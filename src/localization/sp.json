@@ -1,0 +1,28 @@
+{
+    "loginScreen": {
+        "welcomBack": "¡Bienvenido de nuevo!",
+        "Please": "Por favor",
+        "sign in": "Iniciar sesión",
+        "to continue": "continuar",
+        "email": "Correo electrónico",
+        "password": "Clave",
+        "forgetPassword?": "Contraseña olvidada?",
+        "rememberMe": "Acuérdate de mí",
+        "signInButtonText": "Iniciar sesión"
+    },
+    "signUpScreen": {
+        "Hello": "Hola!",
+        "signUp": "inscribirse",
+        "toStartJourny": "para empezar el viaje",
+        "legalName": "Nombre legal",
+        "email": "Correo electrónico",
+        "phoneNumber": "Número de teléfono",
+        "password": "Clave",
+        "confirmPassword": "Contraseña confirmada",
+        "signUpButtonText": "Inscribirse"
+    },
+    "splashScreen": {
+        "shahjee": "Shahjee",
+        "inc": "Ins"
+    }
+}
