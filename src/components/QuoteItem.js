@@ -19,7 +19,7 @@ const QuoteItem = (props) => {
                         </Text>
                         {props.righArrow ?
                             <Icon
-                                name='infocirlceo' type="antdesign" color={colors.primaryColor} size={17} />
+                                name='infocirlceo' type="antdesign" color={colors.greyColor} size={17} />
                             :
                             <Icon
                                 name='right' type="antdesign" color={colors.primaryColor} size={17} />

@@ -20,5 +20,13 @@ export const styles = StyleSheet.create({
         paddingVertical:15,
         fontWeight:'500',
         marginHorizontal:20
+    },
+    QouteTitleText:{
+        fontSize:16,
+        paddingVertical:15,
+        fontWeight:'500',
+        borderWidth: 0.5,
+        borderColor: 'gray',
+        marginBottom: 10
     }
 })

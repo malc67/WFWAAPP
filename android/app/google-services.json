@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "649293172049",
+    "project_id": "wfwa--app",
+    "storage_bucket": "wfwa--app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:649293172049:android:1856d88777bc73e16f1770",
+        "android_client_info": {
+          "package_name": "com.windowfilmswa.appv02"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "649293172049-0t1g3me3aaj9qbeia12c8qcagj6d18a2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSXthdroR1JXoL9qRRhngf-RMKO0Qq7V4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "649293172049-0t1g3me3aaj9qbeia12c8qcagj6d18a2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "649293172049-54f1d2l7jbc3ki3ln56jde26d26m72dp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.windowfilmswa.appv02",
+                "app_store_id": "1624664727"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

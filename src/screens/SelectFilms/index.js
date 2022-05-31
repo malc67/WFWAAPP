@@ -208,7 +208,7 @@ const SelectFilms = (props) => {
               ]}
               stickySectionHeadersEnabled={false}
               renderSectionHeader={({ section }) => (
-                <Text style={{ ...styles.QouteText1, fontSize: 15,marginLeft: 20 }}> {section.title}</Text>
+                <Text style={{ ...styles.QouteTitleText, fontSize: 15, paddingLeft: 20, backgroundColor: "#EDEDED" }}> {section.title}</Text>
               )}
               // renderSectionFooter={renderNoContent}
               renderItem={({ item, index }) => {

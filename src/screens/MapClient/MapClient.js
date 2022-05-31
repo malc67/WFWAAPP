@@ -53,7 +53,11 @@ const MapClient = (props) => {
             <QuoteItem
               title={'Client'}
               subTitle={_.isNil(quotesData?.customer_name) !== true ? `${quotesData?.customer_name}` : ''}
-              onPress={() => onPress(item)} />
+              onPress={() => {
+                console.log(`i m here`);
+                // onPress(item)
+              }} 
+              />
             <View style={styles.line1} />
           </View>
           <View style={{ marginHorizontal: 20, borderRadius: 5, marginBottom: 2, backgroundColor: colors.whiteColor }}>
