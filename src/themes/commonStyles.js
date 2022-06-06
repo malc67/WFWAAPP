@@ -26,8 +26,8 @@ const styles = StyleSheet.create(
             height: Platform.OS === "android" ? phoneScreen.height * 7 / 100 : phoneScreen.height * 6 / 100,
             alignItems: "center",
             borderRadius: phoneScreen.height * 1 / 100,
-            marginHorizontal:10,
-            backgroundColor:colors.whiteColor
+            marginHorizontal: 10,
+            backgroundColor: colors.whiteColor
         },
         buttonStyle2: {
             // marginVertical: 4,
@@ -35,9 +35,9 @@ const styles = StyleSheet.create(
             height: Platform.OS === "android" ? phoneScreen.height * 7 / 100 : phoneScreen.height * 6 / 100,
             alignItems: "center",
             borderRadius: phoneScreen.height * 1 / 100,
-            marginHorizontal:5,
-            backgroundColor:colors.whiteColor,
-            marginBottom:10
+            marginHorizontal: 5,
+            backgroundColor: colors.whiteColor,
+            marginBottom: 10
         },
         buttonStyle3: {
             // marginVertical: 4,
@@ -45,9 +45,9 @@ const styles = StyleSheet.create(
             height: Platform.OS === "android" ? phoneScreen.height * 7 / 100 : phoneScreen.height * 6 / 100,
             alignItems: "center",
             borderRadius: phoneScreen.height * 1 / 100,
-            marginHorizontal:5,
-            backgroundColor:colors.whiteColor,
-            marginBottom:10
+            marginHorizontal: 5,
+            backgroundColor: colors.whiteColor,
+            marginBottom: 10
         },
         buttonTextStyle: {
             textAlign: "center",
@@ -76,6 +76,14 @@ const styles = StyleSheet.create(
             borderWidth: 2,
             flexDirection: "row"
         },
+        numberContainerStyle: {
+            backgroundColor: 'pink',
+            width: "100%",
+            height: Platform.OS === "android" ? phoneScreen.height * 7 / 100 : phoneScreen.height * 6 / 100,
+            borderRadius: phoneScreen.height * 1 / 100,
+            paddingHorizontal: 15,
+            marginTop: 18
+        },
         inputContainerStyle2: {
             backgroundColor: colors.whiteColor,
             width: "100%",
@@ -95,8 +103,8 @@ const styles = StyleSheet.create(
             borderColor: colors.greyColor,
             borderWidth: 1,
             flexDirection: "row",
-            justifyContent:'center',
-            alignItems:'center'
+            justifyContent: 'center',
+            alignItems: 'center'
         },
         inputInnerStyle: {
             height: "100%",
@@ -166,7 +174,7 @@ const styles = StyleSheet.create(
             fontSize: 14
         },
         WhiteButtonStyle: {
-            padding:7,
+            padding: 7,
             flexDirection: "row",
             width: "100%",
             borderRadius: 16,
@@ -174,31 +182,31 @@ const styles = StyleSheet.create(
             alignItems: "center",
             paddingHorizontal: 10,
             justifyContent: "space-between",
-          },
-          lWhiteImageStyle: {
+        },
+        lWhiteImageStyle: {
             height: 24,
             width: 28,
             resizeMode: "contain",
             tintColor: colors.whiteColor
-          },
-          leftImageViewStyle:{
-              height:47,
-              width:47,
-              borderRadius:9,
-              alignItems:"center",
-              justifyContent:"center",
-              marginRight:14
-          },
-          textStyle: {
+        },
+        leftImageViewStyle: {
+            height: 47,
+            width: 47,
+            borderRadius: 9,
+            alignItems: "center",
+            justifyContent: "center",
+            marginRight: 14
+        },
+        textStyle: {
             fontSize: 16,
             fontWeight: "400",
             fontStyle: "normal",
-          },
-          text1Style: {
+        },
+        text1Style: {
             fontSize: 14,
             fontWeight: "700",
             fontStyle: "normal",
-          },
+        },
     }
 )
 export default styles;

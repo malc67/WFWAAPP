@@ -18,11 +18,28 @@ export default RegisterFunction = (props) => {
       firestore().collection('create_quote')
       .add(data).then((res) => {
         alert("Quote created successfully")
-        setLoading(false)
-        navigation.navigate('MapClient', { title: 'Quotes',quotesData:data })
+        // setLoading(false)
+        getQuotesCollection()
+        // navigation.navigate('MapClient', { title: 'Quotes',quotesData:data })
       }).catch((e)=>{
         setLoading(false)
         console.log('erroorr==>>',e)
+      })
+    }
+
+    const getQuotesCollection = () => {
+      firestore().collection("create_quote").get().then((querySnapshot) => {
+        querySnapshot.forEach((collection) => {
+          setDocId('create_quote', collection.id)
+        });
+      });
+    }
+  
+    const setDocId = (collection, id) => {
+      firestore().doc(`${collection}/${id}`).update({ id }).then((response) => {
+        props.navigation.goBack()
+      }).catch((error) => {
+        console.log('error', error)
       })
     }
 

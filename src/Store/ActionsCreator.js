@@ -1,4 +1,4 @@
-import { SIGN_IN, SIGN_OUT,REGISTERDATA } from "./Actions";
+import { SIGN_IN, SIGN_OUT, REGISTERDATA, USERDETAILS } from "./Actions";
 
 export const signIn = (user) => {
     return {
@@ -20,5 +20,12 @@ export const signOut = () => {
         type: SIGN_OUT,
         user: null,
         isLogin: false
+    }
+}
+
+export const userDetails = (payload) => {
+    return {
+        type: USERDETAILS,
+        details: null,
     }
 }

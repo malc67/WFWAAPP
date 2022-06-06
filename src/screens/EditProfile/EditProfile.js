@@ -1,16 +1,17 @@
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Image, Alert, TouchableOpacity } from "react-native";
+import { useSelector } from "react-redux";
 import { launchImageLibrary } from 'react-native-image-picker';
-import PhoneInput from "react-native-phone-number-input";
+import firestore from '@react-native-firebase/firestore';
 import moment from "moment";
-import { styles } from "./Register.style";
+import storage from '@react-native-firebase/storage';
+import { styles } from "./Styles";
 import InputField from "../../components/InputField";
 import { colors } from "../../themes/colors";
 import commonStyles from "../../themes/commonStyles";
 import Button from "../../components/Button";
 import CustomCheckBox from "../../components/CustomCheckBox";
-import RegisterFunction from "./Register.function";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import Loader from "../../utils/Loader";
 import { useNavigation } from "@react-navigation/native";
@@ -24,27 +25,23 @@ const ImageOptions = {
     quality: 0.6,
     mediaType: 'photo',
 };
-const Bussines = (props) => {
+const EditProfile = (props) => {
+    const details = props?.route?.params?.data
 
-
-    const [Bussiness, setBussiness] = useState("")
-    const [ABN, setABN] = useState("")
-    const [phoneNumber, setPhoneNumber] = useState("")
-    const [formattedValue, setFormattedValue] = useState("");
-    const [contactPerson, setContactPerson] = useState("")
-    const [instalationAddress, setInstalationAddress] = useState("")
-    const [city, setCity] = useState("")
-    const [state, setState] = useState("")
-    const [WFAANZ, setWFAANZ] = useState("")
+    const [Bussiness, setBussiness] = useState(details ? details.Bussiness : '')
+    const [ABN, setABN] = useState(details ? details.ABN : "")
+    const [phoneNumber, setPhoneNumber] = useState(details ? details.phoneNumber : "")
+    const [contactPerson, setContactPerson] = useState(details ? details.contactPerson : "")
+    const [instalationAddress, setInstalationAddress] = useState(details ? details.instalationAddress : "")
+    const [city, setCity] = useState(details ? details.city : "")
+    const [state, setState] = useState(details ? details.state : "")
+    const [WFAANZ, setWFAANZ] = useState(details ? details.WFAANZ : "")
+    const [companyLogo, setCompanyLogo] = useState(details ? { uri: details.companyLogo } : '');
     const [member, setMember] = useState(false);
     const [installer, setInstaller] = useState(false);
-    const [companyLogo, setCompanyLogo] = useState('');
-    const [check1, setCheck1] = useState(false);
-    const [check2, setCheck2] = useState(false);
-    const navigation = useNavigation()
-    const phoneInput = useRef()
-
-    const [loading, , BussinessValidation] = RegisterFunction(props)
+    const [loading, setLoading] = useState(false);
+    const { registerReducer } = useSelector(state => state)
+    const FirebaseImagesStorageRef = storage()
 
     const addImage = () => {
         launchImageLibrary(ImageOptions, imageCallBack);
@@ -65,23 +62,70 @@ const Bussines = (props) => {
         }
     };
 
-    const onChange = () => {
-        if (member) {
-            setMember(false)
+
+    const updateImageToFirebase = async (userId) => {
+        let data = { Bussiness, contactPerson, phoneNumber, ABN, instalationAddress, city, state, member, WFAANZ, installer, companyLogo }
+        console.log(companyLogo.uri);
+        console.log(userId);
+        if (companyLogo?.uri) {
+            if(!companyLogo?.uri?.includes('https')){
+                console.log("in If");
+                setLoading(true)
+                let isUploaded = false
+                const extenstion = companyLogo?.uri?.split('.').pop()
+                const fileName = `${moment().format('x')}.${extenstion}`
+                const task = FirebaseImagesStorageRef.ref(`images/${fileName}`).putFile(companyLogo.uri)
+                task.on('state_changed', taskSnapshot => {
+                    if (taskSnapshot.state == 'success' && isUploaded === false) {
+                        isUploaded = true
+                        taskSnapshot.ref.getDownloadURL().then((response) => {
+                            console.log("Image updated to fireStorage: ", response)
+                            updateProfile(userId, response, data)
+                        }).catch((error) => {
+                            console.log('updateImageToFirebase', 'task', error)
+                        })
+                    } else {
+                        console.log("in else");
+                        let progressTemp = ((taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) * 100).toFixed(2)
+                        console.log(`progress: ${progressTemp}`);
+                        console.log(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`);
+                    }
+                })
+            } else {
+                setLoading(true)
+                console.log("in else");
+                updateProfile(userId, companyLogo?.uri, data)
+            }
         } else {
-            setMember(true)
+            setLoading(true)
+            console.log("in else");
+            updateProfile(userId, companyLogo?.uri, data)
         }
     }
-    const onChange1 = () => {
-        if (installer) {
-            setInstaller(false)
-        } else {
-            setInstaller(true)
+
+    const updateProfile = (userId, imageURL, data) => {
+        try {
+            console.log('In updateProfile');
+            firestore().doc(`Users/${userId}`).update({
+                ...data,
+                companyLogo: imageURL
+            })
+            // Toast.show("Private Station has been updated")
+            console.log("Profile has been updated");
+            setTimeout(() => {
+                props.navigation.goBack()
+            }, 1000);
+            setLoading(false)
+        } catch (error) {
+            console.log('updateProfile-error', error);
         }
     }
+
+
+
     return (
         <>
-            <Header center={"Bussiness Profile"} />
+            <Header center={"Edit Profile"} />
             <View style={styles.mainView}>
                 <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }} showsVerticalScrollIndicator={false} >
                     <View style={{ width: "100%", alignItems: "center" }}>
@@ -109,28 +153,7 @@ const Bussines = (props) => {
                                 sterickTextViewStyle={commonStyles.sterickTextViewStyle}
                                 sterickTextStyle={commonStyles.sterickTextStyle}
                             />
-
-                            {/* <View style={[commonStyles.numberContainerStyle]}> */}
-                            <PhoneInput
-                                containerStyle={{ width: '100%', height: 52, borderRadius: 5, marginTop: 18 }}
-                                textContainerStyle={{ backgroundColor: colors.whiteColor, borderRadius: 5 }}
-                                textInputStyle={{ height: 52 }}
-                                ref={phoneInput}
-                                defaultValue={phoneNumber}
-                                defaultCode='AU'
-                                layout="first"
-                                onChangeText={(text) => {
-                                    setPhoneNumber(text);
-                                    // console.log(text);
-                                }}
-                                onChangeFormattedText={(text) => {
-                                    setFormattedValue(text);
-                                    // console.log(text+phoneNumber);
-                                }}
-                                withDarkTheme
-                            />
-                            {/* </View> */}
-                            {/* <InputField
+                            <InputField
                                 placeholder={"Phone"}
                                 placeholderTextColor={colors.placeholderColor}
                                 containerStyle={[commonStyles.inputContainerStyle, { marginTop: 18 }]}
@@ -140,7 +163,7 @@ const Bussines = (props) => {
                                 // sterick={"*"}
                                 sterickTextViewStyle={commonStyles.sterickTextViewStyle}
                                 sterickTextStyle={commonStyles.sterickTextStyle}
-                            /> */}
+                            />
                             <InputField
                                 placeholder={"ABN Number"}
                                 placeholderTextColor={colors.placeholderColor}
@@ -187,9 +210,6 @@ const Bussines = (props) => {
                                 sterickTextViewStyle={commonStyles.sterickTextViewStyle}
                                 sterickTextStyle={commonStyles.sterickTextStyle}
                             />
-                            <CustomCheckBox isChecked={member} onChange={() => onChange()}
-                                checkstyle={{ marginTop: 10 }} containerStyle={{ alignItems: 'flex-start' }}
-                                label1={"Are you a member of Window Film Association Australia New Zealand ? If so WFAANZ logo will appear on your sales quotes to customers with your membership number"} />
                             <InputField
                                 placeholder={"WFAANZ Member Number"}
                                 placeholderTextColor={colors.placeholderColor}
@@ -201,10 +221,7 @@ const Bussines = (props) => {
                                 sterickTextViewStyle={commonStyles.sterickTextViewStyle}
                                 sterickTextStyle={commonStyles.sterickTextStyle}
                             />
-                            <CustomCheckBox checkstyle={{ marginTop: 10 }} containerStyle={{ alignItems: 'flex-start' }}
-                                isChecked={installer} onChange={() => onChange1()}
-                                label2={"by checking this box and adding your WERS for film membership number, the WERS for film logo will also appear on your sales quotes and you will have the option to to issue WERS certificates and establishes you as a window film energy expert"}
-                                label1={"Are you an accredited WERS for film for Film installer ?"} />
+
                             <Text style={styles.textUpload}>
                                 Upload Company Logo
                             </Text>
@@ -226,8 +243,7 @@ const Bussines = (props) => {
                                     textStyle={commonStyles.textStyle}
                                     text={"Done"}
                                     onPress={() => {
-                                        // signUpUser();
-                                        BussinessValidation(Bussiness, contactPerson, formattedValue, ABN, instalationAddress, city, state, member, WFAANZ, installer, companyLogo)
+                                        updateImageToFirebase(registerReducer.data.id)
                                     }}
                                 />
                             </View>
@@ -240,4 +256,4 @@ const Bussines = (props) => {
     )
 
 }
-export default Bussines;
+export default EditProfile;

@@ -14,7 +14,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-windowFilms-windowFilmsTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-windowFilms-windowFilmsTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		CBCCADF2282C1C8800534534 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CBCCADF1282C1C8800534534 /* GoogleService-Info.plist */; };
+		CB8C258B28452A260010699F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CB8C258A28452A250010699F /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,11 +56,11 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = windowFilms/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-windowFilms-windowFilmsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-windowFilms-windowFilmsTests.release.xcconfig"; path = "Target Support Files/Pods-windowFilms-windowFilmsTests/Pods-windowFilms-windowFilmsTests.release.xcconfig"; sourceTree = "<group>"; };
 		8BED4C3666184C0CA7BF2A21 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
-		8E6A393528462E1500608D5E /* windowFilms.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = windowFilms.entitlements; path = windowFilms/windowFilms.entitlements; sourceTree = "<group>"; };
+		8EA086C6284E8DC3003A0223 /* windowFilms.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = windowFilms.entitlements; path = windowFilms/windowFilms.entitlements; sourceTree = "<group>"; };
 		B1854ED20C944DB384C0435F /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		B61B43B555624EBB85DD91C6 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		C8655AE663B34F689182A7CD /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
-		CBCCADF1282C1C8800534534 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		CB8C258A28452A250010699F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E9C2483D3479452B89BCE06E /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -105,8 +105,8 @@
 		13B07FAE1A68108700A75B9A /* windowFilms */ = {
 			isa = PBXGroup;
 			children = (
-				8E6A393528462E1500608D5E /* windowFilms.entitlements */,
-				CBCCADF1282C1C8800534534 /* GoogleService-Info.plist */,
+				8EA086C6284E8DC3003A0223 /* windowFilms.entitlements */,
+				CB8C258A28452A250010699F /* GoogleService-Info.plist */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -290,7 +290,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				CBCCADF2282C1C8800534534 /* GoogleService-Info.plist in Resources */,
+				CB8C258B28452A260010699F /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -544,7 +544,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = windowFilms/windowFilms.entitlements;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = C74474Q88T;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = windowFilms/Info.plist;
@@ -572,7 +572,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = windowFilms/windowFilms.entitlements;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = C74474Q88T;
 				INFOPLIST_FILE = windowFilms/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

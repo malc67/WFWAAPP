@@ -28,7 +28,9 @@ const InputField = (props) => {
                 </View>
             }
             {!_.isNil(props.search) &&
-                    <Icon name="search1" type="antdesign" style={{marginRight:10}} size={16} color={colors.primaryColor}/>
+                <TouchableOpacity onPress={props.onSearch}>
+                    <Icon name="search1" type="antdesign" style={{ marginRight: 10 }} size={16} color={colors.primaryColor} />
+                </TouchableOpacity>
             }
             <TextInput
                 placeholder={props.placeholder}
@@ -48,7 +50,7 @@ const InputField = (props) => {
             {!_.isNil(props.secureTextEntry) &&
                 <TouchableOpacity style={{ height: "100%", width: "15%", alignItems: "flex-end", justifyContent: "center" }}
                     onPress={() => { setHidePass(!hidePass) }}>
-                    <Image style={{ height: 8, width: 14, resizeMode: "cover"}} source={hidePass ? images.hidePasswordIcon : images.unhidePasswordIcon} />
+                    <Image style={{ height: 8, width: 14, resizeMode: "cover" }} source={hidePass ? images.hidePasswordIcon : images.unhidePasswordIcon} />
                 </TouchableOpacity>
             }
         </View>

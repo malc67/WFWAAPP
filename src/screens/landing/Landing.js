@@ -102,7 +102,7 @@ const Landing = (props) => {
                       subtitle={item.job_name}
                       place={item.site_address}
                       date={`22-02-2021`}
-                      onPress={() => navigation.navigate('MapClient', { title: 'Quotes' })} />
+                      onPress={() => navigation.navigate('MapClient', { title: 'Quotes',item: item })} />
                   </View>
                 </>
               )

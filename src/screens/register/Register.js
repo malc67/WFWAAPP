@@ -11,12 +11,16 @@ import Loader from "../../utils/Loader";
 import LinearGradient from 'react-native-linear-gradient';
 import Svg, {ClipPath, Defs, G, Path, SvgXml} from "react-native-svg";
 import constants from "../../utils/ApiConstants";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'; 
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+
+
 
 const Register = (props) => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [loading, registerValidation] = RegisterFunction(props)
+
+    
 
     return (
         <View style={styles.mainView}>
@@ -25,6 +29,7 @@ const Register = (props) => {
             <Image source={require('../../assets/images/splash1.png')} style={styles.image}/>
             <KeyboardAwareScrollView  contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false} >
                 <View style={{flex:1,justifyContent:'center'}} >
+                    
                     <View style={{flex:2,justifyContent:'flex-end'}}>
                     <Text style={styles.headerText}>Sign Up</Text>
                     <View style={[commonStyles.innerViewStyle,{paddingBottom:20}]}>

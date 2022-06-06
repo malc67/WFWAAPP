@@ -8,17 +8,17 @@ import commonStyles from "../../themes/commonStyles";
 import { colors } from "../../themes/colors";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import QuoteItem from "../../components/QuoteItem";
+import firestore from '@react-native-firebase/firestore';
 import InputField from "../../components/InputField";
 import { Icon } from "@rneui/base";
 import Button from "../../components/Button";
+import Loader from "../../utils/Loader";
 import _ from 'lodash';
+import MapClientFunction from './MapClientFunction';
+import { useIsFocused } from '@react-navigation/native';
 const MapClient = (props) => {
-  const { quotesData } = props?.route?.params;
-  const data = [
-    { Title: 'Client', subtitle: "Nutter", id: 1 },
-    { Title: 'Tint Films', subtitle: "Natura 15", id: 2 },
-    { Title: 'Notes', subtitle: "", id: 4 }
-  ]
+  const { quotesData, item } = props?.route?.params;
+  var tempItem = item;
   const data2 = [
     { Title: 'Office', subtitle: "1 Window", id: 1 },
     { Title: 'Spare', subtitle: "1 Window", id: 2 },
@@ -26,22 +26,48 @@ const MapClient = (props) => {
 
   const navigation = useNavigation()
   const route = useRoute()
-  const onPress = (i) => {
-    switch (i.Title) {
-      case 'Client':
-        navigation.navigate('NewQuote', { title: 'Job' })
-        break;
-
-      case 'Tint Films':
-        // navigation.navigate('TintFilms')
-        break;
-
-      default:
-        console.log('false')
-        break;
-    }
-  }
+  const isFocused = useIsFocused();
   const [ongoing, setOngoing] = useState(true)
+  const [roomList, setRoomList] = useState([])
+  const [itemToSend, setItemToSend] = useState(item)
+  const [temploading, setTempLoading] = useState(false);
+  const [loading, getQuotes] = RegisterFunction(props)
+
+  useEffect(() => {
+    getCollectionData();
+  }, [isFocused, navigation])
+
+  const getCollectionData = async () => {
+    setTempLoading(true)
+    try {
+      firestore().collection('create_quote').doc(item.id).get()
+        .then(snapshot => {
+          let data = snapshot.data();
+          setTempLoading(false);
+          let tempRoomList = [];
+          data?.RoomsList?.map((item) => {
+            tempRoomList.push(item)
+          })
+          setRoomList(tempRoomList)
+          tempItem.myTempRoomList = tempRoomList
+
+        })
+    } catch (err) {
+      setTempLoading(false)
+      throw err;
+    }
+
+
+
+
+    // firestore().collection('create_quote')
+    //   .add(data).then((res) => {
+    //     setTempLoading(false)
+    //   }).catch((e) => {
+    //     setTempLoading(false)
+    //     console.log('erroorr==>>', e)
+    //   })
+  }
 
   return (
     <>
@@ -56,8 +82,8 @@ const MapClient = (props) => {
               onPress={() => {
                 console.log(`i m here`);
                 // onPress(item)
-              }} 
-              />
+              }}
+            />
             <View style={styles.line1} />
           </View>
           <View style={{ marginHorizontal: 20, borderRadius: 5, marginBottom: 2, backgroundColor: colors.whiteColor }}>
@@ -96,7 +122,7 @@ const MapClient = (props) => {
                     )
                   }}/> */}
           <Text style={{ ...styles.QouteText, fontSize: 16 }}>Rooms</Text>
-          <TouchableOpacity onPress={() => { navigation.navigate('List') }}>
+          <TouchableOpacity onPress={() => { navigation.navigate('List', { item: tempItem }) }}>
             <View style={styles.headerView}>
               <View style={styles.NewTextView}>
                 <Icon
@@ -110,16 +136,17 @@ const MapClient = (props) => {
             </View>
           </TouchableOpacity>
           <FlatList
-            data={data2}
+            data={roomList}
             keyExtractor={item => item.id}
             showsVerticalScrollIndicator={false}
             removeClippedSubviews={false}
             style={{ width: "100%" }}
             renderItem={({ item, index }) => {
+              console.log(`item in flat list==>`, item);
               return (
                 <View style={{ marginHorizontal: 20, borderRadius: 5, marginBottom: 2, backgroundColor: colors.whiteColor }}>
-                  <QuoteItem title={item.Title}
-                    subTitle={item.subtitle}
+                  <QuoteItem title={item?.roomTitle}
+                    subTitle={item.roomTitle}
                     onPress={() => navigation.navigate('Room')} />
                 </View>
               )
@@ -157,6 +184,7 @@ const MapClient = (props) => {
           text={"Send Cut List"}
         />
       </View>
+      <Loader visible={temploading} />
     </>
   )
 }

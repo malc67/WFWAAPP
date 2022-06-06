@@ -41,7 +41,7 @@ export default LoginFunction = (props) => {
       .signInWithEmailAndPassword(email, password).then((response)=>{
         if (response && response.user) {
           console.log(response.user.uid)
-        Alert.alert("Success ✅", "Authenticated successfully")
+        // Alert.alert("Success ✅", "Authenticated successfully")
         firestore()
           .collection('Users')
           .doc(response.user.uid)
@@ -49,6 +49,8 @@ export default LoginFunction = (props) => {
           .then(documentSnapshot => {            
             if (documentSnapshot.exists) {
               console.log('User data: ', documentSnapshot.data());
+            }else  {
+              console.log("nothing *********************************************");
             }
             dispatch(registerData({register:documentSnapshot.data()}))
           });
