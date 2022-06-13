@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, Linking } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import { styles } from "./MapClient.style";
 import Header from "../../components/Header";
@@ -69,18 +69,32 @@ const MapClient = (props) => {
     //   })
   }
 
+
+  const onCreateNewRoomSuccess = (info) => {
+    navigation.navigate('Room', info)
+  }
+
+
+
+
+  let dataQuotes
+  if (quotesData) {
+    dataQuotes = quotesData
+  } else {
+    dataQuotes = route?.params?.item
+  }
   return (
     <>
-      <Header dellIcon backArrow leftOnPress={() => navigation.goBack()} left={route?.params?.title ? route.params.title : "Map"} center={_.isNil(quotesData?.job_name) !== true ? `${quotesData?.job_name}` : 'Job Name'} />
+      <Header dellIcon backArrow leftOnPress={() => navigation.goBack()} left={route?.params?.title ? route.params.title : "Map"} center={_.isNil(dataQuotes?.job_name) !== true ? `${dataQuotes?.job_name}` : 'Job Name'} />
       <View style={styles.mainView}>
         <KeyboardAwareScrollView showsVerticalScrollIndicator={false} >
           <Text style={{ ...styles.QouteText, fontSize: 16 }}>Browse Tint Films</Text>
           <View style={{ marginHorizontal: 20, borderRadius: 5, marginBottom: 2, backgroundColor: colors.whiteColor }}>
             <QuoteItem
               title={'Client'}
-              subTitle={_.isNil(quotesData?.customer_name) !== true ? `${quotesData?.customer_name}` : ''}
+              subTitle={_.isNil(dataQuotes?.customer_name) !== true ? `${dataQuotes?.customer_name}` : ''}
               onPress={() => {
-                console.log(`i m here`);
+                navigation.goBack()
                 // onPress(item)
               }}
             />
@@ -89,7 +103,7 @@ const MapClient = (props) => {
           <View style={{ marginHorizontal: 20, borderRadius: 5, marginBottom: 2, backgroundColor: colors.whiteColor }}>
             <QuoteItem
               title={`Tint Films`}
-              subTitle={`Natura 15`}
+              subTitle={``}
               onPress={() => {
                 navigation.navigate('SelectFilms')
               }} />
@@ -122,7 +136,7 @@ const MapClient = (props) => {
                     )
                   }}/> */}
           <Text style={{ ...styles.QouteText, fontSize: 16 }}>Rooms</Text>
-          <TouchableOpacity onPress={() => { navigation.navigate('List', { item: tempItem }) }}>
+          <TouchableOpacity onPress={() => { navigation.navigate('List', { item: tempItem, onCreateNewRoomSuccess: onCreateNewRoomSuccess }) }}>
             <View style={styles.headerView}>
               <View style={styles.NewTextView}>
                 <Icon
@@ -147,7 +161,7 @@ const MapClient = (props) => {
                 <View style={{ marginHorizontal: 20, borderRadius: 5, marginBottom: 2, backgroundColor: colors.whiteColor }}>
                   <QuoteItem title={item?.roomTitle}
                     subTitle={item.roomTitle}
-                    onPress={() => navigation.navigate('Room')} />
+                    onPress={() => navigation.navigate('Room', item)} />
                 </View>
               )
             }}
@@ -177,7 +191,10 @@ const MapClient = (props) => {
           buttonStyle={[commonStyles.buttonStyle2, !ongoing && styles.selectedbtn]}
           onPress={() => {
             setOngoing(false)
-            props.navigation.navigate('NewQuote', { title: 'Quote' })
+            const subject = "Cut List";
+            const message = "Message Body";
+            Linking.openURL(`mailto:${dataQuotes?.contact_email}?subject=${subject}&body=${message}`)
+            //props.navigation.navigate('NewQuote', { title: 'Quote' })
           }
           }
           textStyle={[commonStyles.buttonTextStyle, !ongoing && styles.selectedbtn, { fontWeight: 'bold' }]}

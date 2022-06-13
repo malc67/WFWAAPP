@@ -17,7 +17,7 @@ import RegisterFunction from "./Register.function";
 import Button from "../../components/Button";
 const NewQuote = (props) => {
 
-  const {registerReducer}=useSelector(state=>state)
+  const { registerReducer } = useSelector(state => state)
   const [loading, createQuote] = RegisterFunction(props)
 
 
@@ -36,53 +36,66 @@ const NewQuote = (props) => {
   const route = useRoute()
   // const [loading, setLoading] = useState(false)
 
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => {
+    if (isEnabled) {
+      setIsEnabled(!isEnabled)
+    } else {
+      setIsEnabled(!isEnabled)
+      setBuildingAddress(siteAddress)
+      setBuildingSiteState(siteState)
+    }
+    console.log('isEnabled', isEnabled)
+  }
 
-  const firestorer = async() => {
-    if(quoteNumber == ""){
+
+
+  const firestorer = async () => {
+    if (quoteNumber == "") {
       alert('Quote number is required');
       return
     }
-    if(customerName == ""){
+    if (customerName == "") {
       alert('Customer name is required');
       return
     }
-    if(jobName == ""){
+    if (jobName == "") {
       alert('Job name is required');
       return
     }
-    if(jobName == ""){
+    if (jobName == "") {
       alert('Job name is required');
       return
     }
-    if(siteAddress == ""){
+    if (siteAddress == "") {
       alert('Site address is required');
       return
     }
-    if(siteState == ""){
+    if (siteState == "") {
       alert('Site state is required');
       return
     }
-    if(name == ""){
+    if (name == "") {
       alert('Name is required');
       return
     }
-    if(email == ""){
+    if (email == "") {
       alert('Email is required');
       return
     }
-    if(phone == ""){
+    if (phone == "") {
       alert('Phone is required');
       return
     }
-    if(Mobile == ""){
+    if (Mobile == "") {
       alert('Mobile is required');
       return
     }
-    if(buildingAddress == ""){
+    if (buildingAddress == "") {
       alert('Building Address is required');
       return
     }
-    if(buildingSiteState == ""){
+    if (buildingSiteState == "") {
       alert('Building state is required');
       return
     }
@@ -106,7 +119,7 @@ const NewQuote = (props) => {
     <>
       {route?.params?.title ?
         <Header backArrow leftOnPress={() => navigation.goBack()} left={"Cancel"} center={"Request a Quote"} /> :
-        <Header backArrow rightOnPress={() => 
+        <Header backArrow rightOnPress={() =>
           // navigation.navigate('MapClient', { title: 'Quotes' })
           firestorer()
         } leftOnPress={() => navigation.goBack()} left={"Cancel"} right={"Save"} center={"New Quote"} />}
@@ -127,7 +140,7 @@ const NewQuote = (props) => {
           </View>
           <View style={{ marginHorizontal: 20, borderRadius: 5, marginBottom: 2, backgroundColor: colors.whiteColor }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={styles.titleText}>
+              <Text style={[styles.titleText, { color: colors.redTextColor }]}>
                 {`Customer Name`}
               </Text>
               <TextInput
@@ -154,7 +167,7 @@ const NewQuote = (props) => {
           </Text>
           <View style={{ marginHorizontal: 20, borderRadius: 5, marginBottom: 2, backgroundColor: colors.whiteColor }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={styles.titleText}>
+              <Text style={[styles.titleText, { color: colors.redTextColor }]}>
                 {`Address`}
               </Text>
               <TextInput
@@ -166,7 +179,7 @@ const NewQuote = (props) => {
           </View>
           <View style={{ marginHorizontal: 20, borderRadius: 5, marginBottom: 2, backgroundColor: colors.whiteColor }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={styles.titleText}>
+              <Text style={[styles.titleText, { color: colors.redTextColor }]}>
                 {`Suburb / State`}
               </Text>
               <TextInput
@@ -239,33 +252,49 @@ const NewQuote = (props) => {
               />
             </View>
           </View>
-          <Text style={styles.headerText4}>
-            Building Address
-          </Text>
-          <View style={{ marginHorizontal: 20, borderRadius: 5, marginBottom: 2, backgroundColor: colors.whiteColor }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={styles.titleText}>
-                {`Address`}
-              </Text>
-              <TextInput
-                style={styles.subTitleText}
-                value={buildingAddress}
-                onChangeText={(text) => setBuildingAddress(text)}
-              />
-            </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={[styles.headerText4, { flex: 1 }]}>
+              Billing Address
+            </Text>
+            <Switch
+              style={{ marginHorizontal: 20, alignSelf: 'center' }}
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={'#ffffff'}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleSwitch}
+              value={isEnabled}
+            />
           </View>
-          <View style={{ marginHorizontal: 20, borderRadius: 5, marginBottom: 2, backgroundColor: colors.whiteColor }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={styles.titleText}>
-                {`Suburb / State`}
-              </Text>
-              <TextInput
-                style={styles.subTitleText}
-                value={buildingSiteState}
-                onChangeText={(text) => setBuildingSiteState(text)}
-              />
-            </View>
-          </View>
+          {
+            !isEnabled ? (
+              <>
+                <View style={{ marginHorizontal: 20, borderRadius: 5, marginBottom: 2, backgroundColor: colors.whiteColor }}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={styles.titleText}>
+                      {`Address`}
+                    </Text>
+                    <TextInput
+                      style={styles.subTitleText}
+                      value={buildingAddress}
+                      onChangeText={(text) => setBuildingAddress(text)}
+                    />
+                  </View>
+                </View>
+                <View style={{ marginHorizontal: 20, borderRadius: 5, marginBottom: 2, backgroundColor: colors.whiteColor }}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={styles.titleText}>
+                      {`Suburb / State`}
+                    </Text>
+                    <TextInput
+                      style={styles.subTitleText}
+                      value={buildingSiteState}
+                      onChangeText={(text) => setBuildingSiteState(text)}
+                    />
+                  </View>
+                </View>
+              </>
+            ) : <View style={{ height: 10 }} />
+          }
         </KeyboardAwareScrollView>
       </View>
       {/* <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: colors.lightGraay, paddingBottom: 20, paddingHorizontal: 20 }}>

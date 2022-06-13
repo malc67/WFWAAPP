@@ -33,7 +33,7 @@ const Landing = (props) => {
 
   useEffect(() => {
     getQuotes()
-  },[isFocused])
+  }, [isFocused])
 
   const getQuotes = () => {
     firestore().collection('create_quote').get().then((querySnapshot) => {
@@ -56,7 +56,10 @@ const Landing = (props) => {
   return (
     <>
       <Header1 plus left={'Quotes'} onPress={() => props.navigation.navigate('NewQuote')} />
-      <Footer1 />
+      <Footer1
+        onChangeTab={index => {
+
+        }} />
       <View style={styles.mainView}>
         <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false} >
           {/* <TouchableOpacity onPress={()=>navigation.navigate('BrowseFilms')}>
@@ -102,7 +105,7 @@ const Landing = (props) => {
                       subtitle={item.job_name}
                       place={item.site_address}
                       date={`22-02-2021`}
-                      onPress={() => navigation.navigate('MapClient', { title: 'Quotes',item: item })} />
+                      onPress={() => navigation.navigate('MapClient', { title: 'Quotes', item: item })} />
                   </View>
                 </>
               )

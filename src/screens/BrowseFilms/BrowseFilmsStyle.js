@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import { colors } from "../../themes/colors";
 export const styles = StyleSheet.create({
     mainView: {
@@ -41,4 +41,9 @@ export const styles = StyleSheet.create({
         marginHorizontal:20
     }, selectedbtn: { color: colors.whiteColor, backgroundColor: colors.primaryColor },
 
+    pdf: {
+        flex:1,
+        width:Dimensions.get('window').width,
+        height:Dimensions.get('window').height - 65,
+    }
 })

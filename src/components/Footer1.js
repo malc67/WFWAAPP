@@ -27,6 +27,9 @@ const Footer1 = (props) => {
             <TouchableWithoutFeedback
             onPress={()=>{
                 setSelectedId(item.id)
+                if(props.onChangeTab){
+                    props.onChangeTab(item.id)
+                }
             }}
             >
         <View style={{...styles.view3,backgroundColor:iconVisible?route.name=='Quotes'?colors.whiteColor:colors.primaryColor:colors.lightGraay,elevation:iconVisible?10:0}}>

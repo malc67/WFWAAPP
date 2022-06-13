@@ -58,11 +58,8 @@ const Setting = (props) => {
   }
 
   const getFirstCharacters=(userName)=> {
-    if(userName.split("").size > 1) {
-      return userName.split(" ").shift().charAt(0) + userName.split(" ").pop().charAt(0).toUpperCase()
-    } else {
-      return userName.charAt(0) + userName.charAt(1).toUpperCase()
-    }
+    if(!userName) return "*"
+    return userName.split(" ").shift().charAt(0) + userName.split(" ").pop().charAt(0).toUpperCase()
   } 
 
   return (
@@ -72,8 +69,7 @@ const Setting = (props) => {
         <View style={{ marginLeft: 20 }}>
           <View style={styles.nameView}>
             <Text style={styles.nameText}>
-            { userData.Bussiness }
-            {/* { getFirstCharacters(userData.Bussiness.toString()) } */}
+              { getFirstCharacters(userData.Bussiness) }
             </Text>
           </View>
           <Text style={styles.headerText}>

@@ -7,13 +7,14 @@ import InputField from "../../components/InputField";
 import commonStyles from "../../themes/commonStyles";
 import firestore from '@react-native-firebase/firestore';
 import Header from "../../components/Header";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Loader from "../../utils/Loader";
 
 
 const RoomList = (props) => {
   const [password, setPassword] = useState("")
   const navigation = useNavigation()
+  const route = useRoute()
   const { item } = props?.route?.params;
 
   const [selectedId, setSelectedId] = useState("");
@@ -60,6 +61,7 @@ const RoomList = (props) => {
   ];
 
   const addRoom = (title) => {
+    const { onCreateNewRoomSuccess } = route?.params
     let tempRoomArray = [];
     console.log(item);
     if(item.myTempRoomList){
@@ -80,6 +82,7 @@ const RoomList = (props) => {
         alert("Room created successfully")
         navigation.goBack();
         setLoading(false)
+        onCreateNewRoomSuccess({ roomTitle: title })
       }).catch((e) => {
         setLoading(false)
         console.log('erroorr==>>', e)

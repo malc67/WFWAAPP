@@ -1,11 +1,12 @@
 import React from "react";
-import { TouchableOpacity, Text, Image, View, StyleSheet } from "react-native";
+import { TouchableOpacity, Text, Image, View, StyleSheet, Alert } from "react-native";
 import { colors } from "../themes/colors"
 import { Icon } from "@rneui/base";
 
 const SingleFilmsItem = (props) => {
     const OnPress=()=>{
         // 
+        Alert.alert(props.title, props.textAlert)
     }
     return (
         <View>
@@ -16,7 +17,7 @@ const SingleFilmsItem = (props) => {
               <Icon
                name={props.name} 
                type={props.type} 
-               color={props.name=="controller-stop"?colors.greanColor:colors.darkred} 
+               color={props.color ? props.color : props.name=="controller-stop"?colors.greanColor:colors.darkred} 
                size={props.name=="controller-stop"?22:16}
                style={{paddingRight:5}}
                />:null}
