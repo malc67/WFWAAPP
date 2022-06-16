@@ -31,6 +31,18 @@ const DATA = [
   },
   {
     title: "Desserts",
+  },
+  {
+    title: "Main dishes",
+  },
+  {
+    title: "Sides",
+  },
+  {
+    title: "Drinks",
+  },
+  {
+    title: "Desserts",
   }
 ];
 
@@ -49,7 +61,7 @@ const TabQuoteContainer = () => {
           return (
             <Header
               text={'Quotes'}
-              rightOption={(<TouchableOpacity onPress={() => {}}>
+              rightOption={(<TouchableOpacity onPress={() => navigation.navigate('RequestQuote')}>
                 <Image style={styles.imgArrow} source={Images.ic_plus} />
               </TouchableOpacity>)} />
           );
@@ -59,7 +71,9 @@ const TabQuoteContainer = () => {
   )
 
   const Item = ({ title }) => (
-    <TouchableOpacity style={styles.item}>
+    <TouchableOpacity
+      onPress={() => navigation.navigate('QuoteDetail')}
+      style={styles.item}>
       <View style={styles.itemHeader}>
         <Text style={styles.title}>{title}</Text>
         <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
@@ -87,7 +101,17 @@ const TabQuoteContainer = () => {
         renderItem={({ item }) => <Item {...item} />}
         ListHeaderComponent={() => <View style={styles.separator} />}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
+        ListFooterComponent={() => <View style={{ height: Responsive.height(85), width: '100%' }} />}
       />
+
+      <View style={[Layout.fullWidth, Layout.colHCenter, styles.actionWrapper]}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('RequestQuote')}
+          style={[Layout.fill, Layout.center, styles.buttonAdd]}>
+          <Text style={[styles.textButton, { color: '#FFFFFF' }]}>Create a New Quote</Text>
+        </TouchableOpacity>
+        <View style={{ height: Responsive.height(10) }} />
+      </View>
 
     </SafeAreaView>
   )
@@ -140,6 +164,27 @@ const styles = StyleSheet.create({
     width: Responsive.height(22),
     height: Responsive.height(22),
     tintColor: '#B2C249'
+  },
+  actionWrapper: {
+    paddingHorizontal: Responsive.width(60),
+    paddingBottom: Responsive.height(10),
+    position: 'absolute',
+    bottom: 0
+  },
+  buttonAdd: {
+    height: Responsive.height(50),
+    backgroundColor: '#B2C249',
+    borderRadius: Responsive.height(10)
+  },
+  buttonOrder: {
+    height: Responsive.height(50),
+    backgroundColor: '#FFFFFF',
+    borderRadius: Responsive.height(10)
+  },
+  textButton: {
+    color: '#FFFFFF',
+    fontFamily: 'Ubuntu-Bold',
+    fontSize: Responsive.font(17)
   }
 
 });

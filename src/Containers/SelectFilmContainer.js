@@ -17,6 +17,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { isEmpty } from 'lodash'
 import { Header, SearchBar } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 const DATA = [
@@ -35,11 +36,19 @@ const DATA = [
   {
     title: "Desserts",
     data: ["Cheese Cake", "Ice Cream"]
+  },
+  {
+    title: "Desserts",
+    data: ["Cheese Cake", "Ice Cream"]
+  },
+  {
+    title: "Desserts",
+    data: ["Cheese Cake", "Ice Cream"]
   }
 ];
 
 Responsive.setOptions({ width: 390, height: 844, enableOnlySmallSize: true });
-const TabWindowFilmContainer = () => {
+const SelectFilmContainer = () => {
   const { t } = useTranslation()
   const navigation = useNavigation()
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
@@ -52,11 +61,27 @@ const TabWindowFilmContainer = () => {
     useCallback(() => {
       navigation.setOptions({
         header: () => {
-          return <Header text={'Window Films'} type={'large'} />;
+          return <Header
+            text={'Films'}
+            type={'normal'}
+            leftOption={
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.goBack();
+                }}
+                style={Layout.rowHCenter}>
+                <Image source={Images.ic_back} />
+                <Text style={styles.textBack}>Room</Text>
+              </TouchableOpacity>
+            } />;
         },
       })
     }, [navigation])
   )
+
+  const onFilmSelected = (film) => {
+    navigation.goBack()
+  }
 
 
   const HeaderItem = ({ title }) => (
@@ -66,11 +91,12 @@ const TabWindowFilmContainer = () => {
   const Item = ({ title }) => (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate('FilmDetail')
+        onFilmSelected()
       }}
       style={styles.item}>
       <Text style={styles.itemTitle}>{title}</Text>
-      <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
+      <MaterialCommunityIcons name='information' size={18} color={'#606A70'} />
+      <View style={{ width: Responsive.width(15) }} />
     </TouchableOpacity>
   );
 
@@ -93,12 +119,17 @@ const TabWindowFilmContainer = () => {
   )
 }
 
-export default TabWindowFilmContainer
+export default SelectFilmContainer
 
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#F1F1F1',
+  },
+  textBack: {
+    fontFamily: 'Ubuntu-Regular',
+    fontSize: Responsive.font(17),
+    color: '#B2C249'
   },
   item: {
     backgroundColor: "#ffffff",

@@ -15,5 +15,6 @@ export default function () {
     ic_search: require('@/Assets/Images/ic_search.png'),
     ic_arrow_right: require('@/Assets/Images/ic_arrow_right.png'),
     ic_plus: require('@/Assets/Images/ic_plus.png'),
+    ic_back: require('@/Assets/Images/ic_back.png'),
   }
 }

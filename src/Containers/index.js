@@ -5,3 +5,15 @@ export { default as TabWindowFilmContainer } from './TabWindowFilmContainer'
 export { default as TabQuoteContainer } from './TabQuoteContainer'
 export { default as TabMapContainer } from './TabMapContainer'
 export { default as TabSettingContainer } from './TabSettingContainer'
+
+
+
+export { default as FilmDetailContainer } from './FilmDetailContainer'
+export { default as CreateQuoteContainer } from './CreateQuoteContainer'
+export { default as PriceRemovalContainer } from './PriceRemovalContainer'
+export { default as RequestQuoteContainer } from './RequestQuoteContainer'
+export { default as QuoteDetailContainer } from './QuoteDetailContainer'
+export { default as NewRoomContainer } from './NewRoomContainer'
+export { default as SelectFilmContainer } from './SelectFilmContainer'
+export { default as RoomDetailContainer } from './RoomDetailContainer'
+export { default as WindowContainer } from './WindowContainer'
