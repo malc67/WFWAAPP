@@ -84,7 +84,7 @@ const TabSettingContainer = () => {
         </TouchableOpacity>
         <View style={styles.separator} />
         <TouchableOpacity style={styles.item}>
-          <Text style={styles.itemTitle}>Help</Text>
+          <Text style={styles.itemTitle}>Sign Out</Text>
           <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
         </TouchableOpacity>
 

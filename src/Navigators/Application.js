@@ -4,6 +4,9 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { NavigationContainer } from '@react-navigation/native'
 import {
   StartupContainer,
+  LoginContainer,
+  SignUpContainer,
+  BussinessProfileContainer,
   FilmDetailContainer,
   CreateQuoteContainer,
   PriceRemovalContainer,
@@ -12,7 +15,8 @@ import {
   NewRoomContainer,
   SelectFilmContainer,
   RoomDetailContainer,
-  WindowContainer
+  WindowContainer,
+  AddPictureContainer
 } from '@/Containers'
 import { useTheme } from '@/Hooks'
 import MainNavigator from './Main'
@@ -31,6 +35,14 @@ const ApplicationNavigator = () => {
         <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Startup" component={StartupContainer} />
+          <Stack.Screen name="Login" component={LoginContainer} />
+          <Stack.Screen name="SignUp" component={SignUpContainer} />
+          <Stack.Screen
+            name="BussinessProfile"
+            component={BussinessProfileContainer}
+            options={{
+              headerShown: true
+            }} />
           <Stack.Screen
             name="Main"
             component={MainNavigator}
@@ -89,6 +101,12 @@ const ApplicationNavigator = () => {
           <Stack.Screen
             name="Window"
             component={WindowContainer}
+            options={{
+              headerShown: true
+            }} />
+          <Stack.Screen
+            name="AddPicture"
+            component={AddPictureContainer}
             options={{
               headerShown: true
             }} />

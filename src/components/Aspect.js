@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: Responsive.width(5),
-    width: Responsive.width(38),
+    width: Responsive.width(36),
     flexDirection: 'row',
     borderTopLeftRadius: Responsive.height(8),
     borderBottomLeftRadius: Responsive.height(8)
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: Responsive.width(5),
-    width: Responsive.width(38),
+    width: Responsive.width(36),
     flexDirection: 'row',
   },
   itemLast: {
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: Responsive.width(5),
-    width: Responsive.width(38),
+    width: Responsive.width(36),
     flexDirection: 'row',
     borderTopRightRadius: Responsive.height(8),
     borderBottomRightRadius: Responsive.height(8)

@@ -17,13 +17,56 @@ import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { isEmpty } from 'lodash'
-import { Header, Aspect, Colour } from '@/Components'
+import { Header, Aspect, Colour, CustomDropdown } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
 
 
+const FRAME_TYPE_ITEMS = [
+  { label: 'Timber', value: 'Timber' },
+  { label: 'Aluminium', value: 'Aluminium' },
+  { label: 'Steel', value: 'Steel' },
+  { label: 'PVC', value: 'PVC' },
+  { label: 'Colonial', value: 'Colonial' },
+  { label: 'Federation', value: 'Federation' }
+]
+
+const GLASS_TYPE_ITEMS = [
+  { label: 'Laminated', value: 'Laminated' },
+  { label: 'Toughened', value: 'Toughened' },
+  { label: 'Double Glazed', value: 'Double Glazed' },
+  { label: 'Float', value: 'Float' },
+  { label: 'Low-E', value: 'Low-E' },
+]
+const GLASS_THICKNESS_ITEMS = [
+  { label: '3mm', value: '3mm' },
+  { label: '4mm', value: '4mm' },
+  { label: '5mm', value: '5mm' },
+  { label: '6mm', value: '6mm' },
+  { label: '6.38mm', value: '6.38mm' },
+  { label: '8.38mm', value: '8.38mm' },
+  { label: '10.12mm', value: '10.12mm' },
+  { label: '10.38mm', value: '10.38mm' },
+]
+const LADDER_TYPE_ITEMS = [
+  { label: 'Extension', value: 'Extension' },
+  { label: 'Scaffold', value: 'Scaffold' },
+  { label: 'Platform 600mm', value: 'Platform 600mm' },
+  { label: 'Platform 900mm', value: 'Platform 900mm' },
+  { label: 'Platform 1200mm', value: 'Platform 1200mm' },
+  { label: 'Platfrom 1500mm', value: 'Platfrom 1500mm' },
+  { label: 'Platform 1800mm', value: 'Platform 1800mm' },
+  { label: 'Platform 2100mm', value: 'Platform 2100mm' },
+  { label: 'Platform 2400mm', value: 'Platform 2400mm' },
+  { label: 'Step 300mm', value: 'Step 300mm' },
+  { label: 'Step 600mm', value: 'Step 600mm' },
+  { label: 'Step 900mm', value: 'Step 900mm' },
+  { label: 'Step 1200mm', value: 'Step 1200mm' },
+  { label: 'Step 1500mm', value: 'Step 1500mm' },
+  { label: 'Step 1800mm', value: 'Step 1800mm' },
+]
 
 
 Responsive.setOptions({ width: 390, height: 844, enableOnlySmallSize: true });
@@ -125,7 +168,7 @@ const WindowContainer = () => {
           </TouchableOpacity>
           <View style={{ height: Responsive.height(20), width: '100%' }} />
           <TouchableOpacity
-            onPress={() => { }}
+            onPress={() => navigation.navigate('AddPicture')}
             style={styles.item}>
             <Text style={styles.title}>Add Picture</Text>
             <Text style={styles.subValue}>{''}</Text>
@@ -136,7 +179,7 @@ const WindowContainer = () => {
             onPress={() => { }}
             style={styles.item}>
             <Text style={styles.title}>Aspect</Text>
-            <Aspect onValueChange={index => console.log(index)}/>
+            <Aspect onValueChange={index => console.log(index)} />
             <View style={{ width: Responsive.width(15) }} />
           </TouchableOpacity>
           <View style={styles.separator} />
@@ -144,15 +187,15 @@ const WindowContainer = () => {
             onPress={() => { }}
             style={styles.item}>
             <Text style={styles.title}>Frame Type</Text>
-            <Text style={styles.subValue}>{''}</Text>
-            <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
+            <CustomDropdown items={FRAME_TYPE_ITEMS} />
+            <View style={{ width: Responsive.width(15) }} />
           </TouchableOpacity>
           <View style={styles.separator} />
           <TouchableOpacity
             onPress={() => { }}
             style={styles.item}>
             <Text style={styles.title}>Frame Colour</Text>
-            <Colour onValueChange={index => console.log(index)}/>
+            <Colour onValueChange={index => console.log(index)} />
             <View style={{ width: Responsive.width(15) }} />
           </TouchableOpacity>
           <View style={styles.separator} />
@@ -160,16 +203,16 @@ const WindowContainer = () => {
             onPress={() => { }}
             style={styles.item}>
             <Text style={styles.title}>Glass Type</Text>
-            <Text style={styles.subValue}>{''}</Text>
-            <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
+            <CustomDropdown items={GLASS_TYPE_ITEMS} />
+            <View style={{ width: Responsive.width(15) }} />
           </TouchableOpacity>
           <View style={styles.separator} />
           <TouchableOpacity
             onPress={() => { }}
             style={styles.item}>
             <Text style={styles.title}>Glass Thickness</Text>
-            <Text style={styles.subValue}>{''}</Text>
-            <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
+            <CustomDropdown items={GLASS_THICKNESS_ITEMS} />
+            <View style={{ width: Responsive.width(15) }} />
           </TouchableOpacity>
           <View style={styles.separator} />
           <TouchableOpacity
@@ -202,8 +245,8 @@ const WindowContainer = () => {
             onPress={() => { }}
             style={styles.item}>
             <Text style={styles.title}>Ladder Type</Text>
-            <Text style={styles.subValue}>{''}</Text>
-            <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
+            <CustomDropdown items={LADDER_TYPE_ITEMS} flexValue={1.5} />
+            <View style={{ width: Responsive.width(15) }} />
           </TouchableOpacity>
           <View style={{ height: Responsive.height(20), width: '100%' }} />
         </ScrollView>

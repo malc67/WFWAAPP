@@ -66,7 +66,7 @@ const TabMapContainer = () => {
       >
         {
           data.map(item => {
-            return <Marker coordinate={{ latitude: item.lat, longitude: item.lng }}>
+            return <Marker key={item.id} coordinate={{ latitude: item.lat, longitude: item.lng }}>
               <Callout onPress={() => { }}>
                 <View style={styles.markerContainer}>
                   <View>
