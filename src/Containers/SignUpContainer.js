@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Image, ImageBackground, SafeAreaView, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native'
 import { useTranslation } from 'react-i18next'
-import { useTheme } from '@/Hooks'
+import { useAuth, useTheme } from '@/Hooks'
 import { setDefaultTheme } from '@/Store/Theme'
 import { navigateAndSimpleReset } from '@/Navigators/utils'
 import Responsive from 'react-native-lightweight-responsive'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native'
+import { Loader } from '@/Components'
 
 Responsive.setOptions({ width: 390, height: 844, enableOnlySmallSize: true });
 const SignUpContainer = () => {
@@ -14,21 +15,12 @@ const SignUpContainer = () => {
   const navigation = useNavigation()
   const { t } = useTranslation()
 
+  const [loading, errors, validation, registerApi] = useAuth().Register
+
   const [isShowPassword, setIsShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const init = async () => {
-    //await new Promise(resolve =>
-    //  setTimeout(() => {
-    //    resolve(true)
-    //  }, 2000),
-    //)
-    //await setDefaultTheme({ theme: 'default', darkMode: null })
-    //navigateAndSimpleReset('Main')
-  }
-
-  useEffect(() => {
-    init()
-  })
 
   return (
     <ImageBackground source={Images.bg_auth_footer} style={[Layout.fill]}>
@@ -48,17 +40,23 @@ const SignUpContainer = () => {
               <TextInput
                 style={[Layout.fill, styles.input]}
                 placeholder={'Email'}
+                keyboardType={'email-address'}
+                onChangeText={text => setEmail(text)}
+                onBlur={e => validation(email, password)}
                 placeholderTextColor={'#80606A70'} />
             </View>
             <View style={{ height: Responsive.height(1), backgroundColor: '#979BA3' }} />
+            <Text style={styles.textError}>{errors['email']}</Text>
           </View>
-          <View style={[Layout.fullWidth, styles.inputContainer]}>
+          <View style={[Layout.fullWidth, styles.inputContainer, { marginTop: Responsive.height(20) }]}>
             <Text style={styles.inputLabel}>Password</Text>
             <View style={styles.inputWrapper}>
               <TextInput
                 style={[Layout.fill, styles.input]}
-                secureTextEntry
+                secureTextEntry={!isShowPassword}
                 placeholder={'Password'}
+                onChangeText={text => setPassword(text)}
+                onBlur={e => validation(email, password)}
                 placeholderTextColor={'#80606A70'} />
               <MaterialCommunityIcons
                 onPress={() => {
@@ -70,12 +68,13 @@ const SignUpContainer = () => {
                 color={isShowPassword ? '#606A70' : '#80606A70'} />
             </View>
             <View style={{ height: Responsive.height(1), backgroundColor: '#979BA3' }} />
+            <Text style={styles.textError}>{errors['password']}</Text>
           </View>
           <View style={[Layout.rowHCenter, styles.actionWrapper]}>
 
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('BussinessProfile')
+                registerApi(email, password)
               }}
               style={[Layout.fill, Layout.center, styles.buttonLogin]}>
               <Text style={[styles.textButton, { color: '#FFFFFF' }]}>Sign Up</Text>
@@ -84,9 +83,9 @@ const SignUpContainer = () => {
           </View>
 
           <View style={Layout.fill} />
-          <TouchableOpacity style={styles.dontHaveAccountContainer}>
+          <View style={styles.dontHaveAccountContainer}>
             <Text style={styles.textdontHaveAccount}>Already have an Account</Text>
-          </TouchableOpacity>
+          </View>
           <View style={[Layout.rowHCenter, styles.actionWrapper]}>
 
             <TouchableOpacity
@@ -100,6 +99,7 @@ const SignUpContainer = () => {
           </View>
           <View style={{ height: Responsive.height(30), width: '100%' }} />
         </ScrollView>
+        <Loader visible={loading} />
       </SafeAreaView>
     </ImageBackground>
   )
@@ -159,7 +159,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Ubuntu-Regular',
     fontSize: Responsive.font(17),
     color: '#606A70',
+    paddingTop: 0, 
+    paddingBottom: 0,
     paddingHorizontal: Responsive.width(10)
+  },
+  textError: {
+    fontFamily: 'Ubuntu-Regular',
+    fontSize: Responsive.font(12),
+    color: '#F55549',
+    marginTop: Responsive.height(5)
   },
   actionWrapper: {
     marginTop: Responsive.height(30),

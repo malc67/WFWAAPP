@@ -8,7 +8,8 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  Switch
+  Switch,
+  Linking
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -97,7 +98,7 @@ const CreateQuoteContainer = () => {
           </View>
           <View style={styles.separator} />
           <View style={styles.item}>
-            <Text style={[styles.title, { color: '#C40215' }]}>Price Per m2</Text>
+            <Text style={[styles.title, { color: '#C40215' }]}>Price Per m²</Text>
             <View style={styles.inputContainer}>
               <TextInput style={styles.input} placeholder={'$ per m²'} placeholderTextColor={'#606A70'} />
             </View>
@@ -213,7 +214,112 @@ const CreateQuoteContainer = () => {
 
         <View style={[Layout.fullWidth, Layout.colHCenter, styles.actionWrapper]}>
 
-          <TouchableOpacity style={[Layout.fill, Layout.center, styles.buttonAdd]}>
+          <TouchableOpacity
+            onPress={() => {
+              let body = `Quotation No. 14
+
+              23 Apr 2022
+              
+              Customer details:
+              
+              Sorrento Surf Club West Coast Hwy, Sorrento
+              
+              Christine
+              
+              Site details:
+              
+              West Coast Hwy, Sorrento Dear Sorrento Surf Club,
+              
+              I have great pleasure in submitting the
+              
+              following quotation and have attached the following documents:
+              
+              Quotation 14 (contained within thisdocument)
+              
+              Natura 28 Internal Window Film Brochure • Sample copy of the Manufacturer's Warranty Form (attached to original email)
+              
+              Scope of Works:
+              
+              Provide quotation to supply and install Natura
+              
+              28 as described
+              
+              Project Requirements & Benefits Reduce Solar Heat Gain (Heat)
+              
+              Reduce Ultra Violet Radiation (Fading)
+              
+              Reduce Clare
+              
+              Provide Daytime Privacy
+              
+              About your Glass and Frames:
+              
+              Glass Type: New window /glass type
+              
+              Frame Type: =new window/frame type Film-to-Glass Application (Recommendation): Natura 28 Internal Window Film is recommended by the manufacturer
+              
+              About SolarZone Internal Window Films:
+              
+              • Deliver high levels of protection from solar
+              
+              heat, cut energy costs by reducing the need
+              
+              for air-conditioning, boosting energy
+              
+              efficiency
+              
+              • Dual Reflective films are ideal for
+              
+              commercial and residential energy-upgrade
+              
+              glazing projects when the customer wants quick payback but wants a neutral Interior that preserves the view outside
+              
+              High levels of heat rejection cuts energy costs by reducing consumption and peak
+              
+              load Outstanding glare control for enhanced
+              
+              comfort Warm neutral interior with low reflectivity
+              
+              preserves ambiance and views 99+% UV block limits fading and damage
+              
+              from the sun Bold appearance upgrades building exterior and maintains daytime privacy
+              
+              Fade Reduction:
+               Manufacturer's Note: This data is a guide enabling an estimate only of fade reduction, as there are many variables that cause fading, it would be impossible to give an exact figure, therefore, does not constitute a warranty.
+              
+              Installation of your Window Film:
+              
+              Will be supplied and installed in accordance
+              
+              with manufacturer's installation instructions.
+              
+              Window Films WA employees are licenced and
+              
+              approved window film applicators.
+              
+              We are currently booking ahead for between 7-10 working days (if you require immediate
+              
+              installation, please contact me directly and I - will endeavour to accommodate your requirements).
+              
+              Please let me know directly when you are ready to proceed and I will schedule ASAP.
+              
+              Window Energy Rating System
+              
+              Window films WA is an accredited WERS installer. Upon completion you will issued a certification of the WERS rating appropriate to the film being installed on your current Glazing specifications. Based on the Natura 28 you will achieve a WERS rating 15 % heating ***32% Cooling Rating.
+              
+              Warranty Period & Registration:
+               Natura 28 Internal Window Film carries a Lifetime Warranty for Residential applications and 12 Years Warranty for Commercial applications. The warranty period on the External Window film applications varies depending on the film used and other site variables. Please refer to the sample copy of the manufacturer's warranty form attached to confirm the warranty period relevant to this particular application.
+              
+              The original warranty document will be sent to
+              
+              you after installation for this types of glazing.
+              
+              Apples for Apples Policy:
+              
+              Window Films WA pride ourselves on giving`
+              Linking.openURL(`mailto:abc@example.com?cc=abc@example.com&subject=${`Cutting list for ABC`}&body=${body}`)
+            }}
+            style={[Layout.fill, Layout.center, styles.buttonAdd]}>
             <Text style={[styles.textButton, { color: '#FFFFFF' }]}>Create Deatiled Proposal</Text>
           </TouchableOpacity>
           <View style={{ height: Responsive.height(10) }} />
@@ -305,6 +411,8 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     fontSize: Responsive.font(17),
     fontFamily: 'Ubuntu-Regular',
+    paddingTop: 0,
+    paddingBottom: 0,
     paddingHorizontal: Responsive.width(10)
   },
   imgArrow: {

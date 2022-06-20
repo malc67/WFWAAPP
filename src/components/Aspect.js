@@ -1,33 +1,33 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { View, FlatList, StyleSheet, TouchableOpacity, Text } from 'react-native'
 import { useTheme } from '@/Hooks'
 import Responsive from 'react-native-lightweight-responsive'
 
-const Aspect = ({ height, onValueChange }) => {
+const Aspect = ({ height, onValueChange, value }) => {
   const { Layout, Images } = useTheme()
-  const [selectedId, setSelectedId] = useState(1);
   const [listOfItems, setListOfItems] = useState([
     { id: 1, data: "N" },
     { id: 2, data: "E" },
     { id: 3, data: 'S' },
     { id: 4, data: 'W' },
   ])
+  const [selectedId, setSelectedId] = useState(1);
+
+  useEffect(() => {
+    const selectedData = listOfItems.filter(item => item.data === value)
+    setSelectedId(selectedData[0]?.id)
+  }, [value])
 
   return (
     <View style={[styles.container, { height }]}>
 
-      <FlatList
-        data={listOfItems}
-        horizontal={true}
-        scrollEnabled={false}
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item, index }) => {
+      {
+        listOfItems.map((item, index) => {
           const getColorBackground = (isRevert = false) => {
-            if(isRevert){
+            if (isRevert) {
               return item.id !== selectedId ? '#434A4F' : '#ffffff'
-            }else {
+            } else {
               return item.id === selectedId ? '#434A4F' : '#ffffff'
             }
           }
@@ -41,7 +41,7 @@ const Aspect = ({ height, onValueChange }) => {
               <TouchableOpacity
                 onPress={() => {
                   setSelectedId(item.id)
-                  onValueChange(item.id)
+                  onValueChange(item.data)
                 }}
               >
                 <View style={{ ...getStyleItem(), backgroundColor: getColorBackground() }}>
@@ -52,25 +52,28 @@ const Aspect = ({ height, onValueChange }) => {
               </TouchableOpacity>
             </View>
           )
-        }}
-        extraData={selectedId} />
+        })
+      }
 
     </View>
   )
 }
 
 Aspect.propTypes = {
-  onValueChange: PropTypes.func
+  onValueChange: PropTypes.func,
+  value: PropTypes.string
 }
 
 Aspect.defaultProps = {
-  onValueChange: (index) => {}
+  onValueChange: (value) => { },
+  value: 'N'
 }
 
 export default Aspect
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: 'row'
   },
   itemContainer: {
     justifyContent: 'space-around'

@@ -20,7 +20,6 @@ const Avatar = ({ height, firstName, lastName, urlImage }) => {
     if (isEmpty(lastName)) return ""
     return lastName.charAt(0)
   }
-  console.log('urlImage', urlImage)
   return (
     <SafeAreaView style={[styles.container, { height, width: height, borderRadius: height / 2 }]}>
       {

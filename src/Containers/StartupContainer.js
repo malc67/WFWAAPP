@@ -1,16 +1,19 @@
 import React, { useEffect } from 'react'
 import { StyleSheet, View, Image, ImageBackground } from 'react-native'
 import { useTranslation } from 'react-i18next'
-import { useTheme } from '@/Hooks'
+import { useAuth, useTheme } from '@/Hooks'
 import { setDefaultTheme } from '@/Store/Theme'
 import { navigateAndSimpleReset } from '@/Navigators/utils'
 import Responsive from 'react-native-lightweight-responsive'
+import { isUndefined, isEmpty } from 'lodash'
+import { useNavigation } from '@react-navigation/native'
 
 Responsive.setOptions({ width: 390, height: 844, enableOnlySmallSize: true });
 const StartupContainer = () => {
   const { Layout, Images, Gutters, Fonts } = useTheme()
-
+  const navigation = useNavigation()
   const { t } = useTranslation()
+  const { info, profile } = useAuth().Data
 
   const init = async () => {
     await new Promise(resolve =>
@@ -19,7 +22,17 @@ const StartupContainer = () => {
       }, 2000),
     )
     await setDefaultTheme({ theme: 'default', darkMode: null })
-    navigateAndSimpleReset('Login')
+    console.log('info', info)
+    console.log('profile', profile)
+    if(isUndefined(info) || isEmpty(info)){
+      navigateAndSimpleReset('Login')
+    }else {
+      if(isUndefined(profile) || isEmpty(profile)){
+        navigation.navigate('BussinessProfile')
+      }else {
+        navigation.navigate('Main')
+      }
+    }
   }
 
   useEffect(() => {

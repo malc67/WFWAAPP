@@ -52,6 +52,8 @@ const styles = StyleSheet.create({
   textStyle: {
     fontFamily: 'Ubuntu-Regular',
     fontSize: Responsive.font(17),
-    color: '#434A4F'
+    color: '#434A4F',
+    paddingBottom: 0,
+    paddingTop: 0
   }
 });

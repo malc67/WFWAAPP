@@ -1,16 +1,22 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { View, FlatList, StyleSheet, TouchableOpacity, Text } from 'react-native'
 import { useTheme } from '@/Hooks'
 import Responsive from 'react-native-lightweight-responsive'
 
-const Colour = ({ height, onValueChange }) => {
+const Colour = ({ height, onValueChange, value }) => {
   const { Layout, Images } = useTheme()
-  const [selectedId, setSelectedId] = useState(1);
   const [listOfItems, setListOfItems] = useState([
     { id: 1, data: "Light" },
     { id: 2, data: "Dark" },
   ])
+  const [selectedId, setSelectedId] = useState(1);
+
+  useEffect(() => {
+    const selectedData = listOfItems.filter(item => item.data === value)
+    setSelectedId(selectedData[0]?.id)
+  }, [value])
+
 
   return (
     <View style={[styles.container, { height }]}>
@@ -39,7 +45,7 @@ const Colour = ({ height, onValueChange }) => {
               <TouchableOpacity
                 onPress={() => {
                   setSelectedId(item.id)
-                  onValueChange(item.id)
+                  onValueChange(item.data)
                 }}
               >
                 <View style={{ ...getStyleItem(), backgroundColor: getColorBackground() }}>
@@ -58,11 +64,13 @@ const Colour = ({ height, onValueChange }) => {
 }
 
 Colour.propTypes = {
-  onValueChange: PropTypes.func
+  onValueChange: PropTypes.func,
+  value: PropTypes.string
 }
 
 Colour.defaultProps = {
-  onValueChange: (index) => {}
+  onValueChange: (value) => {},
+  value: 'Light'
 }
 
 export default Colour

@@ -10,41 +10,16 @@ import {
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { useTheme } from '@/Hooks'
+import { useQuote, useTheme } from '@/Hooks'
 import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { isEmpty } from 'lodash'
-import { Header, TabBarQuote } from '@/Components'
+import { Header, Loader, TabBarQuote } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
+import moment from 'moment'
 
 
-const DATA = [
-  {
-    title: "Main dishes",
-  },
-  {
-    title: "Sides",
-  },
-  {
-    title: "Drinks",
-  },
-  {
-    title: "Desserts",
-  },
-  {
-    title: "Main dishes",
-  },
-  {
-    title: "Sides",
-  },
-  {
-    title: "Drinks",
-  },
-  {
-    title: "Desserts",
-  }
-];
 
 Responsive.setOptions({ width: 390, height: 844, enableOnlySmallSize: true });
 const TabQuoteContainer = () => {
@@ -52,7 +27,7 @@ const TabQuoteContainer = () => {
   const navigation = useNavigation()
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
 
-
+  const [loading, , quotesList, getQuotesApi, ,] = useQuote()
 
   useFocusEffect(
     useCallback(() => {
@@ -61,7 +36,7 @@ const TabQuoteContainer = () => {
           return (
             <Header
               text={'Quotes'}
-              rightOption={(<TouchableOpacity onPress={() => navigation.navigate('RequestQuote')}>
+              rightOption={(<TouchableOpacity onPress={() => navigation.navigate('RequestQuote', { onUpdateListQuote })}>
                 <Image style={styles.imgArrow} source={Images.ic_plus} />
               </TouchableOpacity>)} />
           );
@@ -70,21 +45,30 @@ const TabQuoteContainer = () => {
     }, [navigation])
   )
 
-  const Item = ({ title }) => (
+
+  useEffect(() => {
+    getQuotesApi()
+  }, [])
+
+  const onUpdateListQuote = () => {
+    getQuotesApi()
+  }
+
+
+  const Item = ({ item }) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate('QuoteDetail')}
+      onPress={() => navigation.navigate('QuoteDetail', { item, onUpdateListQuote })}
       style={styles.item}>
       <View style={styles.itemHeader}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>{item['customer_name']}</Text>
         <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
       </View>
-      <Text style={styles.subTitle}>KBSC in Kommana Bay</Text>
-      <View style={styles.itemHeader}>
-        <Text style={styles.subTitle}>Quote:{' '}
-          <Text style={styles.subTitleBold}>10</Text>
+      <Text style={styles.subTitle}>{item['site_address']}</Text>
+      <View style={[styles.itemHeader]}>
+        <Text numberOfLines={1} ellipsizeMode={'tail'} style={[Layout.fill, styles.subTitle]}>Quote:{' '}
+          <Text style={styles.subTitleBold}>{item['job_name']}</Text>
         </Text>
-        <View style={Layout.fill} />
-        <Text style={styles.subTitle}>Last Modified: 20 Apr 2022</Text>
+        <Text style={styles.subTitle}>{moment(item['create_date']).format('DD MMM YYYY')}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -96,9 +80,9 @@ const TabQuoteContainer = () => {
       <TabBarQuote colorHeightline={'#ffffff'} onChangeTab={index => { }} />
 
       <FlatList
-        data={DATA}
+        data={quotesList}
         keyExtractor={(item, index) => item + index}
-        renderItem={({ item }) => <Item {...item} />}
+        renderItem={({ item }) => <Item item={item} />}
         ListHeaderComponent={() => <View style={styles.separator} />}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListFooterComponent={() => <View style={{ height: Responsive.height(85), width: '100%' }} />}
@@ -106,13 +90,13 @@ const TabQuoteContainer = () => {
 
       <View style={[Layout.fullWidth, Layout.colHCenter, styles.actionWrapper]}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('RequestQuote')}
+          onPress={() => navigation.navigate('RequestQuote', { onUpdateListQuote })}
           style={[Layout.fill, Layout.center, styles.buttonAdd]}>
           <Text style={[styles.textButton, { color: '#FFFFFF' }]}>Create a New Quote</Text>
         </TouchableOpacity>
         <View style={{ height: Responsive.height(10) }} />
       </View>
-
+      <Loader visible={loading} />
     </SafeAreaView>
   )
 }

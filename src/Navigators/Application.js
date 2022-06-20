@@ -16,7 +16,9 @@ import {
   SelectFilmContainer,
   RoomDetailContainer,
   WindowContainer,
-  AddPictureContainer
+  AddPictureContainer,
+  DataSheetContainer,
+  NotesContainer
 } from '@/Containers'
 import { useTheme } from '@/Hooks'
 import MainNavigator from './Main'
@@ -107,6 +109,18 @@ const ApplicationNavigator = () => {
           <Stack.Screen
             name="AddPicture"
             component={AddPictureContainer}
+            options={{
+              headerShown: true
+            }} />
+          <Stack.Screen
+            name="DataSheet"
+            component={DataSheetContainer}
+            options={{
+              headerShown: true
+            }} />
+          <Stack.Screen
+            name="Notes"
+            component={NotesContainer}
             options={{
               headerShown: true
             }} />

@@ -1,0 +1,81 @@
+diff --git a/node_modules/react-native-element-dropdown/src/components/Dropdown/index.tsx b/node_modules/react-native-element-dropdown/src/components/Dropdown/index.tsx
+index e18848c..5d29c69 100644
+--- a/node_modules/react-native-element-dropdown/src/components/Dropdown/index.tsx
++++ b/node_modules/react-native-element-dropdown/src/components/Dropdown/index.tsx
+@@ -55,6 +55,8 @@ const DropdownComponent = React.forwardRef<any, DropdownProps>(
+       data,
+       labelField,
+       valueField,
++      displayField = labelField,
++      type,
+       value,
+       activeColor,
+       fontFamily,
+@@ -303,18 +305,31 @@ const DropdownComponent = React.forwardRef<any, DropdownProps>(
+         <TouchableWithoutFeedback testID={testID} onPress={showOrClose}>
+           <View style={styles.dropdown}>
+             {renderLeftIcon?.()}
+-            <Text
+-              style={[
+-                styles.textItem,
+-                isSelected !== null ? selectedTextStyle : placeholderStyle,
+-                font(),
+-              ]}
+-              {...selectedTextProps}
+-            >
+-              {isSelected !== null
+-                ? _.get(currentValue, labelField)
+-                : placeholder}
+-            </Text>
++            {
++              _.isEmpty(type) ? (
++                <Text
++                  style={[
++                    styles.textItem,
++                    isSelected !== null ? selectedTextStyle : placeholderStyle,
++                    font(),
++                  ]}
++                  {...selectedTextProps}
++                >
++                  {isSelected !== null
++                    ? _.get(currentValue, displayField)
++                    : placeholder}
++                </Text>
++              ) : (
++                isSelected !== null ? (
++                  <Image
++                    source={isSelected !== null
++                      ? _.get(currentValue, displayField)
++                      : ''}
++                    style={[styles.icon, iconStyle]}
++                  />) : null
++              )
++            }
++
+             {renderRightIcon ? (
+               renderRightIcon()
+             ) : (
+@@ -474,8 +489,8 @@ const DropdownComponent = React.forwardRef<any, DropdownProps>(
+             dropdownPosition === 'auto'
+               ? bottom < (isIOS ? 200 : search ? 310 : 300)
+               : dropdownPosition === 'top'
+-              ? true
+-              : false;
++                ? true
++                : false;
+           let topHeight = isTopPosition ? top - height : top;
+ 
+           let keyboardStyle: ViewStyle = {};
+diff --git a/node_modules/react-native-element-dropdown/src/components/Dropdown/model.ts b/node_modules/react-native-element-dropdown/src/components/Dropdown/model.ts
+index b6b22b1..e5223c7 100644
+--- a/node_modules/react-native-element-dropdown/src/components/Dropdown/model.ts
++++ b/node_modules/react-native-element-dropdown/src/components/Dropdown/model.ts
+@@ -30,6 +30,8 @@ export type DropdownProps = {
+   placeholder?: string;
+   labelField: string;
+   valueField: string;
++  displayField: string;
++  type: string;
+   search?: boolean;
+   searchPlaceholder?: string;
+   disable?: boolean;

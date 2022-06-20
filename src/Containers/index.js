@@ -22,3 +22,6 @@ export { default as SelectFilmContainer } from './SelectFilmContainer'
 export { default as RoomDetailContainer } from './RoomDetailContainer'
 export { default as WindowContainer } from './WindowContainer'
 export { default as AddPictureContainer } from './AddPictureContainer'
+
+export { default as DataSheetContainer } from './DataSheetContainer'
+export { default as NotesContainer } from './NotesContainer'

@@ -10,12 +10,12 @@ import {
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { useTheme } from '@/Hooks'
+import { useAuth, useTheme } from '@/Hooks'
 import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { isEmpty } from 'lodash'
-import { Header, Avatar } from '@/Components'
+import { Header, Avatar, Loader } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 
 
@@ -23,6 +23,8 @@ Responsive.setOptions({ width: 390, height: 844, enableOnlySmallSize: true });
 const TabSettingContainer = () => {
   const { t } = useTranslation()
   const navigation = useNavigation()
+  const { info, profile } = useAuth().Data
+  const [loading, signOut] = useAuth().SignOut
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
 
 
@@ -40,7 +42,9 @@ const TabSettingContainer = () => {
   )
 
 
-
+  var fullName = profile ? profile['contactPerson']?.split(' ') : []
+  let firstName = fullName[0] || ''
+  let lastName = fullName[fullName.length - 1] || '';
   return (
     <SafeAreaView
       style={Layout.fill}>
@@ -52,18 +56,22 @@ const TabSettingContainer = () => {
 
         <View style={styles.infoWrapper}>
 
-          <Avatar height={64} firstName={'Ahihi'} lastName={'So'} />
-          <Text style={styles.textName}>John Adams</Text>
-          <Text style={styles.textSub}>New York</Text>
+          <Avatar height={64} firstName={firstName} lastName={lastName} />
+          <Text style={styles.textName}>{profile ? profile['contactPerson'] : ''}</Text>
+          <Text style={styles.textSub}>{profile ? profile['city'] : ''}</Text>
           <View style={{ height: Responsive.height(15) }} />
-          <Text style={styles.textSub}>+1 987654321</Text>
+          <Text style={styles.textSub}>{profile ? `+${profile['callingCode']} ${profile['phoneNumber']}` : `` }</Text>
           <View style={{ height: Responsive.height(15) }} />
-          <Text style={styles.textSub}>johnadam@anydmain.com</Text>
+          <Text style={styles.textSub}>{info ? info['email'] : ''}</Text>
           <View style={{ height: Responsive.height(30) }} />
         </View>
 
         <View style={{ height: Responsive.height(30) }} />
-        <TouchableOpacity style={styles.item}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('BussinessProfile', { isEditProfile: true })
+          }}
+          style={styles.item}>
           <Text style={styles.itemTitle}>Edit Profile</Text>
           <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
         </TouchableOpacity>
@@ -83,7 +91,9 @@ const TabSettingContainer = () => {
           <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
         </TouchableOpacity>
         <View style={styles.separator} />
-        <TouchableOpacity style={styles.item}>
+        <TouchableOpacity
+          onPress={() => signOut()}
+          style={styles.item}>
           <Text style={styles.itemTitle}>Sign Out</Text>
           <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
         </TouchableOpacity>
@@ -92,6 +102,7 @@ const TabSettingContainer = () => {
 
 
       </ScrollView>
+      <Loader visible={loading} />
     </SafeAreaView>
   )
 }

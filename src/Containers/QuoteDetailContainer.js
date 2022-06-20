@@ -6,18 +6,17 @@ import {
   View,
   Text,
   Image,
-  TextInput,
+  Alert,
   TouchableOpacity,
-  Switch
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { useTheme } from '@/Hooks'
+import { useQuote, useRoom, useTheme } from '@/Hooks'
 import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
 import { isEmpty } from 'lodash'
-import { Header, Avatar } from '@/Components'
+import { Header, Avatar, Loader } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -30,9 +29,14 @@ Responsive.setOptions({ width: 390, height: 844, enableOnlySmallSize: true });
 const QuoteDetailContainer = () => {
   const { t } = useTranslation()
   const navigation = useNavigation()
+  const route = useRoute()
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
 
+  const [, , , , , updateQuote, deleteQuote] = useQuote()
 
+  const [loading, errors, rooms, getRoomsApi, createRoom, , ] = useRoom()
+
+  const [data, setData] = useState(route?.params.item)
 
   useFocusEffect(
     useCallback(() => {
@@ -40,10 +44,27 @@ const QuoteDetailContainer = () => {
         header: () => {
           return (
             <Header
-              text={'Job Name....'}
+              text={data['job_name']}
               type={'normal'}
               rightOption={
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => {
+                  Alert.alert(
+                    "Are your sure?",
+                    "Are you sure you want to remove this quote?",
+                    [
+                      {
+                        text: "Yes",
+                        onPress: () => {
+                          onDeleteQuote()
+                          navigation.goBack()
+                        },
+                      },
+                      {
+                        text: "No",
+                      },
+                    ]
+                  );
+                }}>
                   <MaterialCommunityIcons name='delete' size={24} color={'#B2C249'} />
                 </TouchableOpacity>
               }
@@ -61,10 +82,48 @@ const QuoteDetailContainer = () => {
           );
         },
       })
-    }, [navigation])
+    }, [navigation, route])
   )
 
 
+  useEffect(() => {
+    const { item } = route?.params
+    setData(item)
+    getRoomsApi(item['id'])
+  }, [route])
+
+
+  const onAddNewRoom = (item) => {
+    createRoom(data['id'], item)
+    route?.params?.onUpdateListQuote()
+  }
+
+  const onUpdateTintFilm = (film) => {
+    updateQuote(data['id'], { tint_film: film['name'] })
+    setData({ ...data, tint_film: film['name'] })
+    route?.params?.onUpdateListQuote()
+  }
+
+  const onUpdateNotes = (notes) => {
+    updateQuote(data['id'], { notes: notes })
+    setData({ ...data, notes: notes })
+    route?.params?.onUpdateListQuote()
+  }
+
+  const onUpdateRooms = () => {
+    getRoomsApi(data['id'])
+  }
+
+  const onDeleteQuote = () => {
+    deleteQuote(data['id'])
+    route?.params?.onUpdateListQuote()
+  }
+
+
+  const getTextDisplayNotes = () => {
+    if(data['notes'] && data['notes'].length > 15) return `${data['notes'].substring(0, 15)}...`
+    return data['notes']
+  }
 
   return (
     <SafeAreaView
@@ -81,51 +140,53 @@ const QuoteDetailContainer = () => {
             onPress={() => { }}
             style={styles.item}>
             <Text style={styles.title}>Client</Text>
-            <Text style={styles.subValue}>Nutler</Text>
+            <Text style={styles.subValue}>{data['customer_name']}</Text>
             <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
           </TouchableOpacity>
           <View style={styles.separator} />
           <TouchableOpacity
-            onPress={() => navigation.navigate('SelectFilm')}
+            onPress={() => navigation.navigate('SelectFilm', { onUpdateTintFilm })}
             style={styles.item}>
             <Text style={styles.title}>Tint Film</Text>
-            <Text style={styles.subValue}>Nutler</Text>
+            <Text style={styles.subValue}>{data['tint_film']}</Text>
             <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
           </TouchableOpacity>
           <View style={styles.separator} />
           <TouchableOpacity
-            onPress={() => { }}
+            onPress={() => navigation.navigate('Notes', { notes: data['notes'], onUpdateNotes })}
             style={styles.item}>
             <Text style={styles.title}>Notes</Text>
-            <Text style={styles.subValue}>{''}</Text>
+            <Text style={styles.subValue}>{getTextDisplayNotes()}</Text>
             <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
           </TouchableOpacity>
 
 
           <Text style={styles.header}>Rooms</Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate('NewRoom')}
+            onPress={() => navigation.navigate('NewRoom', { onAddNewRoom })}
             style={styles.item}>
             <Image style={[styles.imgArrow, { marginLeft: Responsive.height(20) }]} source={Images.ic_plus} />
             <Text style={[styles.title, { paddingHorizontal: Responsive.height(5) }]}>Add a New Room</Text>
             <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
           </TouchableOpacity>
           <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => navigation.navigate('RoomDetail')}
-            style={styles.item}>
-            <Text style={styles.title}>Office</Text>
-            <Text style={styles.subValue}>1 window</Text>
-            <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => navigation.navigate('RoomDetail')}
-            style={styles.item}>
-            <Text style={styles.title}>Spare</Text>
-            <Text style={styles.subValue}>1 window</Text>
-            <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
-          </TouchableOpacity>
+          {
+            rooms?.map(item => {
+              return (
+                <View key={item['id']} style={Layout.column}>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('RoomDetail', { onUpdateRooms, item, quote: data })}
+                    style={styles.item}>
+                    <Text style={styles.title}>{item['title']}</Text>
+                    <Text style={styles.subValue}>1 window</Text>
+                    <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
+                  </TouchableOpacity>
+                  <View style={styles.separator} />
+                </View>
+              )
+            })
+          }
+
 
 
           <View style={{ height: Responsive.height(20), width: '100%' }} />
@@ -158,7 +219,7 @@ const QuoteDetailContainer = () => {
         </View>
 
       </View>
-
+      <Loader visible={loading} />
     </SafeAreaView>
   )
 }

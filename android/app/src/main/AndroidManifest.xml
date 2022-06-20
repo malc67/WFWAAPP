@@ -16,6 +16,7 @@
         android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyBq_is64XiZTL9byV7Ibvvnl7Bnza6P8TE"/>
       <activity
+        android:exported="true"
         android:name=".SplashActivity"
         android:theme="@style/SplashTheme"
         android:label="@string/app_name"
@@ -27,6 +28,7 @@
       </activity>
 
       <activity
+        android:exported="true"
         android:name=".MainActivity"
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"

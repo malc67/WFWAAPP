@@ -12,12 +12,12 @@ import {
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { useTheme } from '@/Hooks'
+import { useRoom, useTheme, useWindow } from '@/Hooks'
 import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
 import { isEmpty } from 'lodash'
-import { Header, Avatar } from '@/Components'
+import { Header, Avatar, Loader } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -30,9 +30,25 @@ Responsive.setOptions({ width: 390, height: 844, enableOnlySmallSize: true });
 const RoomDetailContainer = () => {
   const { t } = useTranslation()
   const navigation = useNavigation()
+  const route = useRoute()
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
 
+  const [, , , , , deleteRoom, updateRoom] = useRoom()
 
+  const [loading, errors, windows, getWindowsApi, createWindow, deleteWindow, updateWindow] = useWindow()
+
+
+  const [quote, setQuote] = useState(route?.params.quote)
+  const [data, setData] = useState(route?.params.item)
+
+  useEffect(() => {
+    const { item } = route?.params
+    setData(item)
+    const { quote } = route?.params
+    setQuote(quote)
+
+    getWindowsApi(quote['id'], item['id'])
+  }, [route])
 
   useFocusEffect(
     useCallback(() => {
@@ -40,10 +56,29 @@ const RoomDetailContainer = () => {
         header: () => {
           return (
             <Header
-              text={'Room Name....'}
+              text={data['title']}
               type={'normal'}
               rightOption={
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    Alert.alert(
+                      "Are your sure?",
+                      "Are you sure you want to remove this room?",
+                      [
+                        {
+                          text: "Yes",
+                          onPress: () => {
+                            onDeleteRoom(route?.params.item)
+                            navigation.goBack()
+                          },
+                        },
+                        {
+                          text: "No",
+                        },
+                      ]
+                    );
+                  }}
+                >
                   <MaterialCommunityIcons name='delete' size={24} color={'#B2C249'} />
                 </TouchableOpacity>
               }
@@ -61,10 +96,45 @@ const RoomDetailContainer = () => {
           );
         },
       })
-    }, [navigation])
+    }, [navigation, route])
   )
 
+  const onDeleteRoom = (item) => {
+    console.log('Delete', item)
+    deleteRoom(quote['id'], item['id'])
+    route?.params?.onUpdateRooms()
+  }
 
+  const onUpdateTintFilm = (film) => {
+    updateRoom(quote['id'], data['id'], { tint_film: film['name'] })
+    setData({ ...data, tint_film: film['name'] })
+    route?.params?.onUpdateRooms()
+  }
+
+  const onUpdateNotes = (notes) => {
+    updateRoom(quote['id'], data['id'], { notes: notes })
+    setData({ ...data, notes: notes })
+    route?.params?.onUpdateRooms()
+  }
+
+  const getTextDisplayNotes = () => {
+    if (data['notes'] && data['notes'].length > 15) return `${data['notes'].substring(0, 15)}...`
+    return data['notes']
+  }
+
+
+
+  const onAddNewOrUpdateWindow = (windowId, item) => {
+    if (windowId) {
+      updateWindow(quote['id'], data['id'], windowId, item)
+    } else {
+      createWindow(quote['id'], data['id'], item)
+    }
+  }
+
+  const onDeleteWindow = (item) => {
+    deleteWindow(quote['id'], data['id'], item['id'])
+  }
 
   return (
     <SafeAreaView
@@ -80,37 +150,53 @@ const RoomDetailContainer = () => {
             onPress={() => { }}
             style={styles.item}>
             <Text style={styles.title}>Name</Text>
-            <Text style={styles.subValue}>Nutler</Text>
+            <Text style={styles.subValue}>{data['title']}</Text>
             <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
           </TouchableOpacity>
           <View style={styles.separator} />
           <TouchableOpacity
-            onPress={() => navigation.navigate('SelectFilm')}
+            onPress={() => navigation.navigate('SelectFilm', { onUpdateTintFilm })}
             style={styles.item}>
             <Text style={styles.title}>Tint Film</Text>
-            <Text style={styles.subValue}>Nutler</Text>
+            <Text style={styles.subValue}>{data['tint_film']}</Text>
             <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
           </TouchableOpacity>
           <View style={styles.separator} />
           <TouchableOpacity
-            onPress={() => { }}
+            onPress={() => navigation.navigate('Notes', { notes: data['notes'], onUpdateNotes })}
             style={styles.item}>
             <Text style={styles.title}>Notes</Text>
-            <Text style={styles.subValue}>{''}</Text>
+            <Text style={styles.subValue}>{getTextDisplayNotes()}</Text>
             <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
           </TouchableOpacity>
 
 
           <Text style={styles.header}>Window</Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Window')}
+            onPress={() => navigation.navigate('Window', { onAddNewOrUpdateWindow })}
             style={styles.item}>
             <Image style={[styles.imgArrow, { marginLeft: Responsive.height(20) }]} source={Images.ic_plus} />
             <Text style={[styles.title, { paddingHorizontal: Responsive.height(5) }]}>Add a New Window</Text>
             <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
           </TouchableOpacity>
           <View style={styles.separator} />
-          <TouchableOpacity
+          {
+            windows.map(item => {
+              return (
+                <View key={item['id']} style={Layout.column}>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('Window', { item, onAddNewOrUpdateWindow, onDeleteWindow })}
+                    style={styles.item}>
+                    <Text style={styles.title}>{item['name'] ? item['name'] : `${item['width']}mm x ${item['height']}mm x ${item['quantity']}`}</Text>
+                    <Text style={styles.subValue}>{''}</Text>
+                    <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
+                  </TouchableOpacity>
+                  <View style={styles.separator} />
+                </View>
+              )
+            })
+          }
+          {/* <TouchableOpacity
             onPress={() => navigation.navigate('Window')}
             style={styles.item}>
             <Text style={styles.title}>580 x 1480 mm x 20</Text>
@@ -124,7 +210,7 @@ const RoomDetailContainer = () => {
             <Text style={styles.title}>580 x 1480 mm x 20</Text>
             <Text style={styles.subValue}>{''}</Text>
             <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <View style={{ height: Responsive.height(20), width: '100%' }} />
           <View
@@ -156,7 +242,7 @@ const RoomDetailContainer = () => {
         </View>
 
       </View>
-
+      <Loader visible={loading} />
     </SafeAreaView>
   )
 }

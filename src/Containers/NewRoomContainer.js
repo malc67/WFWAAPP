@@ -15,13 +15,51 @@ import { useTranslation } from 'react-i18next'
 import { useTheme } from '@/Hooks'
 import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
 import { isEmpty } from 'lodash'
 import { Header, Avatar } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
+const DATA = [
+  {
+    id: '1',
+    title: 'Bathrom',
+  },
+  {
+    id: '2',
+    title: 'Bedroom',
+  },
+  {
+    id: '3',
+    title: 'Bedroom 2 & 3',
+  },
+  {
+    id: '4',
+    title: 'Bobby office',
+  },
+  {
+    id: '5',
+    title: 'Celestial',
+  },
+  {
+    id: '6',
+    title: 'control Tower',
+  },
+  {
+    id: '7',
+    title: 'Dinning Room',
+  },
+  {
+    id: '8',
+    title: 'Door',
+  },
+  {
+    id: '9',
+    title: 'Ensuit',
+  },
+];
 
 
 
@@ -29,8 +67,10 @@ Responsive.setOptions({ width: 390, height: 844, enableOnlySmallSize: true });
 const NewRoomContainer = () => {
   const { t } = useTranslation()
   const navigation = useNavigation()
+  const route = useRoute()
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
 
+  const [customName, setCustomName] = useState('')
 
 
   useFocusEffect(
@@ -42,7 +82,14 @@ const NewRoomContainer = () => {
               text={'New Room'}
               type={'normal'}
               rightOption={
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    onRoomSelected({
+                      id: 'c',
+                      title: customName,
+                    })
+                  }}
+                >
                   <Text style={styles.textSave}>Save</Text>
                 </TouchableOpacity>
               }
@@ -60,10 +107,12 @@ const NewRoomContainer = () => {
           );
         },
       })
-    }, [navigation])
+    }, [navigation, route, customName])
   )
 
+
   const onRoomSelected = (room) => {
+    route?.params?.onAddNewRoom(room)
     navigation.goBack()
   }
 
@@ -84,41 +133,30 @@ const NewRoomContainer = () => {
           <View style={styles.item}>
             <Text style={[styles.title]}>Customer Name</Text>
             <View style={styles.inputContainer}>
-              <TextInput style={styles.input} placeholder={'Required'} placeholderTextColor={'#606A70'} />
+              <TextInput
+                style={styles.input}
+                placeholder={'Required'}
+                value={customName}
+                onChangeText={(text) => setCustomName(text)}
+                placeholderTextColor={'#606A70'} />
             </View>
             <View style={{ width: Responsive.width(15) }} />
           </View>
           <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => onRoomSelected()}
-            style={styles.item}>
-            <Text style={styles.title}>Bathroom</Text>
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => { }}
-            style={styles.item}>
-            <Text style={styles.title}>Bedroom 2 & 3</Text>
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => { }}
-            style={styles.item}>
-            <Text style={styles.title}>Bobby Office</Text>
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => { }}
-            style={styles.item}>
-            <Text style={styles.title}>Door</Text>
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => { }}
-            style={styles.item}>
-            <Text style={styles.title}>Ensuite</Text>
-          </TouchableOpacity>
-          <View style={styles.separator} />
+          {
+            DATA.map(item => {
+              return (
+                <View key={item['id']} style={Layout.column}>
+                  <TouchableOpacity
+                    onPress={() => onRoomSelected(item)}
+                    style={styles.item}>
+                    <Text style={styles.title}>{item['title']}</Text>
+                  </TouchableOpacity>
+                  <View style={styles.separator} />
+                </View>
+              )
+            })
+          }
 
         </ScrollView>
 
@@ -199,6 +237,8 @@ const styles = StyleSheet.create({
     color: '#434A4F',
     fontSize: Responsive.font(17),
     fontFamily: 'Ubuntu-Regular',
+    paddingBottom: 0,
+    paddingTop: 0,
     paddingHorizontal: Responsive.width(10)
   },
 
