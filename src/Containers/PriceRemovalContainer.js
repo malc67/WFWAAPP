@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next'
 import { useTheme } from '@/Hooks'
 import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
 import { isEmpty } from 'lodash'
 import { Header, Avatar } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
@@ -30,9 +30,15 @@ Responsive.setOptions({ width: 390, height: 844, enableOnlySmallSize: true });
 const PriceRemovalContainer = () => {
   const { t } = useTranslation()
   const navigation = useNavigation()
+  const route = useRoute()
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
 
+  const [data, setData] = useState(route?.params.item)
 
+  useEffect(() => {
+    const { item } = route?.params
+    setData(item)
+  }, [route])
 
   useFocusEffect(
     useCallback(() => {
@@ -45,6 +51,7 @@ const PriceRemovalContainer = () => {
               leftOption={
                 <TouchableOpacity
                   onPress={() => {
+                    updatePriceRemoval()
                     navigation.goBack();
                   }}
                   style={Layout.rowHCenter}>
@@ -56,9 +63,13 @@ const PriceRemovalContainer = () => {
           );
         },
       })
-    }, [navigation])
+    }, [navigation, data])
   )
 
+
+  const updatePriceRemoval = () => {
+    route?.params?.onUpdatePriceRemoval({ ...data })
+  }
 
 
   return (
@@ -73,7 +84,12 @@ const PriceRemovalContainer = () => {
           <View style={styles.item}>
             <Text style={[styles.title]}>Width</Text>
             <View style={styles.inputContainer}>
-              <TextInput style={styles.input} placeholder={'Required'} placeholderTextColor={'#606A70'} />
+              <TextInput
+                style={styles.input}
+                placeholder={'Required'}
+                value={data['width']}
+                onChangeText={text => setData({ ...data, width: text })}
+                placeholderTextColor={'#606A70'} />
             </View>
             <View style={{ width: Responsive.width(15) }} />
           </View>
@@ -81,7 +97,12 @@ const PriceRemovalContainer = () => {
           <View style={styles.item}>
             <Text style={[styles.title]}>Drop</Text>
             <View style={styles.inputContainer}>
-              <TextInput style={styles.input} placeholder={'Required'} placeholderTextColor={'#606A70'} />
+              <TextInput
+                style={styles.input}
+                placeholder={'Required'}
+                value={data['drop']}
+                onChangeText={text => setData({ ...data, drop: text })}
+                placeholderTextColor={'#606A70'} />
             </View>
             <View style={{ width: Responsive.width(15) }} />
           </View>
@@ -89,7 +110,12 @@ const PriceRemovalContainer = () => {
           <View style={styles.item}>
             <Text style={[styles.title]}>Quantity</Text>
             <View style={styles.inputContainer}>
-              <TextInput style={styles.input} placeholder={'Required'} placeholderTextColor={'#606A70'} />
+              <TextInput
+                style={styles.input}
+                placeholder={'Required'}
+                value={data['quantity']}
+                onChangeText={text => setData({ ...data, quantity: text })}
+                placeholderTextColor={'#606A70'} />
             </View>
             <View style={{ width: Responsive.width(15) }} />
           </View>
@@ -97,7 +123,12 @@ const PriceRemovalContainer = () => {
           <View style={styles.item}>
             <Text style={[styles.title, { color: '#C40215' }]}>Price Film Removal</Text>
             <View style={styles.inputContainer}>
-              <TextInput style={styles.input} placeholder={'$ per m²'} placeholderTextColor={'#606A70'} />
+              <TextInput
+                style={styles.input}
+                placeholder={'$ per m²'}
+                value={data['price']}
+                onChangeText={text => setData({ ...data, price: text })}
+                placeholderTextColor={'#606A70'} />
             </View>
             <View style={{ width: Responsive.width(15) }} />
           </View>

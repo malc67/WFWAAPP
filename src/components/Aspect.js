@@ -37,7 +37,7 @@ const Aspect = ({ height, onValueChange, value }) => {
             return styles.item
           }
           return (
-            <View style={styles.itemContainer}>
+            <View key={item['id']} style={styles.itemContainer}>
               <TouchableOpacity
                 onPress={() => {
                   setSelectedId(item.id)

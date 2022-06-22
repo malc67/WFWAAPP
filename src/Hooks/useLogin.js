@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import { navigateAndSimpleReset } from "@/Navigators/utils";
 
 import { useDispatch } from 'react-redux'
-import { updateInfo, clearAuth } from '@/Store/Auth'
+import { updateInfo, updateBussinessProfile, clearAuth } from '@/Store/Auth'
 
 
 const regexEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -45,6 +45,10 @@ export default function () {
     dispatch(updateInfo({ info }))
   }
 
+  const onUpdateBussinessProfile = (profile) => {
+    dispatch(updateBussinessProfile({ profile }))
+  }
+
   const loginApi = async (email, password) => {
     if (!validation(email, password)) return
     setLoading(true)
@@ -59,6 +63,7 @@ export default function () {
             .get()
             .then(documentSnapshot => {
               if (documentSnapshot.exists) {
+                onUpdateBussinessProfile(documentSnapshot.data())
                 navigateAndSimpleReset('Main')
               } else {
                 navigation.navigate('BussinessProfile', { isEditProfile: false })

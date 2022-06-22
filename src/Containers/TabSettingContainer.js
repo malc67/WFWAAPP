@@ -43,8 +43,8 @@ const TabSettingContainer = () => {
 
 
   var fullName = profile ? profile['contactPerson']?.split(' ') : []
-  let firstName = fullName[0] || ''
-  let lastName = fullName[fullName.length - 1] || '';
+  let firstName = fullName ? fullName[0] || '' : ''
+  let lastName = fullName ? fullName[fullName.length - 1] || '' : '';
   return (
     <SafeAreaView
       style={Layout.fill}>

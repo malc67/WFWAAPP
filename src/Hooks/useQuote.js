@@ -7,7 +7,7 @@ import storage from '@react-native-firebase/storage';
 import { useNavigation } from "@react-navigation/native";
 import { navigateAndSimpleReset } from "@/Navigators/utils";
 
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { updateInfo, clearAuth } from '@/Store/Auth'
 
 export default function () {
@@ -18,16 +18,24 @@ export default function () {
   const [errors, setErrors] = useState({})
   const [quotesList, setQuoteList] = useState([])
 
+
+  const info = useSelector(state => state.auth.info || {})
+
   const getQuotesApi = async () => {
     setLoading(true)
-    firestore().collection('create_quote').get().then((querySnapshot) => {
-      let tempData = [];
-      querySnapshot.forEach(doc => {
-        tempData.push({ ...doc.data(), id: doc.id });
+
+    firestore()
+      .collection('create_quote')
+      .where('created_by', '==', info['uid'])
+      .get()
+      .then((querySnapshot) => {
+        let tempData = [];
+        querySnapshot.forEach(doc => {
+          tempData.push({ ...doc.data(), id: doc.id });
+        })
+        setLoading(false)
+        setQuoteList(tempData)
       })
-      setLoading(false)
-      setQuoteList(tempData)
-    })
   }
 
 
@@ -84,6 +92,7 @@ export default function () {
   const createQuote = async (data) => {
     if (!validation(data)) return
     setLoading(true)
+    data['created_by'] = info['uid']
     firestore().collection('create_quote')
       .add(data).then(async (res) => {
         setLoading(false)
@@ -110,16 +119,16 @@ export default function () {
   const deleteQuote = async (quoteId) => {
     setLoading(true)
     firestore()
-    .collection('create_quote')
-    .doc(quoteId)
-    .delete()
-    .then(async () => {
-      await getQuotesApi()
-      setLoading(false)
-    }).catch((error) => {
-      setLoading(false)
-      console.log('updateQuote', error)
-    })
+      .collection('create_quote')
+      .doc(quoteId)
+      .delete()
+      .then(async () => {
+        await getQuotesApi()
+        setLoading(false)
+      }).catch((error) => {
+        setLoading(false)
+        console.log('updateQuote', error)
+      })
   }
 
 

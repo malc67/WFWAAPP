@@ -179,7 +179,7 @@ const RequestQuoteContainer = () => {
                 value={siteState}
                 onChangeText={(text) => {
                   setSiteState(text)
-                  if(asAbove) setSiteState(text)
+                  if(asAbove) setBillingState(text)
                 }}
                 placeholderTextColor={'#606A70'} />
             </View>

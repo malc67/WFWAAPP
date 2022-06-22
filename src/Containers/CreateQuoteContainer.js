@@ -13,11 +13,11 @@ import {
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { useTheme } from '@/Hooks'
+import { useTheme, useWindow } from '@/Hooks'
 import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
-import { isEmpty } from 'lodash'
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
+import { isEmpty, isUndefined } from 'lodash'
 import { Header, Avatar } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -31,7 +31,22 @@ Responsive.setOptions({ width: 390, height: 844, enableOnlySmallSize: true });
 const CreateQuoteContainer = () => {
   const { t } = useTranslation()
   const navigation = useNavigation()
+  const route = useRoute()
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
+
+  const [loading, errors, windows, getWindowsApi, , ,] = useWindow()
+
+  const [room, setRoom] = useState(route?.params.room)
+  const [data, setData] = useState(route?.params.item)
+
+  const [price, setPrice] = useState('')
+  const [priceFilmRemoval, setPriceFilmRemoval] = useState({})
+
+  useEffect(() => {
+    const { item, room } = route?.params
+    setData(item)
+    setRoom(room)
+  }, [route])
 
 
 
@@ -65,8 +80,37 @@ const CreateQuoteContainer = () => {
     }, [navigation])
   )
 
+  const onUpdatePriceRemoval = (data) => {
+    setPriceFilmRemoval(data)
+  }
+
+  const getGlassArea = () => {
+    let glassArea = 0
+    if (room) {
+      room['windows'].forEach(item => {
+        glassArea += item['width'] / 1000 * item['height'] / 1000 * item['quantity']
+      })
+    }
+    return Math.round(glassArea * 100) / 100
+  }
+
+  const getPriceFilmRemoval = () => {
+    if (isUndefined(priceFilmRemoval) || isEmpty(priceFilmRemoval)) {
+      return 0
+    } else {
+      let area = priceFilmRemoval['width'] / 1000 * priceFilmRemoval['drop'] / 1000 * priceFilmRemoval['quantity']
+      return Math.round(area * priceFilmRemoval['price'] * 100) / 100
+    }
+  }
 
 
+  const getPriceTotal = (percent = 1) => {
+    let priceFilm = getGlassArea() * price + getPriceFilmRemoval()
+    return Math.round(priceFilm * percent * 100) / 100
+  }
+
+
+  console.log('DATA', data)
   return (
     <SafeAreaView
       style={Layout.fill}>
@@ -94,13 +138,18 @@ const CreateQuoteContainer = () => {
           <View style={styles.separator} />
           <View style={styles.item}>
             <Text style={styles.title}>Glass Area</Text>
-            <Text style={styles.subValue}>2.53m</Text>
+            <Text style={styles.subValue}>{getGlassArea()}m²</Text>
           </View>
           <View style={styles.separator} />
           <View style={styles.item}>
             <Text style={[styles.title, { color: '#C40215' }]}>Price Per m²</Text>
             <View style={styles.inputContainer}>
-              <TextInput style={styles.input} placeholder={'$ per m²'} placeholderTextColor={'#606A70'} />
+              <TextInput
+                style={styles.input}
+                value={price}
+                onChangeText={text => setPrice(text)}
+                placeholder={'$ per m²'}
+                placeholderTextColor={'#606A70'} />
             </View>
             <View style={{ width: Responsive.width(15) }} />
           </View>
@@ -108,7 +157,11 @@ const CreateQuoteContainer = () => {
           <View style={styles.item}>
             <Text style={[styles.title, { color: '#C40215' }]}>Price Film Removal</Text>
             <View style={styles.inputContainer}>
-              <TextInput style={styles.input} placeholder={'$ per m²'} placeholderTextColor={'#606A70'} />
+              <TextInput
+                style={styles.input}
+                placeholder={'$ per m²'}
+                value={priceFilmRemoval['price']}
+                placeholderTextColor={'#606A70'} />
             </View>
             <View style={{ width: Responsive.width(15) }} />
           </View>
@@ -127,9 +180,10 @@ const CreateQuoteContainer = () => {
           </View>
           <View style={styles.separator} />
           <TouchableOpacity
-            onPress={() => navigation.navigate('PriceRemoval')}
+            onPress={() => navigation.navigate('PriceRemoval', { item: priceFilmRemoval, onUpdatePriceRemoval })}
             style={styles.item}>
             <Text style={styles.title}>Film Removal</Text>
+            <Text style={[styles.subValue, { paddingHorizontal: Responsive.height(10) }]}>${getPriceFilmRemoval()}</Text>
             <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
           </TouchableOpacity>
 
@@ -182,7 +236,7 @@ const CreateQuoteContainer = () => {
             onPress={() => { }}
             style={styles.item}>
             <Text style={styles.title}>GST (10%)</Text>
-            <Text style={[styles.subValue, { paddingHorizontal: Responsive.height(10) }]}>Natura</Text>
+            <Text style={[styles.subValue, { paddingHorizontal: Responsive.height(10) }]}>${getPriceTotal(0.1)}</Text>
             <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
           </TouchableOpacity>
           <View style={styles.separator} />
@@ -190,7 +244,7 @@ const CreateQuoteContainer = () => {
             onPress={() => { }}
             style={styles.item}>
             <Text style={styles.title}>Total</Text>
-            <Text style={[styles.subValue, { paddingHorizontal: Responsive.height(10) }]}>Natuura 1.5</Text>
+            <Text style={[styles.subValue, { paddingHorizontal: Responsive.height(10) }]}>${getPriceTotal(1.1)}</Text>
             <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
           </TouchableOpacity>
 

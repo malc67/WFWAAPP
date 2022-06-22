@@ -22,7 +22,7 @@ export default function () {
     setLoading(true)
     firestore().collection('create_quote').doc(quoteId).collection('rooms').get().then((querySnapshot) => {
       let tempData = [];
-      querySnapshot.forEach(doc => {
+      querySnapshot.forEach( async doc => {
         tempData.push({ ...doc.data(), id: doc.id });
       })
       setLoading(false)

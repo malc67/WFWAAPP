@@ -34,7 +34,7 @@ const QuoteDetailContainer = () => {
 
   const [, , , , , updateQuote, deleteQuote] = useQuote()
 
-  const [loading, errors, rooms, getRoomsApi, createRoom, , ] = useRoom()
+  const [loading, errors, rooms, getRoomsApi, createRoom, ,] = useRoom()
 
   const [data, setData] = useState(route?.params.item)
 
@@ -121,7 +121,7 @@ const QuoteDetailContainer = () => {
 
 
   const getTextDisplayNotes = () => {
-    if(data['notes'] && data['notes'].length > 15) return `${data['notes'].substring(0, 15)}...`
+    if (data['notes'] && data['notes'].length > 15) return `${data['notes'].substring(0, 15)}...`
     return data['notes']
   }
 
@@ -178,7 +178,7 @@ const QuoteDetailContainer = () => {
                     onPress={() => navigation.navigate('RoomDetail', { onUpdateRooms, item, quote: data })}
                     style={styles.item}>
                     <Text style={styles.title}>{item['title']}</Text>
-                    <Text style={styles.subValue}>1 window</Text>
+                    <Text style={styles.subValue}>{`${item['window_count'] ?? 0} window`}</Text>
                     <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
                   </TouchableOpacity>
                   <View style={styles.separator} />
@@ -205,7 +205,7 @@ const QuoteDetailContainer = () => {
 
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('CreateQuote')
+              navigation.navigate('CreateQuote', { item: { ...data, rooms } })
             }}
             style={[Layout.fill, Layout.center, styles.buttonCreate]}>
             <Text style={[styles.textButton, { color: '#FFFFFF' }]}>Create Quote</Text>

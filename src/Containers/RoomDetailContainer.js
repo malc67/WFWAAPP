@@ -8,7 +8,8 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  Switch
+  Switch,
+  Alert
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -123,19 +124,27 @@ const RoomDetailContainer = () => {
   }
 
 
-
   const onAddNewOrUpdateWindow = (windowId, item) => {
     if (windowId) {
       updateWindow(quote['id'], data['id'], windowId, item)
     } else {
       createWindow(quote['id'], data['id'], item)
+      updateRoom(quote['id'], data['id'], {
+        window_count: (windows.length + 1)
+      })
+      route?.params?.onUpdateRooms()
     }
   }
 
   const onDeleteWindow = (item) => {
     deleteWindow(quote['id'], data['id'], item['id'])
+    updateRoom(quote['id'], data['id'], {
+      window_count: (windows.length - 1)
+    })
+    route?.params?.onUpdateRooms()
   }
 
+ 
   return (
     <SafeAreaView
       style={Layout.fill}>
@@ -196,21 +205,6 @@ const RoomDetailContainer = () => {
               )
             })
           }
-          {/* <TouchableOpacity
-            onPress={() => navigation.navigate('Window')}
-            style={styles.item}>
-            <Text style={styles.title}>580 x 1480 mm x 20</Text>
-            <Text style={styles.subValue}>{''}</Text>
-            <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Window')}
-            style={styles.item}>
-            <Text style={styles.title}>580 x 1480 mm x 20</Text>
-            <Text style={styles.subValue}>{''}</Text>
-            <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
-          </TouchableOpacity> */}
 
           <View style={{ height: Responsive.height(20), width: '100%' }} />
           <View
@@ -233,7 +227,8 @@ const RoomDetailContainer = () => {
 
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('CreateQuote')
+
+              navigation.navigate('CreateQuote', { item: quote, room: { ...data, windows } })
             }}
             style={[Layout.fill, Layout.center, styles.buttonCreate]}>
             <Text style={[styles.textButton, { color: '#FFFFFF' }]}>Create Room Quote</Text>

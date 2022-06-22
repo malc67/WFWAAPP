@@ -80,12 +80,16 @@ const TabQuoteContainer = () => {
       <TabBarQuote colorHeightline={'#ffffff'} onChangeTab={index => { }} />
 
       <FlatList
+        contentContainerStyle={{ flexGrow: 1 }}
         data={quotesList}
         keyExtractor={(item, index) => item + index}
         renderItem={({ item }) => <Item item={item} />}
         ListHeaderComponent={() => <View style={styles.separator} />}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListFooterComponent={() => <View style={{ height: Responsive.height(85), width: '100%' }} />}
+        ListEmptyComponent={<View style={[Layout.fullSize, Layout.center]}>
+          <Text style={styles.textEmpty}>No Data</Text>
+        </View>}
       />
 
       <View style={[Layout.fullWidth, Layout.colHCenter, styles.actionWrapper]}>
@@ -167,6 +171,11 @@ const styles = StyleSheet.create({
   },
   textButton: {
     color: '#FFFFFF',
+    fontFamily: 'Ubuntu-Bold',
+    fontSize: Responsive.font(17)
+  },
+  textEmpty: {
+    color: '#434A4F',
     fontFamily: 'Ubuntu-Bold',
     fontSize: Responsive.font(17)
   }
