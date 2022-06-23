@@ -32,10 +32,9 @@ const NotesContainer = () => {
   const route = useRoute()
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
 
-  const [data, setData] = useState(route?.params.notes)
+  const [data, setData] = useState(route?.params?.notes)
 
   useEffect(() => {
-    console.log('route?.params', route?.params)
     const { notes } = route?.params
     setData(notes)
   }, [route])

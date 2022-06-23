@@ -39,8 +39,8 @@ const RoomDetailContainer = () => {
   const [loading, errors, windows, getWindowsApi, createWindow, deleteWindow, updateWindow] = useWindow()
 
 
-  const [quote, setQuote] = useState(route?.params.quote)
-  const [data, setData] = useState(route?.params.item)
+  const [quote, setQuote] = useState(route?.params?.quote)
+  const [data, setData] = useState(route?.params?.item)
 
   useEffect(() => {
     const { item } = route?.params
@@ -69,7 +69,7 @@ const RoomDetailContainer = () => {
                         {
                           text: "Yes",
                           onPress: () => {
-                            onDeleteRoom(route?.params.item)
+                            onDeleteRoom(route?.params?.item)
                             navigation.goBack()
                           },
                         },

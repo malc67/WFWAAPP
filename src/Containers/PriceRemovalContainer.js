@@ -33,7 +33,7 @@ const PriceRemovalContainer = () => {
   const route = useRoute()
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
 
-  const [data, setData] = useState(route?.params.item)
+  const [data, setData] = useState(route?.params?.item)
 
   useEffect(() => {
     const { item } = route?.params

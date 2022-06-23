@@ -36,7 +36,7 @@ const QuoteDetailContainer = () => {
 
   const [loading, errors, rooms, getRoomsApi, createRoom, ,] = useRoom()
 
-  const [data, setData] = useState(route?.params.item)
+  const [data, setData] = useState(route?.params?.item)
 
   useFocusEffect(
     useCallback(() => {
@@ -129,7 +129,6 @@ const QuoteDetailContainer = () => {
     return data['notes']
   }
 
-  console.log('rooms=>', JSON.stringify(rooms))
   return (
     <SafeAreaView
       style={Layout.fill}>

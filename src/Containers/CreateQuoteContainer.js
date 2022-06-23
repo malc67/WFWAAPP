@@ -39,8 +39,8 @@ const CreateQuoteContainer = () => {
 
   const [loading, errors, windows, getWindowsApi, , ,] = useWindow()
 
-  const [room, setRoom] = useState(route?.params.room)
-  const [data, setData] = useState(route?.params.item)
+  const [room, setRoom] = useState(route?.params?.room)
+  const [data, setData] = useState(route?.params?.item)
 
   const [price, setPrice] = useState('')
   const [priceForSealing, setPriceForSealing] = useState('')
@@ -270,8 +270,6 @@ const CreateQuoteContainer = () => {
   }
 
 
-
-  console.log('XXXXX', data)
   return (
     <SafeAreaView
       style={Layout.fill}>
