@@ -13,7 +13,7 @@ import {
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { useTheme, useWindow } from '@/Hooks'
+import { useQuote, useTheme, useWindow } from '@/Hooks'
 import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
@@ -23,8 +23,9 @@ import Responsive from 'react-native-lightweight-responsive'
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
-
-
+import email from 'react-native-email'
+import Mailer from 'react-native-mail';
+import moment from 'moment'
 
 
 Responsive.setOptions({ width: 390, height: 844, enableOnlySmallSize: true });
@@ -34,12 +35,15 @@ const CreateQuoteContainer = () => {
   const route = useRoute()
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
 
+  const [, , , , , updateQuote, deleteQuote] = useQuote()
+
   const [loading, errors, windows, getWindowsApi, , ,] = useWindow()
 
   const [room, setRoom] = useState(route?.params.room)
   const [data, setData] = useState(route?.params.item)
 
   const [price, setPrice] = useState('')
+  const [priceForSealing, setPriceForSealing] = useState('')
   const [priceFilmRemoval, setPriceFilmRemoval] = useState({})
 
   useEffect(() => {
@@ -84,14 +88,30 @@ const CreateQuoteContainer = () => {
     setPriceFilmRemoval(data)
   }
 
+  const onUpdateStatusQuote = () => {
+    updateQuote(data['id'], { status: true })
+    setData({ ...data, status: true })
+    route?.params?.onUpdateListQuote()
+  }
+
   const getGlassArea = () => {
     let glassArea = 0
     if (room) {
-      room['windows'].forEach(item => {
-        glassArea += item['width'] / 1000 * item['height'] / 1000 * item['quantity']
-      })
+      if (room['windows']) {
+        room['windows'].forEach(item => {
+          glassArea += item['width'] / 1000 * item['height'] / 1000 * item['quantity']
+        })
+      }
+    } else {
+      for (let room of data['rooms']) {
+        if (room['windows']) {
+          room['windows'].forEach(item => {
+            glassArea += item['width'] / 1000 * item['height'] / 1000 * item['quantity']
+          })
+        }
+      }
     }
-    return Math.round(glassArea * 100) / 100
+    return Math.round(glassArea * 1.1 * 100) / 100
   }
 
   const getPriceFilmRemoval = () => {
@@ -105,12 +125,153 @@ const CreateQuoteContainer = () => {
 
 
   const getPriceTotal = (percent = 1) => {
-    let priceFilm = getGlassArea() * price + getPriceFilmRemoval()
+    let priceFilm = getGlassArea() * price + getPriceFilmRemoval() + Number(priceForSealing)
+
     return Math.round(priceFilm * percent * 100) / 100
   }
 
+  const getEmailHtml = (isQuick = false) => {
+    onUpdateStatusQuote()
+    if (isQuick) {
+      return (`<h1>Quotation No. ${data['quote_number']}</h1>
+    <h1>${moment().format('DD MMM YYYY')}</h1>
+    <p><strong>Customer details:</strong>${data['customer_name']}</p>
+    <p><strong>Site details:</strong>${data['site_address']}, ${data['site_state']}</p>
+    <p>Dear ${data['customer_name']},</p>
+    <p>I have great pleasure in submitting the following quotation and have attached the following documents:</p>
+    <ul>
+    <li>Quotation 14 (contained within this document)</li>
+    <li>Natura 28 Internal Window Film Brochure</li>
+    <li>Sample copy of the Manufacturer&rsquo;s Warranty Form (attached to original email)</li>
+    </ul>
+    <p>Scope of Works:</p>
+    <p><strong>Provide quotation to supply and install Natura 28 as described</strong></p>
+    <p>Project Requirements &amp; Benefits:</p>
+    <p>Reduce Solar Heat Gain (Heat)</p>
+    <p>Reduce Ultra Violet Radiation (Fading)</p>
+    <p>Reduce Glare</p>
+    <p>Provide Daytime Privacy</p>
+    <p><strong>About your Glass and Frames:</strong></p>
+    <p>Glass Type: =&nbsp; New window /glass type</p>
+    <p>Frame Type: =new window/frame type</p>
+    <p><strong>Film-to-Glass Application (Recommendation):</strong></p>
+    <p>Natura 28 Internal Window Film is recommended by the manufacturer</p>
+    <p><strong>About SolarZone Internal Window Films:</strong></p>
+    <ul>
+    <li>Deliver high levels of protection from solar heat, cut energy costs by reducing the need for air-conditioning, boosting energy efficiency</li>
+    <li>Dual Reflective films are ideal for commercial and residential energy-upgrade glazing projects when the customer wants quick payback but wants a neutral interior that preserves the view outside</li>
+    <li>High levels of heat rejection cuts energy costs by reducing consumption and peak load</li>
+    <li>Outstanding glare control for enhanced comfort</li>
+    <li>Warm neutral interior with low reflectivity preserves ambiance and views</li>
+    <li>99+% UV block limits fading and damage from the sun</li>
+    <li>Bold appearance upgrades building exterior and maintains daytime privacy</li>
+    </ul>
+    <p><strong>Fade Reduction:</strong></p>
+    <p>Manufacturer&rsquo;s Note: This data is a guide enabling an estimate only of fade reduction, as there are many variables that cause fading, it would be impossible to give an exact figure, therefore, does not constitute a warranty.</p>
+    <p><strong>Installation of your Window Film:</strong></p>
+    <p>Will be supplied and installed in accordance with manufacturer&rsquo;s installation instructions.</p>
+    <p>Window Films WA employees are licenced and approved window film applicators.</p>
+    <p>We are currently booking ahead for between 7 - 10 working days (if you require immediate installation, please contact me directly and I will endeavour to accommodate your requirements).</p>
+    <p>Please let me know directly when you are ready to proceed and I will schedule ASAP.</p>
+    <p><strong>Window Energy Rating System&nbsp;</strong></p>
+    <p>Window films WA is an accredited WERS installer. Upon completion you will issued a certification of the WERS rating appropriate to the film being installed on your current&nbsp; Glazing specifications. Based on the Natura 28&nbsp; you will achieve a WERS rating <span style="color: #ff0000;">★</span><span style="color: #ff0000;">15 %&nbsp; </span>heating <span style="color: #8eaadb;">★★★</span><span style="color: #8eaadb;">32%&nbsp; </span>Cooling<span style="color: #8eaadb;">&nbsp; Rating</span><span style="color: #8eaadb;">.&nbsp;</span></p>
+    <p><strong>Warranty Period &amp; Registration:</strong></p>
+    <p>Natura 28 Internal Window Film carries a Lifetime Warranty for Residential applications and 12 Years Warranty for Commercial applications. The warranty period on the External Window film applications varies depending on the film used and other site variables. Please refer to the sample copy of the manufacturer&rsquo;s warranty form attached to confirm the warranty period relevant to this particular application.</p>
+    <p>The original warranty document will be sent to you after installation for this types of glazing.</p>
+    <p><strong>Apples for Apples Policy:</strong></p>
+    <p>Window Films WA pride ourselves on giving best value pricing for quality products but if you receive a cheaper quote from our competitors we will do our very best to match it. Competitor&rsquo;s quotes must be in writing and comparable to our quoted product and service.</p>
+    <p><strong>Energy savings and Payback period</strong></p>
+    <p>The film manufacturers have calculated the energy savings (kwh/sqm2) based on applying film to the different glass types of commercial buildings that require air-conditioning. While we haven&rsquo;t energy modelled your particular building yet, if we apply the same reduction in Solar Energy Gain achieved by applying this film and multiply that by the amount you actually pay to run your air-conditioning we can get this estimate of the savings in your power costs.</p>
+    <p>Our estimate is that you will save $315 a year and have a payback period of 3.1 years.</p>
+    <p><em>Please note that this is only a guide and more accurate figures can be obtained by employing an energy auditor.</em></p>
+    <div>
+    <table>
+    <tbody>
+    <tr>
+    <td>Total</td>
+    <td>$${getPriceTotal(0)}</td>
+    </tr>
+    <tr>
+    <td>GST</td>
+    <td>$${getPriceTotal(0.1)}</td>
+    </tr>
+    <tr>
+    <td>Total (including GST)</td>
+    <td>$${getPriceTotal(1.1)}</td>
+    </tr>
+    </tbody>
+    </table>
+    </div>
+    <p>Payment Types:</p>
+    <p>Cheque, EFT (see bank details below)</p>
+    <p>Please contact me directly should you require any additional information.</p>
+    <p style="text-align: center;">Window Films WA77 Boulder Road MALAGA 6090&nbsp;</p>`
+      )
+    } else {
+      return (`<h1>Quotation No. ${data['quote_number']}</h1>
+      <h1>${moment().format('DD MMM YYYY')}</h1>
+      <p><strong>Customer details:</strong>${data['customer_name']}</p>
+      <p><strong>Site details:</strong>${data['site_address']}, ${data['site_state']}</p>
+      <p>Dear ${data['customer_name']},</p>
+      <p>I have great pleasure in submitting the following quotation and have attached the following documents:</p>
+      <ul>
+      <li>Quotation 14 (contained within this document)</li>
+      <li>Natura 28 Internal Window Film Brochure</li>
+      <li>Sample copy of the Manufacturer&rsquo;s Warranty Form (attached to original email)</li>
+      </ul>
+      <div>
+      <table>
+      <tbody>
+      <tr>
+      <td>Total</td>
+      <td>$${getPriceTotal(1)}</td>
+      </tr>
+      <tr>
+      <td>GST</td>
+      <td>$${getPriceTotal(0.1)}</td>
+      </tr>
+      <tr>
+      <td>Total (including GST)</td>
+      <td>$${getPriceTotal(1.1)}</td>
+      </tr>
+      </tbody>
+      </table>
+      </div>
+      <p>Payment Types:</p>
+      <p>EFT (see bank details below)</p>
+      <p>Please contact me directly should you require any additional information.</p>
+      <p>Window Films WA77 Boulder Road MALAGA 6090</p>`)
+    }
+  }
 
-  console.log('DATA', data)
+
+  const handleEmail = (isQuick = false) => {
+    const to = [data['contact_email']]
+    const cc = ['malc@windowfilmswa.com.au']
+    const subject = `Window Film WA Quote ${data['quote_number']}`
+    Mailer.mail({
+      subject: subject,
+      recipients: to,
+      ccRecipients: cc,
+      bccRecipients: [],
+      body: getEmailHtml(isQuick),
+      customChooserTitle: 'Send Mail',
+      isHTML: true,
+      attachments: []
+    }, (error, event) => {
+      email(to, {
+        cc: cc,
+        bcc: [],
+        subject: subject,
+        body: getEmailHtml(isQuick),
+        checkCanOpen: true
+      }).catch(console.error)
+    });
+  }
+
+
+
+  console.log('XXXXX', data)
   return (
     <SafeAreaView
       style={Layout.fill}>
@@ -169,7 +330,12 @@ const CreateQuoteContainer = () => {
           <View style={styles.item}>
             <Text style={[styles.title, { color: '#C40215' }]}>Price for Sealing</Text>
             <View style={styles.inputContainer}>
-              <TextInput style={styles.input} placeholder={'$ per m²'} placeholderTextColor={'#606A70'} />
+              <TextInput
+                style={styles.input}
+                placeholder={'$ per m²'}
+                value={priceForSealing}
+                onChangeText={text => setPriceForSealing(text)}
+                placeholderTextColor={'#606A70'} />
             </View>
             <View style={{ width: Responsive.width(15) }} />
           </View>
@@ -270,115 +436,16 @@ const CreateQuoteContainer = () => {
 
           <TouchableOpacity
             onPress={() => {
-              let body = `Quotation No. 14
-
-              23 Apr 2022
-              
-              Customer details:
-              
-              Sorrento Surf Club West Coast Hwy, Sorrento
-              
-              Christine
-              
-              Site details:
-              
-              West Coast Hwy, Sorrento Dear Sorrento Surf Club,
-              
-              I have great pleasure in submitting the
-              
-              following quotation and have attached the following documents:
-              
-              Quotation 14 (contained within thisdocument)
-              
-              Natura 28 Internal Window Film Brochure • Sample copy of the Manufacturer's Warranty Form (attached to original email)
-              
-              Scope of Works:
-              
-              Provide quotation to supply and install Natura
-              
-              28 as described
-              
-              Project Requirements & Benefits Reduce Solar Heat Gain (Heat)
-              
-              Reduce Ultra Violet Radiation (Fading)
-              
-              Reduce Clare
-              
-              Provide Daytime Privacy
-              
-              About your Glass and Frames:
-              
-              Glass Type: New window /glass type
-              
-              Frame Type: =new window/frame type Film-to-Glass Application (Recommendation): Natura 28 Internal Window Film is recommended by the manufacturer
-              
-              About SolarZone Internal Window Films:
-              
-              • Deliver high levels of protection from solar
-              
-              heat, cut energy costs by reducing the need
-              
-              for air-conditioning, boosting energy
-              
-              efficiency
-              
-              • Dual Reflective films are ideal for
-              
-              commercial and residential energy-upgrade
-              
-              glazing projects when the customer wants quick payback but wants a neutral Interior that preserves the view outside
-              
-              High levels of heat rejection cuts energy costs by reducing consumption and peak
-              
-              load Outstanding glare control for enhanced
-              
-              comfort Warm neutral interior with low reflectivity
-              
-              preserves ambiance and views 99+% UV block limits fading and damage
-              
-              from the sun Bold appearance upgrades building exterior and maintains daytime privacy
-              
-              Fade Reduction:
-               Manufacturer's Note: This data is a guide enabling an estimate only of fade reduction, as there are many variables that cause fading, it would be impossible to give an exact figure, therefore, does not constitute a warranty.
-              
-              Installation of your Window Film:
-              
-              Will be supplied and installed in accordance
-              
-              with manufacturer's installation instructions.
-              
-              Window Films WA employees are licenced and
-              
-              approved window film applicators.
-              
-              We are currently booking ahead for between 7-10 working days (if you require immediate
-              
-              installation, please contact me directly and I - will endeavour to accommodate your requirements).
-              
-              Please let me know directly when you are ready to proceed and I will schedule ASAP.
-              
-              Window Energy Rating System
-              
-              Window films WA is an accredited WERS installer. Upon completion you will issued a certification of the WERS rating appropriate to the film being installed on your current Glazing specifications. Based on the Natura 28 you will achieve a WERS rating 15 % heating ***32% Cooling Rating.
-              
-              Warranty Period & Registration:
-               Natura 28 Internal Window Film carries a Lifetime Warranty for Residential applications and 12 Years Warranty for Commercial applications. The warranty period on the External Window film applications varies depending on the film used and other site variables. Please refer to the sample copy of the manufacturer's warranty form attached to confirm the warranty period relevant to this particular application.
-              
-              The original warranty document will be sent to
-              
-              you after installation for this types of glazing.
-              
-              Apples for Apples Policy:
-              
-              Window Films WA pride ourselves on giving`
-              Linking.openURL(`mailto:abc@example.com?cc=abc@example.com&subject=${`Cutting list for ABC`}&body=${body}`)
+              handleEmail(false)
             }}
             style={[Layout.fill, Layout.center, styles.buttonAdd]}>
             <Text style={[styles.textButton, { color: '#FFFFFF' }]}>Create Deatiled Proposal</Text>
           </TouchableOpacity>
           <View style={{ height: Responsive.height(10) }} />
           <TouchableOpacity
-            onPress={() => navigation.navigate('RequestQuote')}
+            onPress={() => {
+              handleEmail(true)
+            }}
             style={[Layout.fill, Layout.center, styles.buttonOrder]}>
             <Text style={[styles.textButton, { color: '#434A4F' }]}>Quick Quote</Text>
           </TouchableOpacity>

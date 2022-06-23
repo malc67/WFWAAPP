@@ -89,7 +89,7 @@ const QuoteDetailContainer = () => {
   useEffect(() => {
     const { item } = route?.params
     setData(item)
-    getRoomsApi(item['id'])
+    getRoomsApi(item['id'], true)
   }, [route])
 
 
@@ -111,11 +111,15 @@ const QuoteDetailContainer = () => {
   }
 
   const onUpdateRooms = () => {
-    getRoomsApi(data['id'])
+    getRoomsApi(data['id'], true)
   }
 
   const onDeleteQuote = () => {
     deleteQuote(data['id'])
+    route?.params?.onUpdateListQuote()
+  }
+
+  const onUpdateListQuote = () => {
     route?.params?.onUpdateListQuote()
   }
 
@@ -125,6 +129,7 @@ const QuoteDetailContainer = () => {
     return data['notes']
   }
 
+  console.log('rooms=>', JSON.stringify(rooms))
   return (
     <SafeAreaView
       style={Layout.fill}>
@@ -175,7 +180,7 @@ const QuoteDetailContainer = () => {
               return (
                 <View key={item['id']} style={Layout.column}>
                   <TouchableOpacity
-                    onPress={() => navigation.navigate('RoomDetail', { onUpdateRooms, item, quote: data })}
+                    onPress={() => navigation.navigate('RoomDetail', { item, quote: data, onUpdateListQuote, onUpdateRooms })}
                     style={styles.item}>
                     <Text style={styles.title}>{item['title']}</Text>
                     <Text style={styles.subValue}>{`${item['window_count'] ?? 0} window`}</Text>
@@ -205,7 +210,7 @@ const QuoteDetailContainer = () => {
 
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('CreateQuote', { item: { ...data, rooms } })
+              navigation.navigate('CreateQuote', { item: { ...data, rooms }, onUpdateListQuote })
             }}
             style={[Layout.fill, Layout.center, styles.buttonCreate]}>
             <Text style={[styles.textButton, { color: '#FFFFFF' }]}>Create Quote</Text>

@@ -14,7 +14,7 @@ import { useQuote, useTheme } from '@/Hooks'
 import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
-import { isEmpty } from 'lodash'
+import { isEmpty, filter } from 'lodash'
 import { Header, Loader, TabBarQuote } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import moment from 'moment'
@@ -28,6 +28,8 @@ const TabQuoteContainer = () => {
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
 
   const [loading, , quotesList, getQuotesApi, ,] = useQuote()
+
+  const [quotesListDisplay, setQuotesListDisplay] = useState(quotesList)
 
   useFocusEffect(
     useCallback(() => {
@@ -45,13 +47,32 @@ const TabQuoteContainer = () => {
     }, [navigation])
   )
 
+  useEffect(() => {
+    onFilterStatus(undefined)
+  }, [quotesList])
 
   useEffect(() => {
     getQuotesApi()
+    onFilterStatus(undefined)
   }, [])
 
   const onUpdateListQuote = () => {
     getQuotesApi()
+  }
+
+  const onFilterStatus = (status = undefined) => {
+    if (status === undefined) {
+      setQuotesListDisplay(filter(quotesList, item => item['status'] === undefined || item['status'] === false || item['status'] === true))
+      return
+    }
+    if (status === true) {
+      setQuotesListDisplay(filter(quotesList, item => item['status'] === true))
+      return
+    }
+    if (status === false) {
+      setQuotesListDisplay(filter(quotesList, item => item['status'] === undefined || item['status'] === false))
+      return
+    }
   }
 
 
@@ -77,11 +98,15 @@ const TabQuoteContainer = () => {
   return (
     <SafeAreaView
       style={Layout.fill}>
-      <TabBarQuote colorHeightline={'#ffffff'} onChangeTab={index => { }} />
+      <TabBarQuote colorHeightline={'#ffffff'} onChangeTab={index => {
+        if (index === 0) onFilterStatus(undefined)
+        if (index === 1) onFilterStatus(false)
+        if (index === 2) onFilterStatus(true)
+      }} />
 
       <FlatList
         contentContainerStyle={{ flexGrow: 1 }}
-        data={quotesList}
+        data={quotesListDisplay}
         keyExtractor={(item, index) => item + index}
         renderItem={({ item }) => <Item item={item} />}
         ListHeaderComponent={() => <View style={styles.separator} />}

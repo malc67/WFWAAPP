@@ -56,11 +56,11 @@ const TabSettingContainer = () => {
 
         <View style={styles.infoWrapper}>
 
-          <Avatar height={64} firstName={firstName} lastName={lastName} />
+          <Avatar height={64} firstName={firstName} lastName={lastName} urlImage={profile ? profile['companyLogo'] : ''} />
           <Text style={styles.textName}>{profile ? profile['contactPerson'] : ''}</Text>
           <Text style={styles.textSub}>{profile ? profile['city'] : ''}</Text>
           <View style={{ height: Responsive.height(15) }} />
-          <Text style={styles.textSub}>{profile ? `+${profile['callingCode']} ${profile['phoneNumber']}` : `` }</Text>
+          <Text style={styles.textSub}>{profile ? `+${profile['callingCode']} ${profile['phoneNumber']}` : ``}</Text>
           <View style={{ height: Responsive.height(15) }} />
           <Text style={styles.textSub}>{info ? info['email'] : ''}</Text>
           <View style={{ height: Responsive.height(30) }} />

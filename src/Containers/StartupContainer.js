@@ -22,15 +22,13 @@ const StartupContainer = () => {
       }, 2000),
     )
     await setDefaultTheme({ theme: 'default', darkMode: null })
-    console.log('info', info)
-    console.log('profile', profile)
     if(isUndefined(info) || isEmpty(info)){
       navigateAndSimpleReset('Login')
     }else {
       if(isUndefined(profile) || isEmpty(profile)){
-        navigation.navigate('BussinessProfile')
+        navigateAndSimpleReset('BussinessProfile')
       }else {
-        navigation.navigate('Main')
+        navigateAndSimpleReset('Main')
       }
     }
   }

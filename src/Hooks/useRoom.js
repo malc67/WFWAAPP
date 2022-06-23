@@ -18,16 +18,45 @@ export default function () {
   const [errors, setErrors] = useState({})
   const [rooms, setRooms] = useState([])
 
-  const getRoomsApi = async (quoteId) => {
+  const getRoomsApi = async (quoteId, hasIncludeWindows = false) => {
     setLoading(true)
-    firestore().collection('create_quote').doc(quoteId).collection('rooms').get().then((querySnapshot) => {
+    firestore().collection('create_quote').doc(quoteId).collection('rooms').get().then(async (querySnapshot) => {
       let tempData = [];
-      querySnapshot.forEach( async doc => {
+      querySnapshot.forEach(doc => {
         tempData.push({ ...doc.data(), id: doc.id });
       })
+      if (hasIncludeWindows) {
+        for (item of tempData) {
+          let windows = await getWindows(quoteId, item)
+          item['windows'] = windows
+        }
+      }
+
       setLoading(false)
       setRooms(tempData)
     })
+  }
+
+  const getWindows = (quoteId, doc) => {
+    return new Promise((resolve, reject) => {
+      firestore()
+        .collection('create_quote')
+        .doc(quoteId)
+        .collection('rooms')
+        .doc(doc.id)
+        .collection('windows')
+        .get()
+        .then(snapshot => {
+          let tempData = [];
+          snapshot.forEach(doc => {
+            tempData.push({ ...doc.data(), id: doc.id });
+          })
+          resolve(tempData)
+        })
+        .catch(error => {
+          reject()
+        })
+    });
   }
 
 
@@ -38,7 +67,7 @@ export default function () {
       .collection('rooms')
       .add(data)
       .then(async (res) => {
-        getRoomsApi(quoteId)
+        getRoomsApi(quoteId, true)
         setLoading(false)
       }).catch((error) => {
         setLoading(false)
@@ -54,7 +83,7 @@ export default function () {
       .doc(roomId)
       .delete()
       .then(async (res) => {
-        getRoomsApi(quoteId)
+        getRoomsApi(quoteId, true)
         setLoading(false)
       }).catch((error) => {
         setLoading(false)
@@ -70,7 +99,7 @@ export default function () {
       .doc(roomId)
       .update(data)
       .then(async () => {
-        getRoomsApi(quoteId)
+        getRoomsApi(quoteId, true)
         setLoading(false)
       }).catch((error) => {
         setLoading(false)

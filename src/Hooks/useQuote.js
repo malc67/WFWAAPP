@@ -27,6 +27,7 @@ export default function () {
     firestore()
       .collection('create_quote')
       .where('created_by', '==', info['uid'])
+      .orderBy('create_date', 'desc')
       .get()
       .then((querySnapshot) => {
         let tempData = [];

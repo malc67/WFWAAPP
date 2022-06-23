@@ -118,6 +118,10 @@ const RoomDetailContainer = () => {
     route?.params?.onUpdateRooms()
   }
 
+  const onUpdateListQuote = () => {
+    route?.params?.onUpdateListQuote()
+  }
+
   const getTextDisplayNotes = () => {
     if (data['notes'] && data['notes'].length > 15) return `${data['notes'].substring(0, 15)}...`
     return data['notes']
@@ -228,7 +232,7 @@ const RoomDetailContainer = () => {
           <TouchableOpacity
             onPress={() => {
 
-              navigation.navigate('CreateQuote', { item: quote, room: { ...data, windows } })
+              navigation.navigate('CreateQuote', { item: quote, room: { ...data, windows }, onUpdateListQuote })
             }}
             style={[Layout.fill, Layout.center, styles.buttonCreate]}>
             <Text style={[styles.textButton, { color: '#FFFFFF' }]}>Create Room Quote</Text>
