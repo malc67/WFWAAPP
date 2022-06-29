@@ -1510,7 +1510,7 @@ const CustomSelectCountry = ({ height, value, onValueChange, flexValue }) => {
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
         data={countries}
-        fontFamily={'Ubuntu-Regular'}
+        fontFamily={'NewJune'}
         search
         maxHeight={300}
         valueField="callingCode"
@@ -1577,22 +1577,22 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: Responsive.font(17),
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     color: '#434A4F'
   },
   selectedTextStyle: {
     fontSize: Responsive.font(17),
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     color: '#434A4F'
   },
   inputSearchStyle: {
     fontSize: Responsive.font(17),
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     color: '#434A4F'
   },
   callingCodeStyle: {
     fontSize: Responsive.font(17),
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     color: '#434A4F'
   },
 });

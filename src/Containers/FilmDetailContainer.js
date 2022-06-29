@@ -53,13 +53,13 @@ const FilmDetailContainer = () => {
     let newRolSize = []
     rolSize.forEach((element, index) => {
       if (index == 0 && element === 'yes')
-        newRolSize.push({ title: '36"wide', subtitle: '915 mm', id: index })
+        newRolSize.push({ title: '36"wide', subtitle: '915 mm', id: 0 })
       if (index == 1 && element === 'yes')
-        newRolSize.push({ title: '48"wide', subtitle: '1220 mm', id: index })
+        newRolSize.push({ title: '48"wide', subtitle: '1220 mm', id: 1 })
       if (index == 2 && element === 'yes')
-        newRolSize.push({ title: '60"wide', subtitle: '1520 mm', id: index })
+        newRolSize.push({ title: '60"wide', subtitle: '1520 mm', id: 2 })
       if (index == 3 && element === 'yes')
-        newRolSize.push({ title: '72"wide', subtitle: '1830 mm', id: index })
+        newRolSize.push({ title: '72"wide', subtitle: '1830 mm', id: 3 })
     });
     setRolSizes(newRolSize)
 
@@ -101,6 +101,10 @@ const FilmDetailContainer = () => {
     }, [navigation])
   )
 
+
+  const onUpdateListQuote = () => {
+
+  }
 
 
   return (
@@ -157,7 +161,7 @@ const FilmDetailContainer = () => {
 
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('CreateQuote')
+              navigation.navigate('RequestQuote', { film: data, onUpdateListQuote })
             }}
             style={[Layout.fill, Layout.center, styles.buttonAdd]}>
             <Text style={[styles.textButton, { color: '#FFFFFF' }]}>Add to Order</Text>
@@ -184,12 +188,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F1F1',
   },
   textBack: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#B2C249'
   },
   textDatasheet: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(15),
     color: '#606A70'
   },
@@ -203,19 +207,19 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(20)
   },
   value: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(20)
   },
   subValue: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#A7B0B5',
     paddingHorizontal: Responsive.width(20)
@@ -225,7 +229,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 14,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     textTransform: 'uppercase',
     color: '#A7B0B5',
     paddingHorizontal: Responsive.width(20),
@@ -234,7 +238,7 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     flex: 1,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(10)
@@ -257,7 +261,7 @@ const styles = StyleSheet.create({
   },
   textButton: {
     color: '#FFFFFF',
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'NewJune-Bold',
     fontSize: Responsive.font(17)
   }
 

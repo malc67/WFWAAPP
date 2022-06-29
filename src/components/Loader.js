@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     },
     textStyle: {
         color: '#B2C249',
-        fontFamily: 'Ubuntu-Regular',
+        fontFamily: 'NewJune',
         fontSize: Responsive.font(15),
         textAlign: "center"
     }

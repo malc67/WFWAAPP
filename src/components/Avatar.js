@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   textStyle: {
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'NewJune-Bold',
     fontSize: Responsive.font(26),
     color: '#ffffff'
   }

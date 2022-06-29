@@ -72,18 +72,18 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: Responsive.font(17),
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     color: '#434A4F'
   },
   selectedTextStyle: {
     fontSize: Responsive.font(17),
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     color: '#434A4F',
     textAlign: 'right'
   },
   inputSearchStyle: {
     fontSize: Responsive.font(17),
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     color: '#434A4F'
   },
 });

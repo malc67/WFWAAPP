@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     tintColor: '#B2C249'
   },
   textStyle: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingBottom: 0,

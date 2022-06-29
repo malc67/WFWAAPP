@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import {
   StyleSheet,
   SafeAreaView,
@@ -9,7 +9,9 @@ import {
   TextInput,
   TouchableOpacity,
   Switch,
-  Alert
+  Alert,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -22,7 +24,8 @@ import { Header, Aspect, Colour, CustomDropdown } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import CheckBox from '@react-native-community/checkbox';
+import { Picker, DatePicker } from 'react-native-wheel-pick';
+import { Modalize } from 'react-native-modalize';
 
 
 const FRAME_TYPE_ITEMS = [
@@ -85,6 +88,7 @@ const WindowContainer = () => {
   const [name, setName] = useState('')
   const [tintFilm, setTintFilm] = useState('')
   const [notes, setNotes] = useState('')
+  const [picture, setPicture] = useState('');
 
   const [aspect, setAspect] = useState('N')
   const [frameType, setFrameType] = useState('')
@@ -95,9 +99,15 @@ const WindowContainer = () => {
   const [filmRemovalRequired, setFilmRemovalRequired] = useState(true)
   const [ladderType, setLadderType] = useState('')
 
+  const modalizeFrameTypeRef = useRef(null);
+  const modalizeGlassTypeRef = useRef(null);
+  const modalizeGlassThicknessRef = useRef(null);
+  const modalizeLadderTypeRef = useRef(null);
+
   useEffect(() => {
     const { item } = route?.params
     setData(item)
+    console.log('Data', item)
     if (item) {
       setWidth(item['width'])
       setHeight(item['height'])
@@ -211,209 +221,291 @@ const WindowContainer = () => {
     }
   }
 
+  const onUpdatePicture = (source) => {
+    setPicture(source)
+  }
+
 
   const getTextDisplayNotes = () => {
     if (notes && notes.length > 15) return `${notes.substring(0, 15)}...`
     return notes
   }
 
+  const onOpenModalizeFrameTypeRef = () => {
+    modalizeFrameTypeRef.current?.open();
+  };
+  const onOpenModalizeGlassTypeRef = () => {
+    modalizeGlassTypeRef.current?.open();
+  };
+  const onOpenModalizeGlassThicknessRef = () => {
+    modalizeGlassThicknessRef.current?.open();
+  };
+  const onOpenModalizeLadderTypeRef = () => {
+    modalizeLadderTypeRef.current?.open();
+  };
+
   return (
     <SafeAreaView
       style={Layout.fill}>
       <View style={[Layout.fill, Layout.column]}>
-        <ScrollView
-          style={Layout.fill}
-          contentContainerStyle={{ flexGrow: 1 }}>
-          <View style={{ height: Responsive.height(20), width: '100%' }} />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : null}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
+          style={{ flex: 1 }}
+        >
+          <ScrollView
+            style={Layout.fill}
+            contentContainerStyle={{ flexGrow: 1 }}>
+            <View style={{ height: Responsive.height(20), width: '100%' }} />
 
-          <View style={styles.item}>
-            <Text style={[styles.title]}>Width</Text>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder={'Required'}
-                value={width}
-                keyboardType={'number-pad'}
-                onChangeText={(text) => {
-                  setWidth(text)
-                  onUpdateName(text, height, quantity)
-                }}
-                placeholderTextColor={'#606A70'} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Width</Text>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={'Required'}
+                  value={width}
+                  keyboardType={'number-pad'}
+                  onChangeText={(text) => {
+                    setWidth(text)
+                    onUpdateName(text, height, quantity)
+                  }}
+                  placeholderTextColor={'#606A70'} />
+              </View>
+              <View style={{ width: Responsive.width(15) }} />
             </View>
-            <View style={{ width: Responsive.width(15) }} />
-          </View>
-          <View style={styles.separator} />
-          <View style={styles.item}>
-            <Text style={[styles.title]}>Height</Text>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder={'Required'}
-                value={height}
-                keyboardType={'number-pad'}
-                onChangeText={(text) => {
-                  setHeight(text)
-                  onUpdateName(width, text, quantity)
-                }}
-                placeholderTextColor={'#606A70'} />
+            <View style={styles.separator} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Height</Text>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={'Required'}
+                  value={height}
+                  keyboardType={'number-pad'}
+                  onChangeText={(text) => {
+                    setHeight(text)
+                    onUpdateName(width, text, quantity)
+                  }}
+                  placeholderTextColor={'#606A70'} />
+              </View>
+              <View style={{ width: Responsive.width(15) }} />
             </View>
-            <View style={{ width: Responsive.width(15) }} />
-          </View>
-          <View style={styles.separator} />
-          <View style={styles.item}>
-            <Text style={[styles.title]}>Quantity</Text>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder={'Required'}
-                value={quantity}
-                keyboardType={'number-pad'}
-                onChangeText={(text) => {
-                  setQuantity(text)
-                  onUpdateName(width, height, text)
-                }}
-                placeholderTextColor={'#606A70'} />
+            <View style={styles.separator} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Quantity</Text>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={'Required'}
+                  value={quantity}
+                  keyboardType={'number-pad'}
+                  onChangeText={(text) => {
+                    setQuantity(text)
+                    onUpdateName(width, height, text)
+                  }}
+                  placeholderTextColor={'#606A70'} />
+              </View>
+              <View style={{ width: Responsive.width(15) }} />
             </View>
-            <View style={{ width: Responsive.width(15) }} />
-          </View>
-          <View style={{ height: Responsive.height(20), width: '100%' }} />
+            <View style={{ height: Responsive.height(20), width: '100%' }} />
 
-          <View style={styles.item}>
-            <Text style={[styles.title]}>Name</Text>
-            <View style={[styles.inputContainer, { flex: 2 }]}>
-              <TextInput
-                style={styles.input}
-                placeholder={''}
-                value={name}
-                onChangeText={(text) => setName(text)}
-                placeholderTextColor={'#606A70'} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Name</Text>
+              <View style={[styles.inputContainer, { flex: 2 }]}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={''}
+                  value={name}
+                  onChangeText={(text) => setName(text)}
+                  placeholderTextColor={'#606A70'} />
+              </View>
+              <View style={{ width: Responsive.width(15) }} />
             </View>
-            <View style={{ width: Responsive.width(15) }} />
-          </View>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => navigation.navigate('SelectFilm', { onUpdateTintFilm })}
-            style={styles.item}>
-            <Text style={styles.title}>Tint Film</Text>
-            <Text style={styles.subValue}>{tintFilm}</Text>
-            <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Notes', { notes: notes, onUpdateNotes })}
-            style={styles.item}>
-            <Text style={styles.title}>Notes</Text>
-            <Text style={styles.subValue}>{getTextDisplayNotes()}</Text>
-            <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
-          </TouchableOpacity>
-          <View style={{ height: Responsive.height(20), width: '100%' }} />
-          <TouchableOpacity
-            onPress={() => navigation.navigate('AddPicture')}
-            style={styles.item}>
-            <Text style={styles.title}>Add Picture</Text>
-            <Text style={styles.subValue}>{''}</Text>
-            <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
-          </TouchableOpacity>
-          <View style={{ height: Responsive.height(20), width: '100%' }} />
-          <TouchableOpacity
-            onPress={() => { }}
-            style={styles.item}>
-            <Text style={styles.title}>Aspect</Text>
-            <Aspect
-              value={aspect}
-              onValueChange={value => setAspect(value)} />
-            <View style={{ width: Responsive.width(15) }} />
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => { }}
-            style={styles.item}>
-            <Text style={styles.title}>Frame Type</Text>
-            <CustomDropdown
-              value={frameType}
-              items={FRAME_TYPE_ITEMS}
-              onValueChange={(value) => setFrameType(value)} />
-            <View style={{ width: Responsive.width(15) }} />
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => { }}
-            style={styles.item}>
-            <Text style={styles.title}>Frame Colour</Text>
-            <Colour
-              value={frameColour}
-              onValueChange={value => {
-                setFrameColour(value)
-              }} />
-            <View style={{ width: Responsive.width(15) }} />
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => { }}
-            style={styles.item}>
-            <Text style={styles.title}>Glass Type</Text>
-            <CustomDropdown
-              items={GLASS_TYPE_ITEMS}
-              value={glassType}
-              onValueChange={value => setGlassType(value)} />
-            <View style={{ width: Responsive.width(15) }} />
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => { }}
-            style={styles.item}>
-            <Text style={styles.title}>Glass Thickness</Text>
-            <CustomDropdown
-              items={GLASS_THICKNESS_ITEMS}
-              value={glassThickness}
-              onValueChange={value => setGlassThickness(value)} />
-            <View style={{ width: Responsive.width(15) }} />
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => { }}
-            style={styles.item}>
-            <Text style={styles.title}>Include Corking</Text>
-            <Switch
-              ios_backgroundColor={"#E0E0E0"}
-              thumbColor={'#FFFFFF'}
-              trackColor={{ true: '#B2C249', false: '#E0E0E0' }}
-              onValueChange={(value) => {
-                setIncludeCorking(value)
-              }}
-              value={includeCorking} />
-            <View style={{ width: Responsive.width(15) }} />
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => { }}
-            style={styles.item}>
-            <Text style={styles.title}>Film Removal Required</Text>
-            <Switch
-              ios_backgroundColor={"#E0E0E0"}
-              thumbColor={'#FFFFFF'}
-              trackColor={{ true: '#B2C249', false: '#E0E0E0' }}
-              onValueChange={(value) => {
-                setFilmRemovalRequired(value)
-              }}
-              value={filmRemovalRequired} />
-            <View style={{ width: Responsive.width(15) }} />
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            onPress={() => { }}
-            style={styles.item}>
-            <Text style={styles.title}>Ladder Type</Text>
-            <CustomDropdown
-              items={LADDER_TYPE_ITEMS}
-              flexValue={1.5}
-              value={ladderType}
-              onValueChange={value => setLadderType(value)} />
-            <View style={{ width: Responsive.width(15) }} />
-          </TouchableOpacity>
-          <View style={{ height: Responsive.height(20), width: '100%' }} />
-        </ScrollView>
-
+            <View style={styles.separator} />
+            <TouchableOpacity
+              onPress={() => navigation.navigate('SelectFilm', { onUpdateTintFilm })}
+              style={styles.item}>
+              <Text style={styles.title}>Tint Film</Text>
+              <Text style={styles.subValue}>{tintFilm}</Text>
+              <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
+            </TouchableOpacity>
+            <View style={styles.separator} />
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Notes', { notes: notes, onUpdateNotes })}
+              style={styles.item}>
+              <Text style={styles.title}>Notes</Text>
+              <Text style={styles.subValue}>{getTextDisplayNotes()}</Text>
+              <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
+            </TouchableOpacity>
+            <View style={{ height: Responsive.height(20), width: '100%' }} />
+            <TouchableOpacity
+              onPress={() => navigation.navigate('AddPicture', { picture , onUpdatePicture })}
+              style={styles.item}>
+              <Text style={styles.title}>Add Picture</Text>
+              <Text style={styles.subValue}>{''}</Text>
+              <Image style={styles.imgPreview} source={picture} resizeMode={'contain'} />
+              <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
+            </TouchableOpacity>
+            <View style={{ height: Responsive.height(20), width: '100%' }} />
+            <TouchableOpacity
+              onPress={() => { }}
+              style={styles.item}>
+              <Text style={styles.title}>Aspect</Text>
+              <Aspect
+                value={aspect}
+                onValueChange={value => setAspect(value)} />
+              <View style={{ width: Responsive.width(15) }} />
+            </TouchableOpacity>
+            <View style={styles.separator} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Frame Type</Text>
+              <TouchableOpacity
+                onPress={onOpenModalizeFrameTypeRef}
+                style={styles.inputContainer}>
+                <TextInput
+                  pointerEvents="none"
+                  style={[styles.input, { color: '#434A4F' }]}
+                  value={frameType}
+                  editable={false}
+                  placeholderTextColor={'#606A70'} />
+              </TouchableOpacity>
+              <View style={{ width: Responsive.width(15) }} />
+            </View>
+            <View style={styles.separator} />
+            <TouchableOpacity
+              onPress={() => { }}
+              style={styles.item}>
+              <Text style={styles.title}>Frame Colour</Text>
+              <Colour
+                value={frameColour}
+                onValueChange={value => {
+                  setFrameColour(value)
+                }} />
+              <View style={{ width: Responsive.width(15) }} />
+            </TouchableOpacity>
+            <View style={styles.separator} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Glass Type</Text>
+              <TouchableOpacity
+                onPress={onOpenModalizeGlassTypeRef}
+                style={styles.inputContainer}>
+                <TextInput
+                  pointerEvents="none"
+                  style={[styles.input, { color: '#434A4F' }]}
+                  value={glassType}
+                  editable={false}
+                  placeholderTextColor={'#606A70'} />
+              </TouchableOpacity>
+              <View style={{ width: Responsive.width(15) }} />
+            </View>
+            <View style={styles.separator} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Glass Thickness</Text>
+              <TouchableOpacity
+                onPress={onOpenModalizeGlassThicknessRef}
+                style={styles.inputContainer}>
+                <TextInput
+                  pointerEvents="none"
+                  style={[styles.input, { color: '#434A4F' }]}
+                  value={glassThickness}
+                  editable={false}
+                  placeholderTextColor={'#606A70'} />
+              </TouchableOpacity>
+              <View style={{ width: Responsive.width(15) }} />
+            </View>
+            <View style={styles.separator} />
+            <TouchableOpacity
+              onPress={() => { }}
+              style={styles.item}>
+              <Text style={styles.title}>Include Corking</Text>
+              <Switch
+                ios_backgroundColor={"#E0E0E0"}
+                thumbColor={'#FFFFFF'}
+                trackColor={{ true: '#B2C249', false: '#E0E0E0' }}
+                onValueChange={(value) => {
+                  setIncludeCorking(value)
+                }}
+                value={includeCorking} />
+              <View style={{ width: Responsive.width(15) }} />
+            </TouchableOpacity>
+            <View style={styles.separator} />
+            <TouchableOpacity
+              onPress={() => { }}
+              style={styles.item}>
+              <Text style={styles.title}>Film Removal Required</Text>
+              <Switch
+                ios_backgroundColor={"#E0E0E0"}
+                thumbColor={'#FFFFFF'}
+                trackColor={{ true: '#B2C249', false: '#E0E0E0' }}
+                onValueChange={(value) => {
+                  setFilmRemovalRequired(value)
+                }}
+                value={filmRemovalRequired} />
+              <View style={{ width: Responsive.width(15) }} />
+            </TouchableOpacity>
+            <View style={styles.separator} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Ladder Type</Text>
+              <TouchableOpacity
+                onPress={onOpenModalizeLadderTypeRef}
+                style={styles.inputContainer}>
+                <TextInput
+                  pointerEvents="none"
+                  style={[styles.input, { color: '#434A4F' }]}
+                  value={ladderType}
+                  editable={false}
+                  placeholderTextColor={'#606A70'} />
+              </TouchableOpacity>
+              <View style={{ width: Responsive.width(15) }} />
+            </View>
+            <View style={{ height: Responsive.height(20), width: '100%' }} />
+          </ScrollView>
+          <Modalize
+            ref={modalizeFrameTypeRef}
+            handlePosition={'inside'}
+            adjustToContentHeight={true}>
+            <Picker
+              style={styles.pickerStyle}
+              selectedValue={frameType}
+              pickerData={FRAME_TYPE_ITEMS}
+              onValueChange={value => setFrameType(value)}
+            />
+          </Modalize>
+          <Modalize
+            ref={modalizeGlassTypeRef}
+            handlePosition={'inside'}
+            adjustToContentHeight={true}>
+            <Picker
+              style={styles.pickerStyle}
+              selectedValue={glassType}
+              pickerData={GLASS_TYPE_ITEMS}
+              onValueChange={value => setGlassType(value)}
+            />
+          </Modalize>
+          <Modalize
+            ref={modalizeGlassThicknessRef}
+            handlePosition={'inside'}
+            adjustToContentHeight={true}>
+            <Picker
+              style={styles.pickerStyle}
+              selectedValue={glassThickness}
+              pickerData={GLASS_THICKNESS_ITEMS}
+              onValueChange={value => setGlassThickness(value)}
+            />
+          </Modalize>
+          <Modalize
+            ref={modalizeLadderTypeRef}
+            handlePosition={'inside'}
+            adjustToContentHeight={true}>
+            <Picker
+              style={styles.pickerStyle}
+              selectedValue={ladderType}
+              pickerData={LADDER_TYPE_ITEMS}
+              onValueChange={value => setLadderType(value)}
+            />
+          </Modalize>
+        </KeyboardAvoidingView>
       </View>
     </SafeAreaView>
   )
@@ -427,12 +519,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F1F1',
   },
   textBack: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#B2C249'
   },
   textSave: {
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'NewJune-Bold',
     fontSize: Responsive.font(17),
     color: '#B2C249'
   },
@@ -446,14 +538,14 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(20)
   },
   header: {
     fontSize: 14,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     textTransform: 'uppercase',
     color: '#A7B0B5',
     paddingHorizontal: Responsive.width(20),
@@ -461,13 +553,13 @@ const styles = StyleSheet.create({
     paddingBottom: Responsive.height(10)
   },
   value: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(20)
   },
   subValue: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(20)
@@ -481,6 +573,11 @@ const styles = StyleSheet.create({
     height: Responsive.height(22),
     tintColor: '#B2C249'
   },
+  imgPreview: {
+    marginRight: Responsive.width(10),
+    height: Responsive.height(35),
+    width: Responsive.height(45),
+  },
   inputContainer: {
     borderColor: 'rgb(224, 224, 224)',
     height: Responsive.height(32),
@@ -493,11 +590,16 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     color: '#B2C249',
     fontSize: Responsive.font(17),
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     paddingBottom: 0,
     paddingTop: 0,
     paddingHorizontal: Responsive.width(10)
   },
+  pickerStyle: {
+    backgroundColor: 'white',
+    width: '100%',
+    height: Responsive.height(220)
+  }
 
 
 });

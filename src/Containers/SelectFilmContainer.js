@@ -6,7 +6,9 @@ import {
   View,
   Text,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -619,7 +621,7 @@ const SelectFilmContainer = () => {
   const [surfaceList, setSurfaceList] = useState(surfaceListOrigin)
 
   const onSearch = (keyword) => {
-    if(isEmpty(keyword)){
+    if (isEmpty(keyword)) {
       setReflectiveList(reflectiveListOrigin)
       setNeutralList(neutralListOrigin)
       setDualList(dualListOrigin)
@@ -629,7 +631,7 @@ const SelectFilmContainer = () => {
       setXTRMList(XTRMListOrigin)
       setSafetyList(safetyListOrigin)
       setSurfaceList(surfaceListOrigin)
-    }else {
+    } else {
       setReflectiveList(filter(reflectiveListOrigin, item => item.name.includes(keyword)))
       setNeutralList(filter(neutralListOrigin, item => item.name.includes(keyword)))
       setDualList(filter(dualListOrigin, item => item.name.includes(keyword)))
@@ -691,53 +693,57 @@ const SelectFilmContainer = () => {
     <SafeAreaView
       style={Layout.fill}>
       <SearchBar textLabel='Search Films' onSearch={onSearch} />
-
-      <SectionList
-        sections={[
-          {
-            title: 'Reflective Films Interior',
-            data: reflectiveList
-          },
-          {
-            title: 'Neutral Films Interior',
-            data: neutralList
-          },
-          {
-            title: 'Dual Reflective Films Interior',
-            data: dualList
-          },
-          {
-            title: 'Spectrally Selective Films Interior',
-            data: spectrallyList
-          },
-          {
-            title: 'Specialty Films Decorative/Privacy',
-            data: specialtyList
-          },
-          {
-            title: 'SolarZone Xtra Films Exterior',
-            data: solarZoneList
-          },
-          {
-            title: 'XTRM SolarZone Films Exterior',
-            data: XTRMList
-          },
-          {
-            title: 'Safety & Security Films',
-            data: safetyList
-          },
-          {
-            title: 'Surface Protection',
-            data: surfaceList
-          },
-        ]}
-        keyExtractor={(item, index) => item + index}
-        renderItem={({ item }) => <Item item={item} title={item['name']} />}
-        renderSectionHeader={({ section: { title } }) => <HeaderItem title={title} />}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        stickySectionHeadersEnabled={false}
-      />
-
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : null}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
+        style={{ flex: 1 }}
+      >
+        <SectionList
+          sections={[
+            {
+              title: 'Reflective Films Interior',
+              data: reflectiveList
+            },
+            {
+              title: 'Neutral Films Interior',
+              data: neutralList
+            },
+            {
+              title: 'Dual Reflective Films Interior',
+              data: dualList
+            },
+            {
+              title: 'Spectrally Selective Films Interior',
+              data: spectrallyList
+            },
+            {
+              title: 'Specialty Films Decorative/Privacy',
+              data: specialtyList
+            },
+            {
+              title: 'SolarZone Xtra Films Exterior',
+              data: solarZoneList
+            },
+            {
+              title: 'XTRM SolarZone Films Exterior',
+              data: XTRMList
+            },
+            {
+              title: 'Safety & Security Films',
+              data: safetyList
+            },
+            {
+              title: 'Surface Protection',
+              data: surfaceList
+            },
+          ]}
+          keyExtractor={(item, index) => item + index}
+          renderItem={({ item }) => <Item item={item} title={item['name']} />}
+          renderSectionHeader={({ section: { title } }) => <HeaderItem title={title} />}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          stickySectionHeadersEnabled={false}
+        />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   )
 }
@@ -750,7 +756,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F1F1',
   },
   textBack: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#B2C249'
   },
@@ -767,7 +773,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 14,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     textTransform: 'uppercase',
     color: '#A7B0B5',
     paddingHorizontal: Responsive.width(20),
@@ -776,7 +782,7 @@ const styles = StyleSheet.create({
   },
   itemTitle: {
     flex: 1,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(20)

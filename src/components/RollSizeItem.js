@@ -46,13 +46,13 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(20)
   },
   subValue: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#A7B0B5',
     paddingHorizontal: Responsive.width(20)

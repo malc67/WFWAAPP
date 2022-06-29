@@ -9,6 +9,7 @@ import { navigateAndSimpleReset } from "@/Navigators/utils";
 
 import { useDispatch, useSelector } from 'react-redux'
 import { updateInfo, clearAuth } from '@/Store/Auth'
+import geocoder from "@timwangdev/react-native-geocoder";
 
 export default function () {
 
@@ -90,31 +91,78 @@ export default function () {
   }
 
 
-  const createQuote = async (data) => {
+  const createQuote = async (data, callback = undefined) => {
     if (!validation(data)) return
     setLoading(true)
-    data['created_by'] = info['uid']
-    firestore().collection('create_quote')
-      .add(data).then(async (res) => {
-        setLoading(false)
-      }).catch((error) => {
-        setLoading(false)
-        console.log('createQuote', error)
-      })
+    geocoder.geocodeAddress(`${data['site_address']}, ${data['site_state']}`, {
+      locale: 'en',
+      maxResults: 2,
+      apiKey: 'AIzaSyBq_is64XiZTL9byV7Ibvvnl7Bnza6P8TE'
+    }).then(geos => {
+      data['created_by'] = info['uid']
+      if (geos && geos[0]['position']) {
+        let location = geos[0]['position']
+        data['location'] = { lat: location['lat'], lng: location['lng'] }
+      }
+      firestore().collection('create_quote')
+        .add(data).then((doc) => {
+          setLoading(false)
+          if (callback) {
+            callback({ ...data, id: doc.id })
+          }
+        }).catch((error) => {
+          setLoading(false)
+          console.log('createQuote', error)
+        })
+    }).catch(error => {
+      console.log('geocoder', error)
+      data['created_by'] = info['uid']
+      firestore().collection('create_quote')
+        .add(data).then((doc) => {
+          setLoading(false)
+          if (callback) {
+            callback({ ...data, id: doc.id })
+          }
+        }).catch((error) => {
+          setLoading(false)
+          console.log('createQuote', error)
+        })
+    })
   }
 
   const updateQuote = async (quoteId, data) => {
     setLoading(true)
-    firestore()
-      .collection('create_quote')
-      .doc(quoteId)
-      .update(data)
-      .then(async () => {
-        setLoading(false)
-      }).catch((error) => {
-        setLoading(false)
-        console.log('updateQuote', error)
-      })
+    geocoder.geocodeAddress(`${data['site_address']}, ${data['site_state']}`, {
+      locale: 'en',
+      maxResults: 2,
+      apiKey: 'AIzaSyBq_is64XiZTL9byV7Ibvvnl7Bnza6P8TE'
+    }).then(geos => {
+      if (geos && geos[0]['position']) {
+        let location = geos[0]['position']
+        data['location'] = { lat: location['lat'], lng: location['lng'] }
+      }
+      firestore()
+        .collection('create_quote')
+        .doc(quoteId)
+        .update(data)
+        .then(async () => {
+          setLoading(false)
+        }).catch((error) => {
+          setLoading(false)
+          console.log('updateQuote', error)
+        })
+    }).catch(error => {
+      firestore()
+        .collection('create_quote')
+        .doc(quoteId)
+        .update(data)
+        .then(async () => {
+          setLoading(false)
+        }).catch((error) => {
+          setLoading(false)
+          console.log('updateQuote', error)
+        })
+    })
   }
 
   const deleteQuote = async (quoteId) => {

@@ -10,11 +10,11 @@ import {
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { useTheme } from '@/Hooks'
+import { useQuote, useTheme } from '@/Hooks'
 import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
-import { isEmpty } from 'lodash'
+import { isEmpty, filter } from 'lodash'
 import { Header, TabBarQuote } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import MapView, { Callout, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
@@ -27,12 +27,9 @@ const TabMapContainer = () => {
   const navigation = useNavigation()
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
 
-  const [data, setData] = useState([
-    { lat: -25.274398, lng: 133.775136, title: 'Dev buttor warranty', description: '6, Forest Green Field', id: 1 },
-    { lat: -33.865143, lng: 151.209900, title: 'Dev buttor warranty', description: '6, Forest Green Field', id: 2 },
-    { lat: -35.473469, lng: 149.012375, title: 'Dev buttor warranty', description: '6, Forest Green Field', id: 3 },
-    { lat: -36.473469, lng: 148.012375, title: 'Dev buttor warranty', description: '6, Forest Green Field', id: 4 },
-  ])
+  const [loading, , quotesList, getQuotesApi, ,] = useQuote()
+
+  const [quotesListDisplay, setQuotesListDisplay] = useState(quotesList)
 
 
   useFocusEffect(
@@ -44,15 +41,45 @@ const TabMapContainer = () => {
           );
         },
       })
-    }, [navigation])
-  )
+    }, [navigation]))
+
+  useEffect(() => {
+    getQuotesApi()
+    onFilterStatus(undefined)
+  }, [])
+
+  useEffect(() => {
+    onFilterStatus(undefined)
+  }, [quotesList])
 
 
+  const onFilterStatus = (status = undefined) => {
+    if (status === undefined) {
+      setQuotesListDisplay(filter(quotesList, item => (item['status'] === undefined || item['status'] === false || item['status'] === true) && item['location']))
+      return
+    }
+    if (status === true) {
+      setQuotesListDisplay(filter(quotesList, item => item['status'] === true && item['location']))
+      return
+    }
+    if (status === false) {
+      setQuotesListDisplay(filter(quotesList, item => (item['status'] === undefined || item['status'] === false) && item['location']))
+      return
+    }
+  }
+
+  const onUpdateListQuote = () => {
+    getQuotesApi()
+  }
 
   return (
     <SafeAreaView
       style={Layout.fill}>
-      <TabBarQuote colorHeightline={'#B2C249'} onChangeTab={index => { }} />
+      <TabBarQuote colorHeightline={'#B2C249'} onChangeTab={index => {
+        if (index === 0) onFilterStatus(undefined)
+        if (index === 1) onFilterStatus(false)
+        if (index === 2) onFilterStatus(true)
+      }} />
 
       <MapView
         style={styles.map}
@@ -65,14 +92,16 @@ const TabMapContainer = () => {
         }}
       >
         {
-          data.map(item => {
-            return <Marker key={item.id} coordinate={{ latitude: item.lat, longitude: item.lng }}>
-              <Callout onPress={() => { }}>
+          quotesListDisplay.map(item => {
+            return <Marker key={item.id} coordinate={{ latitude: item['location'].lat, longitude: item['location'].lng }}>
+              <Callout onPress={() => {
+                navigation.navigate('QuoteDetail', { item, onUpdateListQuote })
+              }}>
                 <View style={styles.markerContainer}>
                   <View>
-                    <Text style={styles.titleMarker}>{item.title}</Text>
+                    <Text style={styles.titleMarker}>{item['customer_name']}</Text>
                     <View style={{ height: Responsive.height(5) }} />
-                    <Text style={styles.subTitleMarker}>{item.description}</Text>
+                    <Text style={styles.subTitleMarker}>{item['job_name']}</Text>
                   </View>
                   <View style={{ width: Responsive.width(10) }} />
                   <TouchableOpacity>
@@ -108,12 +137,12 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   titleMarker: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
   },
   subTitleMarker: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(13),
     color: '#606A70',
   }

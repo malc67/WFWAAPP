@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Responsive.width(20),
   },
   textBack: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#B2C249'
   },
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderColor: '#A7B0B5',
     borderWidth: 1,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(14),
     borderRadius: Responsive.height(5),
     marginTop: Responsive.height(10),
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   },
   textButton: {
     color: '#FFFFFF',
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'NewJune-Bold',
     fontSize: Responsive.font(17)
   }
 

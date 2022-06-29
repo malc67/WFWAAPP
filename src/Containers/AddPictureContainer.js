@@ -15,22 +15,30 @@ import { useTranslation } from 'react-i18next'
 import { useTheme } from '@/Hooks'
 import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
 import { isEmpty } from 'lodash'
 import { Header, Avatar } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import CheckBox from '@react-native-community/checkbox';
+import { launchImageLibrary } from 'react-native-image-picker';
+import moment from 'moment'
 
-
+const ImageOptions = {
+  width: 500,
+  height: 500,
+  quality: 0.6,
+  mediaType: 'photo',
+};
 
 
 Responsive.setOptions({ width: 390, height: 844, enableOnlySmallSize: true });
 const AddPictureContainer = () => {
   const { t } = useTranslation()
   const navigation = useNavigation()
+  const route = useRoute()
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
 
+  const [picture, setPicture] = useState(route?.params?.picture);
 
 
   useFocusEffect(
@@ -44,6 +52,7 @@ const AddPictureContainer = () => {
               leftOption={
                 <TouchableOpacity
                   onPress={() => {
+                    route?.params?.onUpdatePicture(picture)
                     navigation.goBack();
                   }}
                   style={Layout.rowHCenter}>
@@ -55,10 +64,26 @@ const AddPictureContainer = () => {
           );
         },
       })
-    }, [navigation])
+    }, [navigation, picture])
   )
 
-
+  const imagePicker = () => {
+    launchImageLibrary(ImageOptions, async response => {
+      console.log('image response', response);
+      if (response.didCancel) {
+        console.log('Image Picker Canceled');
+      } else if (response.error) {
+        console.log('image picker error', response.error);
+      } else {
+        const source = {
+          name: moment().format('x') + ".jpeg",
+          uri: response.assets[0].uri,
+          type: "image/jpeg",
+        };
+        setPicture(source)
+      }
+    });
+  }
 
   return (
     <SafeAreaView
@@ -69,14 +94,23 @@ const AddPictureContainer = () => {
           contentContainerStyle={{ flexGrow: 1 }}>
 
           <View style={{ height: Responsive.height(20), width: '100%' }} />
-          
+
 
           <View style={[Layout.fullWidth, styles.inputContainer]}>
             <Text style={styles.inputLabel}>Upload Picture</Text>
             <TouchableOpacity
+              onPress={imagePicker}
               style={[Layout.fill, styles.uploadContainer]} >
-                <AntDesign name='clouduploado' color={'#606A70'} size={25} />
-              <Text style={styles.textUploadCompanyLogo}>Upload Company Logo</Text>
+              {
+                picture ? (
+                  <Image source={picture} style={styles.imagePicture} resizeMode={'contain'} />
+                ) : (
+                  <View style={Layout.colCenter}>
+                    <AntDesign name='clouduploado' color={'#606A70'} size={25} />
+                    <Text style={styles.textUploadPicture}>Upload Picture</Text>
+                  </View>
+                )
+              }
             </TouchableOpacity>
           </View>
 
@@ -99,13 +133,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: Responsive.width(20),
   },
   textBack: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#B2C249'
   },
   inputLabel: {
     color: '#606A70',
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(13)
   },
   inputContainer: {
@@ -123,11 +157,16 @@ const styles = StyleSheet.create({
     borderRadius: Responsive.height(5),
     marginTop: Responsive.height(10)
   },
-  textUploadCompanyLogo: {
-    fontFamily: 'Ubuntu-Regular',
+  textUploadPicture: {
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(13),
     color: '#606A70',
     marginTop: Responsive.height(5)
+  },
+  imagePicture: {
+    width: '100%',
+    height: '100%',
+    borderRadius: Responsive.height(5)
   },
 
 

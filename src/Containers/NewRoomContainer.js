@@ -8,7 +8,8 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  Switch
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -123,44 +124,49 @@ const NewRoomContainer = () => {
     <SafeAreaView
       style={Layout.fill}>
       <View style={[Layout.fill, Layout.column]}>
-        <ScrollView
-          style={Layout.fill}
-          contentContainerStyle={{ flexGrow: 1 }}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : null}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
+          style={{ flex: 1 }}
+        >
+          <ScrollView
+            style={Layout.fill}
+            contentContainerStyle={{ flexGrow: 1 }}>
 
-          <View style={{ height: Responsive.height(20), width: '100%' }} />
+            <View style={{ height: Responsive.height(20), width: '100%' }} />
 
-          <Text style={styles.header}>Room Name</Text>
-          <View style={styles.item}>
-            <Text style={[styles.title]}>Customer Name</Text>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder={'Required'}
-                value={customName}
-                onChangeText={(text) => setCustomName(text)}
-                placeholderTextColor={'#606A70'} />
+            <Text style={styles.header}>Room Name</Text>
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Custom Name</Text>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={'Required'}
+                  value={customName}
+                  onChangeText={(text) => setCustomName(text)}
+                  placeholderTextColor={'#606A70'} />
+              </View>
+              <View style={{ width: Responsive.width(15) }} />
             </View>
-            <View style={{ width: Responsive.width(15) }} />
-          </View>
-          <View style={styles.separator} />
-          {
-            DATA.map(item => {
-              return (
-                <View key={item['id']} style={Layout.column}>
-                  <TouchableOpacity
-                    onPress={() => onRoomSelected(item)}
-                    style={styles.item}>
-                    <Text style={styles.title}>{item['title']}</Text>
-                  </TouchableOpacity>
-                  <View style={styles.separator} />
-                </View>
-              )
-            })
-          }
+            <View style={styles.separator} />
+            {
+              DATA.map(item => {
+                return (
+                  <View key={item['id']} style={Layout.column}>
+                    <TouchableOpacity
+                      onPress={() => onRoomSelected(item)}
+                      style={styles.item}>
+                      <Text style={styles.title}>{item['title']}</Text>
+                    </TouchableOpacity>
+                    <View style={styles.separator} />
+                  </View>
+                )
+              })
+            }
 
-        </ScrollView>
+          </ScrollView>
 
-
+        </KeyboardAvoidingView>
 
       </View>
 
@@ -176,12 +182,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F1F1',
   },
   textBack: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#B2C249'
   },
   textSave: {
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'NewJune-Bold',
     fontSize: Responsive.font(17),
     color: '#B2C249'
   },
@@ -195,14 +201,14 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(20)
   },
   header: {
     fontSize: 14,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     textTransform: 'uppercase',
     color: '#A7B0B5',
     paddingHorizontal: Responsive.width(20),
@@ -210,13 +216,13 @@ const styles = StyleSheet.create({
     paddingBottom: Responsive.height(10)
   },
   value: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(20)
   },
   subValue: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#A7B0B5',
     paddingHorizontal: Responsive.width(20)
@@ -236,7 +242,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     color: '#434A4F',
     fontSize: Responsive.font(17),
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     paddingBottom: 0,
     paddingTop: 0,
     paddingHorizontal: Responsive.width(10)

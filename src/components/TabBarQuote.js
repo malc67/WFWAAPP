@@ -35,7 +35,7 @@ const TabBarQuote = ({ height, containStyle, textStyle, onChangeTab, initSelecte
         <TouchableOpacity
           onPress={() => onClickPositon(1)}
           style={[Layout.fill, getStyleBackground(1)]}>
-          <Text style={getStyleText(1)}>Pendding Quotes</Text>
+          <Text style={getStyleText(1)}>Pending Quotes</Text>
         </TouchableOpacity>
         <View style={styles.separator} />
         <TouchableOpacity
@@ -102,13 +102,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8
   },
   textStyle: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(13),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(5)
   },
   textStyleSSelected: {
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'NewJune-Bold',
     fontSize: Responsive.font(13),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(5)

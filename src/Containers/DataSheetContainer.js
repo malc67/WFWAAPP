@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F1F1',
   },
   textBack: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#B2C249'
   },

@@ -74,12 +74,12 @@ export default MainNavigator
 const styles = StyleSheet.create({
   tabTextNormal: {
     color: '#606A70',
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(11)
   },
   tabTextSelected: {
     color: '#606A70',
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'NewJune-Bold',
     fontSize: Responsive.font(11)
   },
 });

@@ -33,6 +33,13 @@ export default function () {
 
   const createWindow = async (quoteId, roomId, data) => {
     setLoading(true)
+    let picture = data['picture']
+    if (!isUndefined(picture) && !isEmpty(picture) && !isUndefined(picture?.uri) && !isEmpty(picture?.uri)) {
+      picture = await uploadImageToFirebase(picture?.uri)
+      data = { ...data, picture }
+    } else {
+      data = { ...data, picture: '' }
+    }
     firestore().collection('create_quote')
       .doc(quoteId)
       .collection('rooms')
@@ -68,6 +75,13 @@ export default function () {
 
   const updateWindow = async (quoteId, roomId, windowId, data) => {
     setLoading(true)
+    let picture = data['picture']
+    if (!isUndefined(picture) && !isEmpty(picture) && !isUndefined(picture?.uri) && !isEmpty(picture?.uri)) {
+      picture = await uploadImageToFirebase(picture?.uri)
+      data = { ...data, picture }
+    } else {
+      data = { ...data, picture: '' }
+    }
     firestore().collection('create_quote')
       .doc(quoteId)
       .collection('rooms')
@@ -82,6 +96,30 @@ export default function () {
         setLoading(false)
         console.log('updateWindow', error)
       })
+  }
+
+  const uploadImageToFirebase = async (path, callback) => {
+    return new Promise((resolve, reject) => {
+      const extenstion = path.split('.').pop()
+      const fileName = `${moment().format('x')}.${extenstion}`
+      const task = storage().ref(`images/${fileName}`).putFile(path)
+      task.on('state_changed', snapshot => {
+        if (snapshot.state == 'success') {
+          snapshot.ref.getDownloadURL().then((response) => {
+            resolve(response)
+          }).catch(error => {
+            reject(error)
+          })
+        } else {
+          if (callback != undefined) {
+            callback(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100))
+          }
+        }
+      })
+      task.catch(error => {
+        reject(error)
+      })
+    });
   }
 
 

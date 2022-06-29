@@ -20,7 +20,9 @@ import { Header, Avatar, Loader } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import CheckBox from '@react-native-community/checkbox';
+import email from 'react-native-email'
+import Mailer from 'react-native-mail';
+import moment from 'moment'
 
 
 
@@ -89,6 +91,7 @@ const QuoteDetailContainer = () => {
   useEffect(() => {
     const { item } = route?.params
     setData(item)
+    console.log('XXX->', item)
     getRoomsApi(item['id'], true)
   }, [route])
 
@@ -123,11 +126,478 @@ const QuoteDetailContainer = () => {
     route?.params?.onUpdateListQuote()
   }
 
+  const onUpdateQuote = (data) => {
+    setData(data)
+    route?.params?.onUpdateListQuote()
+  }
+
 
   const getTextDisplayNotes = () => {
     if (data['notes'] && data['notes'].length > 15) return `${data['notes'].substring(0, 15)}...`
     return data['notes']
   }
+
+  const getTotalArea = () => {
+    let result = 0
+    if (rooms) {
+      for (let room of rooms) {
+        let glassArea = 0
+        if (room['windows']) {
+          room['windows'].forEach(item => {
+            glassArea += item['width'] / 1000 * item['height'] / 1000 * item['quantity']
+          })
+        }
+        result += glassArea
+      }
+    }
+    return result
+  }
+
+  const getTotalFilmRemoval = () => {
+    let result = 0
+    if (rooms) {
+      for (let room of rooms) {
+        let filmRemovalArea = 0
+        if (room['windows']) {
+          room['windows'].forEach(item => {
+            if (item['filmRemovalRequired']) {
+              filmRemovalArea += item['width'] / 1000 * item['height'] / 1000 * item['quantity']
+            }
+          })
+        }
+        result += filmRemovalArea
+      }
+    }
+    return result
+  }
+
+  const getAreaRoom = () => {
+    let result = ''
+    if (rooms) {
+      for (let room of rooms) {
+        let glassArea = 0
+        if (room['windows']) {
+          room['windows'].forEach(item => {
+            glassArea += item['width'] / 1000 * item['height'] / 1000 * item['quantity']
+          })
+        }
+        result += `
+        <tr>
+            <td>${room['title']}</td>
+            <td>${glassArea}</td>
+            <td>${room['notes'] ?? ''}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>`
+      }
+    }
+    return result
+  }
+
+  const getWindowRoom = () => {
+    let result = ''
+    if (rooms) {
+      let index = 1
+      for (let room of rooms) {
+        for (let window of room['windows']) {
+          result += `
+              <tr>
+                  <td>${index}</td>
+                  <td>${room['title']}</td>
+                  <td>${window['tintFilm']}</td>
+                  <td>${window['quantity']}</td>
+                  <td>${window['width']} (mm)</td>
+                  <td>${window['height']} (mm)</td>
+                  <td>${window['width'] / 1000 * window['height'] / 1000 * window['quantity']} (m²)</td>
+                  <td>${window['frameType']}</td>
+                  <td>${window['glassType']}</td>
+                  <td>${window['includeCorking']}</td>
+                  <td>${window['filmRemovalRequired']}</td>
+                  <td>${window['ladderType']}</td>
+                  <td>${window['notes']}</td>
+              </tr>`
+          index++
+        }
+      }
+    }
+    return result
+  }
+
+
+  const getHtmlCutList = () => {
+    return `
+    <table>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Job</td>
+        <td>${data['job_name']}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Quote</td>
+        <td>${data['quote_number']}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Client</td>
+        <td>${data['customer_name']}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Address</td>
+        <td>${data['site_address']}, ${data['site_state']}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Billing Address</td>
+        <td>${data['billing_address']}, ${data['billing_state']}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Collection /dispatch Date </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Room</td>
+        <td>Area (m²)</td>
+        <td>Notes</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    ${getAreaRoom()}
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Windows</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Room</td>
+        <td>Film</td>
+        <td>Qty</td>
+        <td>W (mm)</td>
+        <td>H (mm)</td>
+        <td>Area (m²)</td>
+        <td>Frame</td>
+        <td>Glass</td>
+        <td>Corking</td>
+        <td>Removal</td>
+        <td>Ladder</td>
+        <td>Notes</td>
+    </tr>
+    ${getWindowRoom()}
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Total area: ${getTotalArea()}m²</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Total corking: 0.00m</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Total film removal: ${getTotalFilmRemoval()}m²</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>`
+  }
+
+
+  const handleEmail = () => {
+    const to = [data['contact_email']]
+    const cc = ['malc@windowfilmswa.com.au']
+    const subject = `Window Film WA Quote ${data['quote_number']}`
+    Mailer.mail({
+      subject: subject,
+      recipients: to,
+      ccRecipients: cc,
+      bccRecipients: [],
+      body: getHtmlCutList(),
+      customChooserTitle: 'Send Mail',
+      isHTML: true,
+      attachments: []
+    }, (error, event) => {
+      if (event != 'cancelled') {
+        email(to, {
+          cc: cc,
+          bcc: [],
+          subject: subject,
+          body: getHtmlCutList(),
+          checkCanOpen: true
+        }).catch(console.error)
+      }
+    });
+  }
+
+  console.log('rooms', rooms)
 
   return (
     <SafeAreaView
@@ -141,7 +611,7 @@ const QuoteDetailContainer = () => {
 
           <Text style={styles.header}>Browse Tint Films</Text>
           <TouchableOpacity
-            onPress={() => { }}
+            onPress={() => navigation.navigate('RequestQuote', { item: data, onUpdateListQuote, onUpdateQuote })}
             style={styles.item}>
             <Text style={styles.title}>Client</Text>
             <Text style={styles.subValue}>{data['customer_name']}</Text>
@@ -216,6 +686,7 @@ const QuoteDetailContainer = () => {
           </TouchableOpacity>
           <View style={{ width: Responsive.width(20) }} />
           <TouchableOpacity
+            onPress={handleEmail}
             style={[Layout.fill, Layout.center, styles.buttonSend]}>
             <Text style={[styles.textButton, { color: '#434A4F' }]}>Send Cut List</Text>
           </TouchableOpacity>
@@ -236,12 +707,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F1F1',
   },
   textBack: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#B2C249'
   },
   textSave: {
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'NewJune-Bold',
     fontSize: Responsive.font(17),
     color: '#B2C249'
   },
@@ -255,14 +726,14 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(20)
   },
   header: {
     fontSize: 14,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     textTransform: 'uppercase',
     color: '#A7B0B5',
     paddingHorizontal: Responsive.width(20),
@@ -270,13 +741,13 @@ const styles = StyleSheet.create({
     paddingBottom: Responsive.height(10)
   },
   value: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(20)
   },
   subValue: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#A7B0B5',
     paddingHorizontal: Responsive.width(20)
@@ -310,7 +781,7 @@ const styles = StyleSheet.create({
   },
   textButton: {
     color: '#FFFFFF',
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'NewJune-Bold',
     fontSize: Responsive.font(17)
   }
 

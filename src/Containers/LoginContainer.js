@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     marginTop: Responsive.height(20)
   },
   header: {
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'NewJune-Bold',
     fontSize: Responsive.font(34),
     color: '#606A70',
     marginTop: Responsive.height(90)
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     color: '#606A70',
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(13)
   },
   inputWrapper: {
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     marginRight: Responsive.width(10)
   },
   input: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#606A70',
     paddingTop: 0,
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Responsive.width(10)
   },
   textError: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(12),
     color: '#F55549',
     marginTop: Responsive.height(5)
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
   },
   textForgotPW: {
     color: '#485973',
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(15),
   },
   actionWrapper: {
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   textButton: {
     color: '#FFFFFF',
     textTransform: 'uppercase',
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'NewJune-Bold',
     fontSize: Responsive.font(17)
   },
   buttonSignUp: {
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   },
   textdontHaveAccount: {
     color: '#485973',
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(15),
   },
 });

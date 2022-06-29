@@ -8,7 +8,9 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  Switch
+  Switch,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -19,9 +21,7 @@ import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/nativ
 import { isEmpty } from 'lodash'
 import { Header, Avatar, Loader } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
-import Icon from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import CheckBox from '@react-native-community/checkbox';
+import { navigateAndSimpleReset } from "@/Navigators/utils";
 import moment from 'moment'
 
 
@@ -34,7 +34,7 @@ const RequestQuoteContainer = () => {
   const route = useRoute()
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
 
-  const [loading, errors, , , createQuote] = useQuote()
+  const [loading, errors, , , createQuote, updateQuote] = useQuote()
 
   const [quoteNumber, setQuoteNumber] = useState(moment().format('DDMMYYHHMMSS'))
   const [customerName, setCustomerName] = useState('')
@@ -52,6 +52,10 @@ const RequestQuoteContainer = () => {
   const [billingState, setBillingState] = useState('')
 
 
+  const [data, setData] = useState(route?.params?.item)
+  const [film, setFilm] = useState(route?.params?.film)
+
+
 
   useFocusEffect(
     useCallback(() => {
@@ -59,12 +63,15 @@ const RequestQuoteContainer = () => {
         header: () => {
           return (
             <Header
-              text={'New Quote'}
+              text={data ? 'Update Quote' : 'New Quote'}
               type={'normal'}
               rightOption={<TouchableOpacity
                 onPress={() => {
-                  onCreateQuote()
-                  navigation.goBack()
+                  if (data) {
+                    onUpdateQuote()
+                  } else {
+                    onCreateQuote()
+                  }
                 }}>
                 <Text style={styles.textSave}>Save</Text>
               </TouchableOpacity>}
@@ -82,8 +89,30 @@ const RequestQuoteContainer = () => {
           );
         },
       })
-    }, [navigation, quoteNumber, customerName, jobName, siteAddress, siteState, name, email, phone, billingAddress, billingState])
+    }, [navigation, data, quoteNumber, customerName, jobName, siteAddress, siteState, name, email, phone, billingAddress, billingState])
   )
+
+
+  useEffect(() => {
+    const { film, item } = route?.params
+    if (film) {
+      setFilm(film)
+    }
+    if (item) {
+      setData(item)
+      setQuoteNumber(item['quote_number'])
+      setCustomerName(item['customer_name'])
+      setJobName(item['job_name'])
+      setSiteAddress(item['site_address'])
+      setSiteState(item['site_state'])
+      setName(item['contact_name'])
+      setEmail(item['contact_email'])
+      setPhone(item['contact_phone'])
+      setMobile(item['contact_phone'])
+      setBillingAddress(item['billing_address'])
+      setBillingState(item['billing_state'])
+    }
+  }, [route])
 
 
   const onCreateQuote = () => {
@@ -100,8 +129,37 @@ const RequestQuoteContainer = () => {
       "billing_state": billingState,
       "create_date": moment().valueOf()
     }
-    createQuote(data)
+    if (film) {
+      data['tint_film'] = film['name']
+      createQuote(data, (quote) => {
+        route?.params?.onUpdateListQuote()
+        navigation.goBack()
+        navigation.navigate('QuoteDetail', { item: quote, onUpdateListQuote: route?.params?.onUpdateListQuote() })
+      })
+    } else {
+      createQuote(data)
+      route?.params?.onUpdateListQuote()
+      navigation.goBack()
+    }
+  }
+
+  const onUpdateQuote = () => {
+    let dataUpdate = {
+      "quote_number": quoteNumber,
+      "customer_name": customerName,
+      "job_name": jobName,
+      "site_address": siteAddress,
+      "site_state": siteState,
+      "contact_name": name,
+      "contact_email": email,
+      "contact_phone": phone,
+      "billing_address": billingAddress,
+      "billing_state": billingState
+    }
+    updateQuote(data['id'], dataUpdate)
+    route?.params?.onUpdateQuote({ ...data, ...dataUpdate })
     route?.params?.onUpdateListQuote()
+    navigation.goBack()
   }
 
 
@@ -109,180 +167,186 @@ const RequestQuoteContainer = () => {
     <SafeAreaView
       style={Layout.fill}>
       <View style={[Layout.fill, Layout.column]}>
-        <ScrollView
-          style={Layout.fill}
-          contentContainerStyle={{ flexGrow: 1 }}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : null}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
+          style={{ flex: 1 }}
+        >
+          <ScrollView
+            style={Layout.fill}
+            contentContainerStyle={{ flexGrow: 1 }}>
 
-          <View style={{ height: Responsive.height(20), width: '100%' }} />
-          <View style={styles.item}>
-            <Text style={[styles.title]}>Quote Number</Text>
-            <View style={[styles.inputContainer, errors['quoteNumber'] ? { borderColor: '#F55549' } : {}]}>
-              <TextInput
-                style={styles.input}
-                placeholder={'Required'}
-                value={quoteNumber}
-                onChangeText={(text) => setQuoteNumber(text)}
-                placeholderTextColor={'#606A70'} />
+            <View style={{ height: Responsive.height(20), width: '100%' }} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Quote Number</Text>
+              <View style={[styles.inputContainer, errors['quoteNumber'] ? { borderColor: '#F55549' } : {}]}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={'Required'}
+                  value={quoteNumber}
+                  onChangeText={(text) => setQuoteNumber(text)}
+                  placeholderTextColor={'#606A70'} />
+              </View>
+              <View style={{ width: Responsive.width(15) }} />
             </View>
-            <View style={{ width: Responsive.width(15) }} />
-          </View>
-          <View style={styles.separator} />
-          <View style={styles.item}>
-            <Text style={[styles.title]}>Customer Name</Text>
-            <View style={[styles.inputContainer, errors['customerName'] ? { borderColor: '#F55549' } : {}]}>
-              <TextInput
-                style={styles.input}
-                placeholder={'Required'}
-                value={customerName}
-                onChangeText={(text) => setCustomerName(text)}
-                placeholderTextColor={'#606A70'} />
+            <View style={styles.separator} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Customer Name</Text>
+              <View style={[styles.inputContainer, errors['customerName'] ? { borderColor: '#F55549' } : {}]}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={'Required'}
+                  value={customerName}
+                  onChangeText={(text) => setCustomerName(text)}
+                  placeholderTextColor={'#606A70'} />
+              </View>
+              <View style={{ width: Responsive.width(15) }} />
             </View>
-            <View style={{ width: Responsive.width(15) }} />
-          </View>
-          <View style={styles.separator} />
-          <View style={styles.item}>
-            <Text style={[styles.title]}>Job Name</Text>
-            <View style={[styles.inputContainer, errors['jobName'] ? { borderColor: '#F55549' } : {}]}>
-              <TextInput
-                style={styles.input}
-                placeholder={'Required'}
-                value={jobName}
-                onChangeText={(text) => setJobName(text)}
-                placeholderTextColor={'#606A70'} />
+            <View style={styles.separator} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Job Name</Text>
+              <View style={[styles.inputContainer, errors['jobName'] ? { borderColor: '#F55549' } : {}]}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={'Required'}
+                  value={jobName}
+                  onChangeText={(text) => setJobName(text)}
+                  placeholderTextColor={'#606A70'} />
+              </View>
+              <View style={{ width: Responsive.width(15) }} />
             </View>
-            <View style={{ width: Responsive.width(15) }} />
-          </View>
 
-          <Text style={styles.header}>Site Address</Text>
-          <View style={styles.item}>
-            <Text style={[styles.title]}>Address</Text>
-            <View style={[styles.inputContainer, errors['siteAddress'] ? { borderColor: '#F55549' } : {}]}>
-              <TextInput
-                style={styles.input}
-                placeholder={'Required'}
-                value={siteAddress}
-                onChangeText={(text) => {
-                  setSiteAddress(text)
-                  if(asAbove) setBillingAddress(text)
+            <Text style={styles.header}>Site Address</Text>
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Address</Text>
+              <View style={[styles.inputContainer, errors['siteAddress'] ? { borderColor: '#F55549' } : {}]}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={'Required'}
+                  value={siteAddress}
+                  onChangeText={(text) => {
+                    setSiteAddress(text)
+                    if (asAbove) setBillingAddress(text)
+                  }}
+                  placeholderTextColor={'#606A70'} />
+              </View>
+              <View style={{ width: Responsive.width(15) }} />
+            </View>
+            <View style={styles.separator} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Suburb / State</Text>
+              <View style={[styles.inputContainer, errors['siteState'] ? { borderColor: '#F55549' } : {}]}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={'Required'}
+                  value={siteState}
+                  onChangeText={(text) => {
+                    setSiteState(text)
+                    if (asAbove) setBillingState(text)
+                  }}
+                  placeholderTextColor={'#606A70'} />
+              </View>
+              <View style={{ width: Responsive.width(15) }} />
+            </View>
+
+            <Text style={styles.header}>Contact</Text>
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Name</Text>
+              <View style={[styles.inputContainer, errors['name'] ? { borderColor: '#F55549' } : {}]}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={'Required'}
+                  value={name}
+                  onChangeText={(text) => setName(text)}
+                  placeholderTextColor={'#606A70'} />
+              </View>
+              <View style={{ width: Responsive.width(15) }} />
+            </View>
+            <View style={styles.separator} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Email</Text>
+              <View style={[styles.inputContainer, errors['email'] ? { borderColor: '#F55549' } : {}]}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={'Required'}
+                  value={email}
+                  onChangeText={(text) => setEmail(text)}
+                  placeholderTextColor={'#606A70'} />
+              </View>
+              <View style={{ width: Responsive.width(15) }} />
+            </View>
+            <View style={styles.separator} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Phone</Text>
+              <View style={[styles.inputContainer, errors['phone'] ? { borderColor: '#F55549' } : {}]}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={'Required'}
+                  value={phone}
+                  onChangeText={(text) => setPhone(text)}
+                  placeholderTextColor={'#606A70'} />
+              </View>
+              <View style={{ width: Responsive.width(15) }} />
+            </View>
+            <View style={styles.separator} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Mobile</Text>
+              <View style={[styles.inputContainer, errors['mobile'] ? { borderColor: '#F55549' } : {}]}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={'Required'}
+                  value={mobile}
+                  onChangeText={(text) => setMobile(text)}
+                  placeholderTextColor={'#606A70'} />
+              </View>
+              <View style={{ width: Responsive.width(15) }} />
+            </View>
+
+            <View style={[Layout.rowHCenter, { marginRight: Responsive.width(20) }]}>
+              <Text style={[styles.header]}>Billing Address</Text>
+              <View style={Layout.fill} />
+              <Switch
+                ios_backgroundColor={"#E0E0E0"}
+                thumbColor={'#FFFFFF'}
+                trackColor={{ true: '#B2C249', false: '#E0E0E0' }}
+                onValueChange={(value) => {
+                  setAsAbove(value)
+                  if (value) {
+                    setBillingAddress(siteAddress)
+                    setBillingState(siteState)
+                  }
                 }}
-                placeholderTextColor={'#606A70'} />
+                value={asAbove} />
             </View>
-            <View style={{ width: Responsive.width(15) }} />
-          </View>
-          <View style={styles.separator} />
-          <View style={styles.item}>
-            <Text style={[styles.title]}>Suburb / State</Text>
-            <View style={[styles.inputContainer, errors['siteState'] ? { borderColor: '#F55549' } : {}]}>
-              <TextInput
-                style={styles.input}
-                placeholder={'Required'}
-                value={siteState}
-                onChangeText={(text) => {
-                  setSiteState(text)
-                  if(asAbove) setBillingState(text)
-                }}
-                placeholderTextColor={'#606A70'} />
-            </View>
-            <View style={{ width: Responsive.width(15) }} />
-          </View>
 
-          <Text style={styles.header}>Contact</Text>
-          <View style={styles.item}>
-            <Text style={[styles.title]}>Name</Text>
-            <View style={[styles.inputContainer, errors['name'] ? { borderColor: '#F55549' } : {}]}>
-              <TextInput
-                style={styles.input}
-                placeholder={'Required'}
-                value={name}
-                onChangeText={(text) => setName(text)}
-                placeholderTextColor={'#606A70'} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Address</Text>
+              <View style={[styles.inputContainer, errors['billingAddress'] ? { borderColor: '#F55549' } : {}]}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={'Required'}
+                  value={billingAddress}
+                  onChangeText={(text) => setBillingAddress(text)}
+                  placeholderTextColor={'#606A70'} />
+              </View>
+              <View style={{ width: Responsive.width(15) }} />
             </View>
-            <View style={{ width: Responsive.width(15) }} />
-          </View>
-          <View style={styles.separator} />
-          <View style={styles.item}>
-            <Text style={[styles.title]}>Email</Text>
-            <View style={[styles.inputContainer, errors['email'] ? { borderColor: '#F55549' } : {}]}>
-              <TextInput
-                style={styles.input}
-                placeholder={'Required'}
-                value={email}
-                onChangeText={(text) => setEmail(text)}
-                placeholderTextColor={'#606A70'} />
+            <View style={styles.separator} />
+            <View style={styles.item}>
+              <Text style={[styles.title]}>Suburb / State</Text>
+              <View style={[styles.inputContainer, errors['billingState'] ? { borderColor: '#F55549' } : {}]}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={'Required'}
+                  value={billingState}
+                  onChangeText={(text) => setBillingState(text)}
+                  placeholderTextColor={'#606A70'} />
+              </View>
+              <View style={{ width: Responsive.width(15) }} />
             </View>
-            <View style={{ width: Responsive.width(15) }} />
-          </View>
-          <View style={styles.separator} />
-          <View style={styles.item}>
-            <Text style={[styles.title]}>Phone</Text>
-            <View style={[styles.inputContainer, errors['phone'] ? { borderColor: '#F55549' } : {}]}>
-              <TextInput
-                style={styles.input}
-                placeholder={'Required'}
-                value={phone}
-                onChangeText={(text) => setPhone(text)}
-                placeholderTextColor={'#606A70'} />
-            </View>
-            <View style={{ width: Responsive.width(15) }} />
-          </View>
-          <View style={styles.separator} />
-          <View style={styles.item}>
-            <Text style={[styles.title]}>Mobile</Text>
-            <View style={[styles.inputContainer, errors['mobile'] ? { borderColor: '#F55549' } : {}]}>
-              <TextInput
-                style={styles.input}
-                placeholder={'Required'}
-                value={mobile}
-                onChangeText={(text) => setMobile(text)}
-                placeholderTextColor={'#606A70'} />
-            </View>
-            <View style={{ width: Responsive.width(15) }} />
-          </View>
 
-          <View style={[Layout.rowHCenter, { marginRight: Responsive.width(20) }]}>
-            <Text style={[styles.header]}>Billing Address</Text>
-            <View style={Layout.fill}/>
-            <Switch
-              ios_backgroundColor={"#E0E0E0"}
-              thumbColor={'#FFFFFF'}
-              trackColor={{ true: '#B2C249', false: '#E0E0E0' }}
-              onValueChange={(value) => { 
-                setAsAbove(value)
-                if(value){
-                  setBillingAddress(siteAddress)
-                  setBillingState(siteState)
-                }
-              }}
-              value={asAbove} />
-          </View>
-
-          <View style={styles.item}>
-            <Text style={[styles.title]}>Address</Text>
-            <View style={[styles.inputContainer, errors['billingAddress'] ? { borderColor: '#F55549' } : {}]}>
-              <TextInput
-                style={styles.input}
-                placeholder={'Required'}
-                value={billingAddress}
-                onChangeText={(text) => setBillingAddress(text)}
-                placeholderTextColor={'#606A70'} />
-            </View>
-            <View style={{ width: Responsive.width(15) }} />
-          </View>
-          <View style={styles.separator} />
-          <View style={styles.item}>
-            <Text style={[styles.title]}>Suburb / State</Text>
-            <View style={[styles.inputContainer, errors['billingState'] ? { borderColor: '#F55549' } : {}]}>
-              <TextInput
-                style={styles.input}
-                placeholder={'Required'}
-                value={billingState}
-                onChangeText={(text) => setBillingState(text)}
-                placeholderTextColor={'#606A70'} />
-            </View>
-            <View style={{ width: Responsive.width(15) }} />
-          </View>
-
-        </ScrollView>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </View>
       <Loader visible={loading} />
     </SafeAreaView>
@@ -297,12 +361,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F1F1',
   },
   textBack: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#B2C249'
   },
   textSave: {
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'NewJune-Bold',
     fontSize: Responsive.font(17),
     color: '#B2C249'
   },
@@ -316,14 +380,14 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(20)
   },
   header: {
     fontSize: 14,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     textTransform: 'uppercase',
     color: '#A7B0B5',
     paddingHorizontal: Responsive.width(20),
@@ -331,13 +395,13 @@ const styles = StyleSheet.create({
     paddingBottom: Responsive.height(10)
   },
   value: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(20)
   },
   subValue: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#A7B0B5',
     paddingHorizontal: Responsive.width(20)
@@ -357,7 +421,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     color: '#B2C249',
     fontSize: Responsive.font(17),
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     paddingTop: 0,
     paddingBottom: 0,
     paddingHorizontal: Responsive.width(10)

@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     flex: 1,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(10)

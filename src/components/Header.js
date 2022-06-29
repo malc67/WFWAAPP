@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   textStyleLarge: {
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'NewJune-Bold',
     fontSize: Responsive.font(34),
     color: '#434A4F'
   },
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   textStyleNormal: {
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'NewJune-Bold',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     textAlign: 'center'

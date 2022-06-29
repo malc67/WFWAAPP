@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: Responsive.height(8)
   },
   title: {
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'NewJune-Bold',
     fontSize: Responsive.font(13)
   }
 });

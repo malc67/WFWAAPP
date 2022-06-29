@@ -120,13 +120,13 @@ const styles = StyleSheet.create({
     paddingTop: Responsive.height(43)
   },
   textName: {
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'NewJune-Bold',
     fontSize: Responsive.font(48),
     color: '#1D1D1D',
     marginTop: Responsive.height(10)
   },
   textSub: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     marginTop: Responsive.height(5)
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   },
   itemTitle: {
     flex: 1,
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(17),
     color: '#434A4F',
     paddingHorizontal: Responsive.width(20)
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     tintColor: '#B2C249'
   },
   textVersion: {
-    fontFamily: 'Ubuntu-Regular',
+    fontFamily: 'NewJune',
     fontSize: Responsive.font(13),
     color: '#606A70',
     marginTop: Responsive.height(20),
