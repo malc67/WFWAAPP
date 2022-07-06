@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import { navigateAndSimpleReset } from "@/Navigators/utils";
 
 import { useDispatch } from 'react-redux'
-import { updateInfo, updateBussinessProfile, clearAuth } from '@/Store/Auth'
+import { updateInfo, updateBussinessProfile, updateSettingPref, clearAuth } from '@/Store/Auth'
 
 
 const regexEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -64,6 +64,7 @@ export default function () {
             .then(documentSnapshot => {
               if (documentSnapshot.exists) {
                 onUpdateBussinessProfile(documentSnapshot.data())
+                getSettingPref(response.user.uid)
                 navigateAndSimpleReset('Main')
               } else {
                 navigation.navigate('BussinessProfile', { isEditProfile: false })
@@ -83,6 +84,19 @@ export default function () {
         if (error.code === 'auth/wrong-password') {
           setErrors({ password: 'You have entered an invalid password' })
         }
+      })
+  }
+
+  const getSettingPref = async (uid) => {
+    firestore()
+      .collection('Settings')
+      .doc(uid)
+      .get()
+      .then(async (doc) => {
+        dispatch(updateSettingPref({ setting: doc.data() }))
+      })
+      .catch((error) => {
+        console.log(error)
       })
   }
 

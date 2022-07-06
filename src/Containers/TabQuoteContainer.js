@@ -78,7 +78,7 @@ const TabQuoteContainer = () => {
 
   const Item = ({ item }) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate('QuoteDetail', { item, onUpdateListQuote })}
+      onPress={() => navigation.navigate('QuoteDetail', { item, from: 'Quotes', onUpdateListQuote })}
       style={styles.item}>
       <View style={styles.itemHeader}>
         <Text style={styles.title}>{item['customer_name']}</Text>

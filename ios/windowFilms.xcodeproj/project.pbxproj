@@ -73,7 +73,7 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = windowFilms/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		82E6B04BA38B400F971A86F8 /* Ubuntu-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Ubuntu-Italic.ttf"; path = "../fonts/Ubuntu-Italic.ttf"; sourceTree = "<group>"; };
 		8CE8F60935CC7F1EA8FB7E0E /* libPods-windowFilms.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-windowFilms.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8E7FEBBA286BC92500A16061 /* windowFilms.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = windowFilms.entitlements; path = windowFilms/windowFilms.entitlements; sourceTree = "<group>"; };
+		8EB6D6F22875048400CDC9CF /* windowFilms.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = windowFilms.entitlements; path = windowFilms/windowFilms.entitlements; sourceTree = "<group>"; };
 		95E70A37FF0645358F01EB6B /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		968A20F8BD0245E30FBD22A5 /* Pods-windowFilms.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-windowFilms.release.xcconfig"; path = "Target Support Files/Pods-windowFilms/Pods-windowFilms.release.xcconfig"; sourceTree = "<group>"; };
 		A8A496B83138A0046DC1D49A /* Pods-windowFilms-windowFilmsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-windowFilms-windowFilmsTests.release.xcconfig"; path = "Target Support Files/Pods-windowFilms-windowFilmsTests/Pods-windowFilms-windowFilmsTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -129,7 +129,7 @@
 		13B07FAE1A68108700A75B9A /* windowFilms */ = {
 			isa = PBXGroup;
 			children = (
-				8E7FEBBA286BC92500A16061 /* windowFilms.entitlements */,
+				8EB6D6F22875048400CDC9CF /* windowFilms.entitlements */,
 				5A660C61285BB4940026D9D8 /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -665,7 +665,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = windowFilms/windowFilms.entitlements;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = C74474Q88T;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = windowFilms/Info.plist;
@@ -691,7 +691,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = windowFilms/windowFilms.entitlements;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = C74474Q88T;
 				INFOPLIST_FILE = windowFilms/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;

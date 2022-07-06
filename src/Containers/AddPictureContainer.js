@@ -20,8 +20,10 @@ import { isEmpty } from 'lodash'
 import { Header, Avatar } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { launchImageLibrary } from 'react-native-image-picker';
+import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import moment from 'moment'
+import SheetMenu from 'react-native-sheetmenu'
+
 
 const ImageOptions = {
   width: 500,
@@ -57,14 +59,14 @@ const AddPictureContainer = () => {
                   }}
                   style={Layout.rowHCenter}>
                   <Image source={Images.ic_back} />
-                  <Text style={styles.textBack}>Room</Text>
+                  <Text style={styles.textBack}>{route?.params?.from}</Text>
                 </TouchableOpacity>
               }
             />
           );
         },
       })
-    }, [navigation, picture])
+    }, [navigation, route, picture])
   )
 
   const imagePicker = () => {
@@ -85,6 +87,41 @@ const AddPictureContainer = () => {
     });
   }
 
+  const imageCameraPicker = () => {
+    launchCamera(ImageOptions, async response => {
+      console.log('image response', response);
+      if (response.didCancel) {
+        console.log('Image Picker Canceled');
+      } else if (response.error) {
+        console.log('image picker error', response.error);
+      } else {
+        const source = {
+          name: moment().format('x') + ".jpeg",
+          uri: response.assets[0].uri,
+          type: "image/jpeg",
+        };
+        setPicture(source)
+      }
+    });
+  }
+
+  const onOptionPickerImage = () => {
+    SheetMenu.show({
+      actions: [{
+        title: "Camera",
+        onPress: () => {
+          imageCameraPicker()
+        },
+      },
+      {
+        title: "Library",
+        onPress: () => {
+          imagePicker()
+        },
+      }]
+    })
+  }
+
   return (
     <SafeAreaView
       style={Layout.fill}>
@@ -99,7 +136,7 @@ const AddPictureContainer = () => {
           <View style={[Layout.fullWidth, styles.inputContainer]}>
             <Text style={styles.inputLabel}>Upload Picture</Text>
             <TouchableOpacity
-              onPress={imagePicker}
+              onPress={onOptionPickerImage}
               style={[Layout.fill, styles.uploadContainer]} >
               {
                 picture ? (

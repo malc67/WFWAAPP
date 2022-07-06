@@ -11,7 +11,7 @@ import {
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { useQuote, useRoom, useTheme } from '@/Hooks'
+import { useAuth, useQuote, useRoom, useTheme } from '@/Hooks'
 import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
@@ -34,9 +34,11 @@ const QuoteDetailContainer = () => {
   const route = useRoute()
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
 
-  const [, , , , , updateQuote, deleteQuote] = useQuote()
+  const { profile, setting } = useAuth().Data
 
-  const [loading, errors, rooms, getRoomsApi, createRoom, ,] = useRoom()
+  const [loadingQuote, , , , , updateQuote, deleteQuote] = useQuote()
+
+  const [loadingRoom, errors, rooms, getRoomsApi, createRoom, ,] = useRoom()
 
   const [data, setData] = useState(route?.params?.item)
 
@@ -58,7 +60,6 @@ const QuoteDetailContainer = () => {
                         text: "Yes",
                         onPress: () => {
                           onDeleteQuote()
-                          navigation.goBack()
                         },
                       },
                       {
@@ -77,7 +78,7 @@ const QuoteDetailContainer = () => {
                   }}
                   style={Layout.rowHCenter}>
                   <Image source={Images.ic_back} />
-                  <Text style={styles.textBack}>Map</Text>
+                  <Text style={styles.textBack}>{route?.params?.from}</Text>
                 </TouchableOpacity>
               }
             />
@@ -99,12 +100,14 @@ const QuoteDetailContainer = () => {
   const onAddNewRoom = (item) => {
     createRoom(data['id'], item)
     route?.params?.onUpdateListQuote()
+    getRoomsApi(data['id'], true)
   }
 
   const onUpdateTintFilm = (film) => {
     updateQuote(data['id'], { tint_film: film['name'] })
     setData({ ...data, tint_film: film['name'] })
     route?.params?.onUpdateListQuote()
+    getRoomsApi(data['id'], true)
   }
 
   const onUpdateNotes = (notes) => {
@@ -118,17 +121,21 @@ const QuoteDetailContainer = () => {
   }
 
   const onDeleteQuote = () => {
-    deleteQuote(data['id'])
-    route?.params?.onUpdateListQuote()
+    deleteQuote(data['id'], () => {
+      route?.params?.onUpdateListQuote()
+      navigation.goBack()
+    })
   }
 
   const onUpdateListQuote = () => {
     route?.params?.onUpdateListQuote()
+    getRoomsApi(data['id'], true)
   }
 
   const onUpdateQuote = (data) => {
     setData(data)
     route?.params?.onUpdateListQuote()
+    getRoomsApi(data['id'], true)
   }
 
 
@@ -150,7 +157,7 @@ const QuoteDetailContainer = () => {
         result += glassArea
       }
     }
-    return result
+    return Math.round(result * 100) / 100
   }
 
   const getTotalFilmRemoval = () => {
@@ -168,7 +175,7 @@ const QuoteDetailContainer = () => {
         result += filmRemovalArea
       }
     }
-    return result
+    return Math.round(result * 100) / 100
   }
 
   const getAreaRoom = () => {
@@ -182,21 +189,11 @@ const QuoteDetailContainer = () => {
           })
         }
         result += `
-        <tr>
-            <td>${room['title']}</td>
-            <td>${glassArea}</td>
-            <td>${room['notes'] ?? ''}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>`
+              <tr style="border: 1px solid #6d6d6d;border-collapse: collapse;">
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${room['title']}</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${Math.round(glassArea * 100) / 100}</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${room['notes'] ?? ''}</td>
+              </tr>`
       }
     }
     return result
@@ -207,22 +204,23 @@ const QuoteDetailContainer = () => {
     if (rooms) {
       let index = 1
       for (let room of rooms) {
-        for (let window of room['windows']) {
+        for (let window of room['windows'] ?? []) {
+          let area = Math.round(window['width'] / 1000 * window['height'] / 1000 * window['quantity'] * 100) / 100
           result += `
-              <tr>
-                  <td>${index}</td>
-                  <td>${room['title']}</td>
-                  <td>${window['tintFilm']}</td>
-                  <td>${window['quantity']}</td>
-                  <td>${window['width']} (mm)</td>
-                  <td>${window['height']} (mm)</td>
-                  <td>${window['width'] / 1000 * window['height'] / 1000 * window['quantity']} (m²)</td>
-                  <td>${window['frameType']}</td>
-                  <td>${window['glassType']}</td>
-                  <td>${window['includeCorking']}</td>
-                  <td>${window['filmRemovalRequired']}</td>
-                  <td>${window['ladderType']}</td>
-                  <td>${window['notes']}</td>
+              <tr style="border: 1px solid #6d6d6d;border-collapse: collapse;">
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${index}</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${room['title']}</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['tintFilm']}</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['quantity']}</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['width']} (mm)</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['height']} (mm)</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${area} (m²)</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['frameType']}</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['glassType']}</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['includeCorking']}</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['filmRemovalRequired']}</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['ladderType']}</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['notes']}</td>
               </tr>`
           index++
         }
@@ -233,371 +231,82 @@ const QuoteDetailContainer = () => {
 
 
   const getHtmlCutList = () => {
-    return `
-    <table>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Job</td>
-        <td>${data['job_name']}</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Quote</td>
-        <td>${data['quote_number']}</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Client</td>
-        <td>${data['customer_name']}</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Address</td>
-        <td>${data['site_address']}, ${data['site_state']}</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Billing Address</td>
-        <td>${data['billing_address']}, ${data['billing_state']}</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Collection /dispatch Date </td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Room</td>
-        <td>Area (m²)</td>
-        <td>Notes</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    ${getAreaRoom()}
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Windows</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td>Room</td>
-        <td>Film</td>
-        <td>Qty</td>
-        <td>W (mm)</td>
-        <td>H (mm)</td>
-        <td>Area (m²)</td>
-        <td>Frame</td>
-        <td>Glass</td>
-        <td>Corking</td>
-        <td>Removal</td>
-        <td>Ladder</td>
-        <td>Notes</td>
-    </tr>
-    ${getWindowRoom()}
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td>Total area: ${getTotalArea()}m²</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Total corking: 0.00m</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Total film removal: ${getTotalFilmRemoval()}m²</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-</table>`
+    return `<table>
+              <tr>
+                  <td><strong>Job</strong></td>
+                  <td><span style="padding-left:4em">${data['job_name']}</span></td>
+              </tr>
+              <tr>
+                  <td><strong>Quote</strong></td>
+                  <td><span style="padding-left:4em">${data['quote_number']}</span></td>
+              </tr>
+              <tr>
+                  <td><strong>Client</strong></td>
+                  <td><span style="padding-left:4em">${data['customer_name']}</span></td>
+              </tr>
+              <tr>
+                  <td><strong>Address</strong></td>
+                  <td><span style="padding-left:4em">${data['site_address']}, ${data['site_state']}</span></td>
+              </tr>
+              <tr>
+                  <td><strong>Billing Address</strong></td>
+                  <td><span style="padding-left:4em">${data['billing_address']}, ${data['billing_state']}</span></td>
+              </tr>
+          </table>
+          <br/>
+          <p><strong>Rooms</strong></p>
+          <table style="border: 1px solid #6d6d6d;border-collapse: collapse;">
+              <tr style="border: 1px solid #6d6d6d;border-collapse: collapse;">
+                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Room</th>
+                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Area (m²)</th>
+                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Notes</th>
+              </tr>
+              ${getAreaRoom()}
+          </table>
+
+          <p><strong>Windows</strong></p>
+          <table style="border: 1px solid #6d6d6d;border-collapse: collapse;">
+              <tr style="border: 1px solid #6d6d6d;border-collapse: collapse;">
+                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;"></th>
+                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Room</th>
+                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Film</th>
+                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Qty</th>
+                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">W (mm)</th>
+                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">H (mm)</th>
+                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Area (m²)</th>
+                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Frame</th>
+                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Glass</th>
+                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Corking</th>
+                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Removal</th>
+                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Ladder</th>
+                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Notes</th>
+              </tr>
+              ${getWindowRoom()}
+          </table>
+          <p><strong>Total area:</strong> <span>${getTotalArea()}m²</span></p>
+          <p><strong>Total corking:</strong> <span>${getTotalFilmRemoval()}m²</span></p>`
   }
 
 
   const handleEmail = () => {
-    const to = [data['contact_email']]
-    const cc = ['malc@windowfilmswa.com.au']
+    const to = [(setting && setting['cutListsTo']) ? setting['cutListsTo'] : data['contact_email']]
+    const cc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : 'malc@windowfilmswa.com.au']
+    const bcc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : 'malc@windowfilmswa.com.au']
     const subject = `Window Film WA Quote ${data['quote_number']}`
     Mailer.mail({
       subject: subject,
       recipients: to,
       ccRecipients: cc,
-      bccRecipients: [],
+      bccRecipients: bcc,
       body: getHtmlCutList(),
       customChooserTitle: 'Send Mail',
       isHTML: true,
       attachments: []
     }, (error, event) => {
-      if (event != 'cancelled') {
-        email(to, {
-          cc: cc,
-          bcc: [],
-          subject: subject,
-          body: getHtmlCutList(),
-          checkCanOpen: true
-        }).catch(console.error)
-      }
+
     });
   }
 
-  console.log('rooms', rooms)
 
   return (
     <SafeAreaView
@@ -619,7 +328,7 @@ const QuoteDetailContainer = () => {
           </TouchableOpacity>
           <View style={styles.separator} />
           <TouchableOpacity
-            onPress={() => navigation.navigate('SelectFilm', { onUpdateTintFilm })}
+            onPress={() => navigation.navigate('SelectFilm', { from: 'Job', onUpdateTintFilm })}
             style={styles.item}>
             <Text style={styles.title}>Tint Film</Text>
             <Text style={styles.subValue}>{data['tint_film']}</Text>
@@ -627,7 +336,7 @@ const QuoteDetailContainer = () => {
           </TouchableOpacity>
           <View style={styles.separator} />
           <TouchableOpacity
-            onPress={() => navigation.navigate('Notes', { notes: data['notes'], onUpdateNotes })}
+            onPress={() => navigation.navigate('Notes', { notes: data['notes'], from: 'Job', onUpdateNotes })}
             style={styles.item}>
             <Text style={styles.title}>Notes</Text>
             <Text style={styles.subValue}>{getTextDisplayNotes()}</Text>
@@ -694,7 +403,7 @@ const QuoteDetailContainer = () => {
         </View>
 
       </View>
-      <Loader visible={loading} />
+      <Loader visible={loadingQuote || loadingRoom} />
     </SafeAreaView>
   )
 }

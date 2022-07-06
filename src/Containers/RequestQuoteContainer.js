@@ -137,9 +137,10 @@ const RequestQuoteContainer = () => {
         navigation.navigate('QuoteDetail', { item: quote, onUpdateListQuote: route?.params?.onUpdateListQuote() })
       })
     } else {
-      createQuote(data)
-      route?.params?.onUpdateListQuote()
-      navigation.goBack()
+      createQuote(data, (quote) => {
+        route?.params?.onUpdateListQuote()
+        navigation.goBack()
+      })
     }
   }
 
@@ -156,10 +157,11 @@ const RequestQuoteContainer = () => {
       "billing_address": billingAddress,
       "billing_state": billingState
     }
-    updateQuote(data['id'], dataUpdate)
-    route?.params?.onUpdateQuote({ ...data, ...dataUpdate })
-    route?.params?.onUpdateListQuote()
-    navigation.goBack()
+    updateQuote(data['id'], dataUpdate, () => {
+      route?.params?.onUpdateQuote({ ...data, ...dataUpdate })
+      route?.params?.onUpdateListQuote()
+      navigation.goBack()
+    })
   }
 
 

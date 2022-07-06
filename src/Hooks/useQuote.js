@@ -130,7 +130,7 @@ export default function () {
     })
   }
 
-  const updateQuote = async (quoteId, data) => {
+  const updateQuote = async (quoteId, data, callback = undefined) => {
     setLoading(true)
     geocoder.geocodeAddress(`${data['site_address']}, ${data['site_state']}`, {
       locale: 'en',
@@ -149,6 +149,9 @@ export default function () {
           setLoading(false)
         }).catch((error) => {
           setLoading(false)
+          if (callback) {
+            callback()
+          }
           console.log('updateQuote', error)
         })
     }).catch(error => {
@@ -160,12 +163,15 @@ export default function () {
           setLoading(false)
         }).catch((error) => {
           setLoading(false)
+          if (callback) {
+            callback()
+          }
           console.log('updateQuote', error)
         })
     })
   }
 
-  const deleteQuote = async (quoteId) => {
+  const deleteQuote = async (quoteId, callback = undefined) => {
     setLoading(true)
     firestore()
       .collection('create_quote')
@@ -174,6 +180,9 @@ export default function () {
       .then(async () => {
         await getQuotesApi()
         setLoading(false)
+        if (callback) {
+          callback()
+        }
       }).catch((error) => {
         setLoading(false)
         console.log('updateQuote', error)

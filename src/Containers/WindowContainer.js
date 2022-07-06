@@ -38,11 +38,15 @@ const FRAME_TYPE_ITEMS = [
 ]
 
 const GLASS_TYPE_ITEMS = [
-  { label: 'Laminated', value: 'Laminated' },
-  { label: 'Toughened', value: 'Toughened' },
-  { label: 'Double Glazed', value: 'Double Glazed' },
-  { label: 'Float', value: 'Float' },
-  { label: 'Low-E', value: 'Low-E' },
+  { label: 'Float Clear', value: 'Float Clear' },
+  { label: 'Clear Laminated', value: 'Clear Laminated' },
+  { label: 'Toughned Clear', value: 'Toughned Clear' },
+  { label: 'Tinted Float', value: 'Tinted Float' },
+  { label: 'Tinted Laminated', value: 'Tinted Laminated' },
+  { label: 'Double Glazed Clear', value: 'Double Glazed Clear' },
+  { label: 'Double Glazed Tinted', value: 'Double Glazed Tinted' },
+  { label: 'Double Glazed low-E', value: 'Double Glazed low-E' },
+  { label: 'Double Glazed Tinted Low- E', value: 'Double Glazed Tinted Low- E' },
 ]
 const GLASS_THICKNESS_ITEMS = [
   { label: '3mm', value: '3mm' },
@@ -123,6 +127,7 @@ const WindowContainer = () => {
       setIncludeCorking(item['includeCorking'])
       setFilmRemovalRequired(item['filmRemovalRequired'])
       setLadderType(item['ladderType'])
+      setPicture(item['picture'] ? { uri: item['picture'] } : '')
     }
   }, [route])
 
@@ -177,7 +182,7 @@ const WindowContainer = () => {
           );
         },
       })
-    }, [navigation, data, width, height, quantity, name, tintFilm, notes, aspect, frameType, frameColour, glassType, glassThickness, includeCorking, filmRemovalRequired, ladderType])
+    }, [navigation, data, width, height, quantity, name, tintFilm, notes, aspect, frameType, frameColour, glassType, glassThickness, includeCorking, filmRemovalRequired, ladderType, picture])
   )
 
   const onUpdateName = (width, height, quantity) => {
@@ -207,9 +212,10 @@ const WindowContainer = () => {
       glassThickness: glassThickness ?? '',
       includeCorking: includeCorking ?? '',
       filmRemovalRequired: filmRemovalRequired ?? '',
-      ladderType: ladderType ?? ''
+      ladderType: ladderType ?? '',
+      picture: picture
     }
-    console.log('dataUpdate', dataUpdate)
+    console.log('XXX->', dataUpdate)
     if (data) {
       if (width > 0 && height > 0 && quantity > 0) {
         route?.params?.onAddNewOrUpdateWindow(data['id'], dataUpdate)
@@ -219,6 +225,7 @@ const WindowContainer = () => {
         route?.params?.onAddNewOrUpdateWindow(undefined, dataUpdate)
       }
     }
+    route?.params?.onUpdateListQuote()
   }
 
   const onUpdatePicture = (source) => {
@@ -244,6 +251,7 @@ const WindowContainer = () => {
     modalizeLadderTypeRef.current?.open();
   };
 
+  console.log('window', data)
   return (
     <SafeAreaView
       style={Layout.fill}>
@@ -324,7 +332,7 @@ const WindowContainer = () => {
             </View>
             <View style={styles.separator} />
             <TouchableOpacity
-              onPress={() => navigation.navigate('SelectFilm', { onUpdateTintFilm })}
+              onPress={() => navigation.navigate('SelectFilm', { from: 'Window', onUpdateTintFilm })}
               style={styles.item}>
               <Text style={styles.title}>Tint Film</Text>
               <Text style={styles.subValue}>{tintFilm}</Text>
@@ -332,7 +340,7 @@ const WindowContainer = () => {
             </TouchableOpacity>
             <View style={styles.separator} />
             <TouchableOpacity
-              onPress={() => navigation.navigate('Notes', { notes: notes, onUpdateNotes })}
+              onPress={() => navigation.navigate('Notes', { notes: notes, from: 'Window', onUpdateNotes })}
               style={styles.item}>
               <Text style={styles.title}>Notes</Text>
               <Text style={styles.subValue}>{getTextDisplayNotes()}</Text>
@@ -340,7 +348,7 @@ const WindowContainer = () => {
             </TouchableOpacity>
             <View style={{ height: Responsive.height(20), width: '100%' }} />
             <TouchableOpacity
-              onPress={() => navigation.navigate('AddPicture', { picture , onUpdatePicture })}
+              onPress={() => navigation.navigate('AddPicture', { picture, from: 'Window', onUpdatePicture })}
               style={styles.item}>
               <Text style={styles.title}>Add Picture</Text>
               <Text style={styles.subValue}>{''}</Text>

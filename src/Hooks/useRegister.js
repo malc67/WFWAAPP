@@ -8,7 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import { navigateAndSimpleReset } from "@/Navigators/utils";
 
 import { useDispatch } from 'react-redux'
-import { updateInfo, clearAuth } from '@/Store/Auth'
+import { updateInfo, clearAuth, updateSettingPref } from '@/Store/Auth'
 
 
 const regexEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

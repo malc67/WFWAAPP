@@ -95,7 +95,7 @@ const TabMapContainer = () => {
           quotesListDisplay.map(item => {
             return <Marker key={item.id} coordinate={{ latitude: item['location'].lat, longitude: item['location'].lng }}>
               <Callout onPress={() => {
-                navigation.navigate('QuoteDetail', { item, onUpdateListQuote })
+                navigation.navigate('QuoteDetail', { item, from: 'Map', onUpdateListQuote })
               }}>
                 <View style={styles.markerContainer}>
                   <View>

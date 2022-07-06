@@ -45,23 +45,23 @@ const NotesContainer = () => {
         header: () => {
           return (
             <Header
-              text={'Notes'}
+              text={route?.params?.title ? route?.params?.title : 'Notes'}
               type={'normal'}
               leftOption={
                 <TouchableOpacity
                   onPress={() => {
-                    navigation.goBack();
+                    onUpdateNotes();
                   }}
                   style={Layout.rowHCenter}>
                   <Image source={Images.ic_back} />
-                  <Text style={styles.textBack}>Quote</Text>
+                  <Text style={styles.textBack}>{route?.params?.from}</Text>
                 </TouchableOpacity>
               }
             />
           );
         },
       })
-    }, [navigation])
+    }, [navigation, route, data])
   )
 
 
@@ -90,15 +90,6 @@ const NotesContainer = () => {
 
 
         </ScrollView>
-
-        <View style={[Layout.fullWidth, Layout.colHCenter, styles.actionWrapper]}>
-          <TouchableOpacity
-            onPress={() => onUpdateNotes()}
-            style={[Layout.fill, Layout.center, styles.button]}>
-            <Text style={[styles.textButton, { color: '#FFFFFF' }]}>Update Notes</Text>
-          </TouchableOpacity>
-          <View style={{ height: Responsive.height(10) }} />
-        </View>
 
       </View>
 

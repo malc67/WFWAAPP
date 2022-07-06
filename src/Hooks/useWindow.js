@@ -9,6 +9,7 @@ import { navigateAndSimpleReset } from "@/Navigators/utils";
 
 import { useDispatch } from 'react-redux'
 import { updateInfo, clearAuth } from '@/Store/Auth'
+import moment from "moment";
 
 export default function () {
 
@@ -34,11 +35,15 @@ export default function () {
   const createWindow = async (quoteId, roomId, data) => {
     setLoading(true)
     let picture = data['picture']
-    if (!isUndefined(picture) && !isEmpty(picture) && !isUndefined(picture?.uri) && !isEmpty(picture?.uri)) {
+    if (!isUndefined(picture) && !isEmpty(picture) && !isUndefined(picture?.uri) && !isEmpty(picture?.uri) && !checkUriFromInternet(picture?.uri)) {
       picture = await uploadImageToFirebase(picture?.uri)
       data = { ...data, picture }
     } else {
-      data = { ...data, picture: '' }
+      if (checkUriFromInternet(picture?.uri)) {
+        data = { ...data }
+      } else {
+        data = { ...data, picture: '' }
+      }
     }
     firestore().collection('create_quote')
       .doc(quoteId)
@@ -73,14 +78,24 @@ export default function () {
       })
   }
 
+  const checkUriFromInternet = (uri) => {
+    if (isUndefined(uri) || isEmpty(uri)) return false
+    if (uri.toLowerCase().startsWith('https://') || uri.toLowerCase().startsWith('http://')) return true
+    return false
+  }
+
   const updateWindow = async (quoteId, roomId, windowId, data) => {
     setLoading(true)
     let picture = data['picture']
-    if (!isUndefined(picture) && !isEmpty(picture) && !isUndefined(picture?.uri) && !isEmpty(picture?.uri)) {
+    if (!isUndefined(picture) && !isEmpty(picture) && !isUndefined(picture?.uri) && !isEmpty(picture?.uri) && !checkUriFromInternet(picture?.uri)) {
       picture = await uploadImageToFirebase(picture?.uri)
       data = { ...data, picture }
     } else {
-      data = { ...data, picture: '' }
+      if (checkUriFromInternet(picture?.uri)) {
+        data = { ...data, picture: picture?.uri }
+      } else {
+        data = { ...data, picture: '' }
+      }
     }
     firestore().collection('create_quote')
       .doc(quoteId)

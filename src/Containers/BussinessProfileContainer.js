@@ -58,7 +58,7 @@ const BussinessProfileContainer = () => {
   const [member, setMember] = useState(profile ? profile['member'] : '');
   const [WFAANZ, setWFAANZ] = useState(profile ? profile['WFAANZ'] : '')
   const [installer, setInstaller] = useState(profile ? profile['installer'] : '');
-  const [companyLogo, setCompanyLogo] = useState('');
+  const [companyLogo, setCompanyLogo] = useState(profile ? { uri: profile['companyLogo'] } : '');
 
 
   useEffect(() => {
@@ -120,7 +120,6 @@ const BussinessProfileContainer = () => {
       })
     }, [navigation])
   )
-
 
 
   return (

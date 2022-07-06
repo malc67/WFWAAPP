@@ -14,13 +14,19 @@ const slice = createSlice({
         state.profile = profile
       }
     },
+    updateSettingPref: (state, { payload: { setting } }) => {
+      if (typeof setting !== 'undefined') {
+        state.setting = setting
+      }
+    },
     clearAuth: (state) => {
       state.info = undefined
       state.profile = undefined
+      state.setting = undefined
     }
   },
 })
 
-export const { updateInfo, updateBussinessProfile, clearAuth } = slice.actions
+export const { updateInfo, updateBussinessProfile, updateSettingPref, clearAuth } = slice.actions
 
 export default slice.reducer

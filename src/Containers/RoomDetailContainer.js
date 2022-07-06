@@ -34,7 +34,7 @@ const RoomDetailContainer = () => {
   const route = useRoute()
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
 
-  const [, , , , , deleteRoom, updateRoom] = useRoom()
+  const [, , rooms, , , deleteRoom, updateRoom] = useRoom()
 
   const [loading, errors, windows, getWindowsApi, createWindow, deleteWindow, updateWindow] = useWindow()
 
@@ -100,8 +100,11 @@ const RoomDetailContainer = () => {
     }, [navigation, route])
   )
 
+  useEffect(() => {
+    route?.params?.onUpdateRooms()
+  }, [rooms])
+
   const onDeleteRoom = (item) => {
-    console.log('Delete', item)
     deleteRoom(quote['id'], item['id'])
     route?.params?.onUpdateRooms()
   }
@@ -148,7 +151,6 @@ const RoomDetailContainer = () => {
     route?.params?.onUpdateRooms()
   }
 
- 
   return (
     <SafeAreaView
       style={Layout.fill}>
@@ -168,7 +170,7 @@ const RoomDetailContainer = () => {
           </TouchableOpacity>
           <View style={styles.separator} />
           <TouchableOpacity
-            onPress={() => navigation.navigate('SelectFilm', { onUpdateTintFilm })}
+            onPress={() => navigation.navigate('SelectFilm', { from: 'Room', onUpdateTintFilm })}
             style={styles.item}>
             <Text style={styles.title}>Tint Film</Text>
             <Text style={styles.subValue}>{data['tint_film']}</Text>
@@ -176,7 +178,7 @@ const RoomDetailContainer = () => {
           </TouchableOpacity>
           <View style={styles.separator} />
           <TouchableOpacity
-            onPress={() => navigation.navigate('Notes', { notes: data['notes'], onUpdateNotes })}
+            onPress={() => navigation.navigate('Notes', { notes: data['notes'], from: 'Room', onUpdateNotes })}
             style={styles.item}>
             <Text style={styles.title}>Notes</Text>
             <Text style={styles.subValue}>{getTextDisplayNotes()}</Text>
@@ -198,7 +200,7 @@ const RoomDetailContainer = () => {
               return (
                 <View key={item['id']} style={Layout.column}>
                   <TouchableOpacity
-                    onPress={() => navigation.navigate('Window', { item, onAddNewOrUpdateWindow, onDeleteWindow })}
+                    onPress={() => navigation.navigate('Window', { item, onAddNewOrUpdateWindow, onDeleteWindow, onUpdateListQuote })}
                     style={styles.item}>
                     <Text style={styles.title}>{item['name'] ? item['name'] : `${item['width']}mm x ${item['height']}mm x ${item['quantity']}`}</Text>
                     <Text style={styles.subValue}>{''}</Text>

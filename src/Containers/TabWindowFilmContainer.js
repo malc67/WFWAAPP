@@ -28,6 +28,7 @@ const reflectiveListOrigin = [
     code: "R06922W",
     type: "Interior",
     compatibilty: ['C', 'C', 'C', 'C', 'CC', 'C', 'C'],
+    savings: [Number(295,10), Number(142,78), 0, Number(165,29), Number(82,73), Number(132,39), Number(`58,05`)],
     rolSize: ["yes", "no", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FR%20Silver%2020i%20Datasheet.pdf?alt=media&token=0588dff2-c886-4fa3-bd60-c363e6abec0d'
   },
@@ -38,6 +39,7 @@ const reflectiveListOrigin = [
     code: "R06934W",
     type: "Interior",
     compatibilty: ['C', 'C', 'C', 'C', 'CC', 'C', 'C'],
+    savings: [Number(225,78), Number(111,15), 0, Number(116,57), Number(59,63), Number(88,31), Number(35,83)],
     rolSize: ["no", "no", "yes", "no"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FR%20Silver%2035i%20Datasheet.pdf?alt=media&token=caaa6d24-bbc1-4d0e-9c9f-5c40ee07e689'
   },
@@ -48,6 +50,7 @@ const reflectiveListOrigin = [
     code: "R05850S",
     type: "Interior",
     compatibilty: ['C', 'C', 'C', 'C', 'CC', 'C', 'C'],
+    savings: [Number(148,21), Number(71,78), 0, Number(65,67), Number(34,90), Number(44,81), Number(17,18)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FNT%20PerLite%20Ceramic%2050i%20Datasheet.pdf?alt=media&token=8ee8d631-d8a9-4a32-b101-f9ddd44cf8ac'
   },
@@ -58,6 +61,7 @@ const reflectiveListOrigin = [
     code: "R06922E",
     type: "Interior",
     compatibilty: ['C', 'C', 'C', 'C', 'CC', 'C', 'C'],
+    savings: [Number(305,31), Number(169,73), 0, Number(167,57), Number(89,89), Number(126,70), Number(52,76)],
     rolSize: ["no", "no", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FR%20Silver%2020i%20Low%20E%20Datasheet.pdf?alt=media&token=211bd1e3-17ba-45c5-a2e1-9b8b253e9ac4'
   }
@@ -72,6 +76,7 @@ const neutralListOrigin = [
     code: "R070L6W",
     type: "Interior",
     compatibilty: ['C', 'C', 'T', 'T', 'CC', 'T', 'T'],
+    savings: [Number(226,77), Number(`116,01`), 0, Number(100,31), Number(52,84), Number(66,61), Number(25,34)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FNT%20PerLite%20Ceramic%2020i%20Datasheet.pdf?alt=media&token=45597ebf-07d5-489c-9600-17cb117b8ce6'
   },
@@ -82,6 +87,7 @@ const neutralListOrigin = [
     code: "R070L5W",
     type: "Interior",
     compatibilty: ['C', 'C', 'C', 'C', 'C', 'T', 'C'],
+    savings: [Number(`158,02`), Number(80,13), 0, Number(58,18), Number(31,39), Number(32,61), Number(11,36)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FNT%20PerLite%20Ceramic%2035i%20Datasheet.pdf?alt=media&token=86ac56a6-c95d-489f-895f-484c70c602ea'
   },
@@ -92,6 +98,7 @@ const neutralListOrigin = [
     code: "R070L5W",
     type: "Interior",
     compatibilty: ["C", "C", "C", "C", "C", "C", "C"],
+    savings: [Number(140,16), Number(66,13), 0, Number(56,14), Number(30,15), Number(`36,04`), Number(13,61)],
     rolSize: ["yes", "no", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FNT%20PerLite%20Ceramic%2050i%20Datasheet.pdf?alt=media&token=8ee8d631-d8a9-4a32-b101-f9ddd44cf8ac'
   },
@@ -112,6 +119,7 @@ const neutralListOrigin = [
     code: "R058L7W",
     type: "Interior",
     compatibilty: ["C", "T", "T", "T", "T", "T", "T"],
+    savings: [Number(210,69), Number(`103,03`), 0, Number(76,37), Number(32,96), Number(38,53), Number(12,31)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FNT%20Natura%2005i%20Datasheet.pdf?alt=media&token=4b575ffa-20e7-4296-a04f-e1ca69806102'
   },
@@ -122,6 +130,7 @@ const neutralListOrigin = [
     code: "R058L9W",
     type: "Interior",
     compatibilty: ["C", "T", "T", "T", "T", "T", "C"],
+    savings: [Number(188,74), Number(91,58), 0, Number(65,46), Number(31,39), Number(35,57), Number(11,36)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FNT%20Natura%2015i%20Datasheet.pdf?alt=media&token=42fa0092-6bb1-4967-9aaf-990d0c73cf16'
   },
@@ -132,6 +141,7 @@ const neutralListOrigin = [
     code: "R069L8W",
     type: "Interior",
     compatibilty: ["C", "CC", "C", "C", "CC", "T", "C"],
+    savings: [Number(144,85), Number(68,69), 0, Number(50,91), Number(21,97), Number(29,64), Number(9,47)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FNT%20Natura%2030i%20Datasheet.pdf?alt=media&token=7d4af4be-c32a-452c-9e57-e1126f8fa7a8'
   }
@@ -145,6 +155,7 @@ const dualListOrigin = [
     code: "R070R0W",
     type: "Interior",
     compatibilty: ["C", "C", "C", "C", "CC", "T", "C"],
+    savings: [Number(315,44), Number(150,56), 0, Number(173,59), Number(86,74), Number(137,63), Number(60,28)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FDR%20OptiTune%2005i%20Datasheet.pdf?alt=media&token=5649ff14-3b6c-4f51-8023-35f86516b0c2'
   },
@@ -155,6 +166,7 @@ const dualListOrigin = [
     code: "R070R1W",
     type: "Interior",
     compatibilty: ["C", "C", "C", "C", "CC", "C", "C"],
+    savings: [Number(286,18), Number(137,31), 0, Number(154,52), Number(77,24), Number(121,57), Number(51,74)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FDR%20OptiTune%2015i%20Datasheet.pdf?alt=media&token=dcb17ced-8ed6-4dab-8afe-da3551692758'
   },
@@ -165,6 +177,7 @@ const dualListOrigin = [
     code: "R069R2W",
     type: "Interior",
     compatibilty: ["C", "C", "C", "C", "CC", "T", "C"],
+    savings: [Number(221,76), Number(`109,05`), 0, Number(101,48), Number(52,42), Number(70,55), Number(27,11)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FDR%20OptiTune%2020i%20Datasheet.pdf?alt=media&token=7ef1bf0a-53cb-4dcb-a4bf-c8ca2e3bb35c'
   },
@@ -175,6 +188,7 @@ const dualListOrigin = [
     code: "R069R3W",
     type: "Interior",
     compatibilty: ["C", "C", "C", "C", "CC", "T", "C"],
+    savings: [Number(204,43), Number(98,60), 0, Number(97,19), Number(49,70), Number(69,58), Number(27,14)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FDR%20OptiTune%2030i%20Datasheet.pdf?alt=media&token=254635f5-8bb1-4c57-9ca4-207e63da621a'
   },
@@ -185,6 +199,7 @@ const dualListOrigin = [
     code: "R069R4W",
     type: "Interior",
     compatibilty: ["C", "C", "C", "C", "C", "T", "C"],
+    savings: [Number(170,36), Number(82,17), 0, Number(70,95), Number(36,28), Number(48,71), Number(`9,04`)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FDR%20OptiTune%2040i%20Datasheet.pdf?alt=media&token=bbcaf10e-966a-4b46-a850-cbec087e7ad7'
   },
@@ -239,6 +254,7 @@ const spectrallyListOrigin = [
     code: "R081ISW",
     type: "Interior",
     compatibilty: ["C", "C", "C", "C", "C", "C", "C"],
+    savings: [Number(157,57), Number(`80,05`), 0, Number(67,36), Number(35,49), Number(43,91), Number(16,85)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FSP%20e-Lite%2070i%20Datasheet.pdf?alt=media&token=840f5f7f-4993-4e72-af7d-007c26568d63'
   }
@@ -296,6 +312,7 @@ const solarZoneListOrigin = [
     code: "R07022X",
     type: "Exterior",
     compatibilty: ["C", "C", "C", "C", "C", "C", "C"],
+    savings: [Number(`342,01`), Number(263,92), 0, Number(302,31), Number(210,48), Number(276,31), Number(168,70)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FR%20Silver%2020X%20Datasheet.pdf?alt=media&token=ccf8ec07-8930-49a2-b976-ea54e45a843a'
   },
@@ -306,6 +323,7 @@ const solarZoneListOrigin = [
     code: "R07035X",
     type: "Exterior",
     compatibilty: ["C", "C", "C", "C", "C", "C", "C"],
+    savings: [Number(254,94), Number(190,44), 0, Number(229,66), Number(157,27), Number(210,51), Number(`121,01`)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FR%20Silver%2035X%20Datasheet.pdf?alt=media&token=c0cf0d6a-1a73-4396-a385-e5105a4c6393'
   },
@@ -326,6 +344,7 @@ const solarZoneListOrigin = [
     code: "R069B2X",
     type: "Exterior",
     compatibilty: ["C", "C", "C", "C", "C", "C", "C"],
+    savings: [Number(348,29), Number(266,38), 0, Number(307,56), Number(213,88), Number(285,32), Number(173,30)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FDR%20Grey%2020%20XTRM%20Datasheet.pdf?alt=media&token=89f5eb3f-9dcb-4dd3-b7d2-6f8a8f43abfa'
   },
@@ -336,6 +355,7 @@ const solarZoneListOrigin = [
     code: "R070W0X",
     type: "Exterior",
     compatibilty: ["C", "C", "C", "C", "C", "C", "C"],
+    savings: [Number(337,93), Number(254,15), 0, Number(305,90), Number(208,71), Number(287,59), Number(173,61)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FDR%20Grey%2010%20XTRM%20Datasheet.pdf?alt=media&token=15c761c4-12f1-4c99-81a9-db9d03501465'
   },
@@ -346,6 +366,7 @@ const solarZoneListOrigin = [
     code: "R070W6X",
     type: "Exterior",
     compatibilty: ["C", "C", "C", "C", "C", "C", "C"],
+    savings: [Number(`258,02`), Number(186,58), 0, Number(246,36), Number(163,70), Number(232,27), Number(141,87)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FDR%20Grey%2020%20XTRM%20Datasheet.pdf?alt=media&token=89f5eb3f-9dcb-4dd3-b7d2-6f8a8f43abfa'
   },
@@ -356,6 +377,7 @@ const solarZoneListOrigin = [
     code: "R070W5X",
     type: "Exterior",
     compatibilty: ["C", "C", "C", "C", "C", "C", "T"],
+    savings: [Number(187,42), Number(129,64), 0, Number(185,32), Number(118,97), Number(176,15), Number(99,96)],
     rolSize: ["yes", "yes", "yes", "yes"],
     dataSheet: 'https://firebasestorage.googleapis.com/v0/b/wfwaapp.appspot.com/o/FilmDataSheets%2FDR%20Grey%2035%20XTRM%20Datasheet.pdf?alt=media&token=affd5377-0869-449f-bf63-e8f174edbea4'
   },

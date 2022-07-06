@@ -19,11 +19,10 @@ export default function () {
   const dispatch = useDispatch()
 
   const info = useSelector(state => state.auth.info || {})
+  const profile = useSelector(state => state.auth.profile || {})
 
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
-
-
 
 
   const validation = (bussiness, contactPerson, phoneNumber, ABN, instalationAddress, city, state, member, WFAANZ, installer, companyLogo) => {
@@ -85,6 +84,12 @@ export default function () {
     });
   }
 
+  const checkUriFromInternet = (uri) => {
+    if (isUndefined(uri) || isEmpty(uri)) return false
+    if (uri.toLowerCase().startsWith('https://') || uri.toLowerCase().startsWith('http://')) return true
+    return false
+  }
+
   const onUpdateProfile = (profile) => {
     dispatch(updateBussinessProfile({ profile }))
   }
@@ -93,14 +98,17 @@ export default function () {
     if (!validation(bussiness, contactPerson, phoneNumber, ABN, instalationAddress, city, state, member, WFAANZ, installer, companyLogo)) return
     setLoading(true)
     let data = { bussiness, contactPerson, callingCode, phoneNumber, ABN, instalationAddress, city, state, member, WFAANZ, installer }
-    if (!isUndefined(companyLogo) && !isEmpty(companyLogo) && !isUndefined(companyLogo?.uri) && !isEmpty(companyLogo?.uri)) {
+    if (!isUndefined(companyLogo) && !isEmpty(companyLogo) && !isUndefined(companyLogo?.uri) && !isEmpty(companyLogo?.uri) && !checkUriFromInternet(companyLogo?.uri)) {
       let companyLogoUri = await uploadImageToFirebase(companyLogo?.uri)
-      data = { ...data, companyLogo: companyLogoUri }
+      data = { ...profile, ...data, companyLogo: companyLogoUri }
     } else {
-      data = { ...data, companyLogo: '' }
+      if (checkUriFromInternet(companyLogo?.uri)) {
+        data = { ...profile, ...data }
+      } else {
+        data = { ...profile, ...data, companyLogo: '' }
+      }
     }
     if (!isUndefined(info) && !isEmpty(info)) {
-      console.log('info.uid', info)
       firestore().collection('Users').doc(info.uid)
         .set(data)
         .then((res) => {
@@ -114,8 +122,36 @@ export default function () {
     }
   }
 
+  const updateSettingPref = async (cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, signature) => {
+    let data = { cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, signature }
+    firestore()
+      .collection('Settings')
+      .doc(info.uid)
+      .set(data)
+      .then((res) => {
+        navigation.navigate('Settings')
+      }).catch((error) => {
+        console.log('updateSettingPref', error)
+      })
+  }
+
+  const getSetting = async () => {
+    return new Promise((resolve, reject) => {
+      firestore()
+        .collection('Settings')
+        .doc(info.uid)
+        .get()
+        .then(async (doc) => {
+          resolve(doc.data())
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    });
+  }
 
 
 
-  return [loading, errors, validation, bussinessProfileApi]
+
+  return [loading, errors, validation, bussinessProfileApi, updateSettingPref, getSetting]
 }

@@ -18,7 +18,8 @@ import {
   WindowContainer,
   AddPictureContainer,
   DataSheetContainer,
-  NotesContainer
+  NotesContainer,
+  SettingContainer
 } from '@/Containers'
 import { useTheme } from '@/Hooks'
 import MainNavigator from './Main'
@@ -121,6 +122,12 @@ const ApplicationNavigator = () => {
           <Stack.Screen
             name="Notes"
             component={NotesContainer}
+            options={{
+              headerShown: true
+            }} />
+          <Stack.Screen
+            name="SettingsPref"
+            component={SettingContainer}
             options={{
               headerShown: true
             }} />

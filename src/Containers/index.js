@@ -25,3 +25,4 @@ export { default as AddPictureContainer } from './AddPictureContainer'
 
 export { default as DataSheetContainer } from './DataSheetContainer'
 export { default as NotesContainer } from './NotesContainer'
+export { default as SettingContainer } from './SettingContainer'
