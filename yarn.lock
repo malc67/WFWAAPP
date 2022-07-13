@@ -6401,6 +6401,11 @@
     "lodash" "^4.17.21"
     "prop-types" "^15.7.2"
 
+"react-native-html-to-pdf@^0.12.0":
+  "integrity" "sha512-Yb5WO9SfF86s5Yv9PqXQ7fZDr9zZOJ+6jtweT9zFLraPNHWX7pSxe2dSkeg3cGiNrib65ZXGN6ksHymfYLFSSg=="
+  "resolved" "https://registry.npmjs.org/react-native-html-to-pdf/-/react-native-html-to-pdf-0.12.0.tgz"
+  "version" "0.12.0"
+
 "react-native-image-picker@^4.8.4":
   "integrity" "sha512-Mjh2j/sddyolb16EpmprWzbtyeFvW8Xgzr/8WNi9d6bR2FC/kL78cY/a+7Yzujg5ZDtT1MWys+eWw/qtfwgGiw=="
   "resolved" "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-4.8.4.tgz"
@@ -6469,6 +6474,11 @@
   dependencies:
     "react-freeze" "^1.0.0"
     "warn-once" "^0.1.0"
+
+"react-native-share@^7.6.4":
+  "integrity" "sha512-Evt6vM76QzHDOv+XYuNCJSDAJ74287FGLq0KlgUZVRlvmQD32gQD03yl6q2kuo0vrpQT67sj3GcVzHglizMfGA=="
+  "resolved" "https://registry.npmjs.org/react-native-share/-/react-native-share-7.6.4.tgz"
+  "version" "7.6.4"
 
 "react-native-sheetmenu@^2.1.1":
   "integrity" "sha512-1Mlz5ySsikJ20vmrlodGx0tSEMSC+RM/FpSfGn0HhppjjCzWAh5CGGVRf+ac1zij0/4e9URinzahYJVKo9+hEA=="

@@ -188,7 +188,7 @@ const RoomDetailContainer = () => {
 
           <Text style={styles.header}>Window</Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Window', { onAddNewOrUpdateWindow })}
+            onPress={() => navigation.navigate('Window', { onAddNewOrUpdateWindow, onUpdateListQuote })}
             style={styles.item}>
             <Image style={[styles.imgArrow, { marginLeft: Responsive.height(20) }]} source={Images.ic_plus} />
             <Text style={[styles.title, { paddingHorizontal: Responsive.height(5) }]}>Add a New Window</Text>

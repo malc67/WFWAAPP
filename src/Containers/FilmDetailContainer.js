@@ -166,11 +166,11 @@ const FilmDetailContainer = () => {
             style={[Layout.fill, Layout.center, styles.buttonAdd]}>
             <Text style={[styles.textButton, { color: '#FFFFFF' }]}>Add to Order</Text>
           </TouchableOpacity>
-          <View style={{ width: Responsive.width(20) }} />
+          {/* <View style={{ width: Responsive.width(20) }} />
           <TouchableOpacity
             style={[Layout.fill, Layout.center, styles.buttonOrder]}>
             <Text style={[styles.textButton, { color: '#434A4F' }]}>Current Order</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
         </View>
 

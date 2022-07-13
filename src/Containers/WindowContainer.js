@@ -215,7 +215,6 @@ const WindowContainer = () => {
       ladderType: ladderType ?? '',
       picture: picture
     }
-    console.log('XXX->', dataUpdate)
     if (data) {
       if (width > 0 && height > 0 && quantity > 0) {
         route?.params?.onAddNewOrUpdateWindow(data['id'], dataUpdate)
@@ -241,17 +240,28 @@ const WindowContainer = () => {
   const onOpenModalizeFrameTypeRef = () => {
     modalizeFrameTypeRef.current?.open();
   };
+  const onCloseModalizeFrameTypeRef = () => {
+    modalizeFrameTypeRef.current?.close();
+  };
   const onOpenModalizeGlassTypeRef = () => {
     modalizeGlassTypeRef.current?.open();
+  };
+  const onCloseModalizeGlassTypeRef = () => {
+    modalizeGlassTypeRef.current?.close();
   };
   const onOpenModalizeGlassThicknessRef = () => {
     modalizeGlassThicknessRef.current?.open();
   };
+  const onCloseModalizeGlassThicknessRef = () => {
+    modalizeGlassThicknessRef.current?.close();
+  };
   const onOpenModalizeLadderTypeRef = () => {
     modalizeLadderTypeRef.current?.open();
   };
+  const onCloseModalizeLadderTypeRef = () => {
+    modalizeLadderTypeRef.current?.close();
+  };
 
-  console.log('window', data)
   return (
     <SafeAreaView
       style={Layout.fill}>
@@ -262,6 +272,7 @@ const WindowContainer = () => {
           style={{ flex: 1 }}
         >
           <ScrollView
+            ref={ref => this.scrollView = ref}
             style={Layout.fill}
             contentContainerStyle={{ flexGrow: 1 }}>
             <View style={{ height: Responsive.height(20), width: '100%' }} />
@@ -350,7 +361,7 @@ const WindowContainer = () => {
             <TouchableOpacity
               onPress={() => navigation.navigate('AddPicture', { picture, from: 'Window', onUpdatePicture })}
               style={styles.item}>
-              <Text style={styles.title}>Add Picture</Text>
+              <Text style={styles.title}>Photo</Text>
               <Text style={styles.subValue}>{''}</Text>
               <Image style={styles.imgPreview} source={picture} resizeMode={'contain'} />
               <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
@@ -473,6 +484,22 @@ const WindowContainer = () => {
             ref={modalizeFrameTypeRef}
             handlePosition={'inside'}
             adjustToContentHeight={true}>
+            <View style={[Layout.row, styles.pickerAction]}>
+              <TouchableOpacity
+                onPress={() => {
+                  onCloseModalizeFrameTypeRef()
+                  onOpenModalizeGlassTypeRef()
+                  this.scrollView.scrollToEnd({ animated: true })
+                }}>
+                <Text style={styles.pickerActionText}>Next</Text>
+              </TouchableOpacity>
+              <View style={{ flex: 1 }} />
+              <TouchableOpacity
+                onPress={() => onCloseModalizeFrameTypeRef()}
+              >
+                <Text style={styles.pickerActionText}>Done</Text>
+              </TouchableOpacity>
+            </View>
             <Picker
               style={styles.pickerStyle}
               selectedValue={frameType}
@@ -484,6 +511,21 @@ const WindowContainer = () => {
             ref={modalizeGlassTypeRef}
             handlePosition={'inside'}
             adjustToContentHeight={true}>
+            <View style={[Layout.row, styles.pickerAction]}>
+              <TouchableOpacity
+                onPress={() => {
+                  onCloseModalizeGlassTypeRef()
+                  onOpenModalizeGlassThicknessRef()
+                  this.scrollView.scrollToEnd({ animated: true })
+                }}>
+                <Text style={styles.pickerActionText}>Next</Text>
+              </TouchableOpacity>
+              <View style={{ flex: 1 }} />
+              <TouchableOpacity
+                onPress={() => onCloseModalizeGlassTypeRef()}>
+                <Text style={styles.pickerActionText}>Done</Text>
+              </TouchableOpacity>
+            </View>
             <Picker
               style={styles.pickerStyle}
               selectedValue={glassType}
@@ -495,6 +537,21 @@ const WindowContainer = () => {
             ref={modalizeGlassThicknessRef}
             handlePosition={'inside'}
             adjustToContentHeight={true}>
+            <View style={[Layout.row, styles.pickerAction]}>
+              <TouchableOpacity
+                onPress={() => {
+                  onCloseModalizeGlassThicknessRef()
+                  onOpenModalizeLadderTypeRef()
+                  this.scrollView.scrollToEnd({ animated: true })
+                }}>
+                <Text style={styles.pickerActionText}>Next</Text>
+              </TouchableOpacity>
+              <View style={{ flex: 1 }} />
+              <TouchableOpacity
+                onPress={() => onCloseModalizeGlassThicknessRef()}>
+                <Text style={styles.pickerActionText}>Done</Text>
+              </TouchableOpacity>
+            </View>
             <Picker
               style={styles.pickerStyle}
               selectedValue={glassThickness}
@@ -506,6 +563,20 @@ const WindowContainer = () => {
             ref={modalizeLadderTypeRef}
             handlePosition={'inside'}
             adjustToContentHeight={true}>
+            <View style={[Layout.row, styles.pickerAction]}>
+              <TouchableOpacity
+                onPress={() => {
+                  onCloseModalizeLadderTypeRef()
+                  this.scrollView.scrollToEnd({ animated: true })
+                }}>
+                <Text style={styles.pickerActionText}>Next</Text>
+              </TouchableOpacity>
+              <View style={{ flex: 1 }} />
+              <TouchableOpacity
+                onPress={() => onCloseModalizeLadderTypeRef()}>
+                <Text style={styles.pickerActionText}>Done</Text>
+              </TouchableOpacity>
+            </View>
             <Picker
               style={styles.pickerStyle}
               selectedValue={ladderType}
@@ -607,6 +678,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width: '100%',
     height: Responsive.height(220)
+  },
+  pickerAction: {
+    paddingHorizontal: Responsive.width(10),
+    height: Responsive.height(45),
+    alignItems: 'center'
+  },
+  pickerActionText: {
+    fontSize: Responsive.font(14),
+    fontFamily: 'NewJune',
+    color: '#B2C249',
+    fontWeight: 'bold'
   }
 
 

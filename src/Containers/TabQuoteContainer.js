@@ -31,6 +31,8 @@ const TabQuoteContainer = () => {
 
   const [quotesListDisplay, setQuotesListDisplay] = useState(quotesList)
 
+  const [statusTab, setStatusTab] = useState(undefined)
+
   useFocusEffect(
     useCallback(() => {
       navigation.setOptions({
@@ -48,7 +50,7 @@ const TabQuoteContainer = () => {
   )
 
   useEffect(() => {
-    onFilterStatus(undefined)
+    onFilterStatus(statusTab)
   }, [quotesList])
 
   useEffect(() => {
@@ -62,14 +64,17 @@ const TabQuoteContainer = () => {
 
   const onFilterStatus = (status = undefined) => {
     if (status === undefined) {
+      setStatusTab(undefined)
       setQuotesListDisplay(filter(quotesList, item => item['status'] === undefined || item['status'] === false || item['status'] === true))
       return
     }
     if (status === true) {
+      setStatusTab(true)
       setQuotesListDisplay(filter(quotesList, item => item['status'] === true))
       return
     }
     if (status === false) {
+      setStatusTab(false)
       setQuotesListDisplay(filter(quotesList, item => item['status'] === undefined || item['status'] === false))
       return
     }

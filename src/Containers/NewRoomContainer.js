@@ -13,15 +13,16 @@ import {
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { useTheme } from '@/Hooks'
+import { useAuth, useTheme } from '@/Hooks'
 import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
-import { isEmpty } from 'lodash'
-import { Header, Avatar } from '@/Components'
+import _, { isEmpty } from 'lodash'
+import { Header, Avatar, Loader } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { updateSettingPref as saveUpdateSettingPref } from '@/Store/Auth'
 
 const DATA = [
   {
@@ -69,9 +70,55 @@ const NewRoomContainer = () => {
   const { t } = useTranslation()
   const navigation = useNavigation()
   const route = useRoute()
+  const dispatch = useDispatch()
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
 
+  const [, , , , updateSettingPref, getSetting] = useAuth().BussinessProfile
+  const { profile, setting } = useAuth().Data
+
+
+  const [loading, setLoading] = useState(false)
   const [customName, setCustomName] = useState('')
+
+
+  const [cutListsTo, setCutListsTo] = useState('')
+  const [bccQuotesTo, setBccQuotesTo] = useState('')
+  const [powerCost, setPowerCost] = useState(0.27)
+
+  const [unit, setUnit] = useState('mm')
+  const [followUp, setFollowUp] = useState(true)
+
+  const [signature, setSignature] = useState('')
+
+  const [companyLogo, setCompanyLogo] = useState('');
+
+  useEffect(() => {
+    getNewSetting()
+  }, [route])
+
+  const getNewSetting = (callback = undefined) => {
+    setLoading(true)
+    getSetting().then(data => {
+      console.log('data', data)
+      if (data) {
+        setCutListsTo(data['cutListsTo'])
+        setBccQuotesTo(data['bccQuotesTo'])
+        setUnit(data['unit'])
+        setFollowUp(data['followUp'])
+        setPowerCost(data['powerCost'])
+        setCompanyLogo({ uri: data['companyLogo'] })
+        setSignature(data['signature'])
+        dispatch(saveUpdateSettingPref({ setting: data }))
+      }
+      setLoading(false)
+      if (callback) {
+        callback()
+      }
+    }).catch(error => {
+      setLoading(false)
+      console.log('error', error)
+    })
+  }
 
 
   useFocusEffect(
@@ -85,9 +132,20 @@ const NewRoomContainer = () => {
               rightOption={
                 <TouchableOpacity
                   onPress={() => {
-                    onRoomSelected({
+                    let customRooms = (setting && setting['customRooms']) ? setting['customRooms'] : []
+                    customRooms = [...customRooms, {
                       id: 'c',
                       title: customName,
+                    }]
+                    updateSettingPref(cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, signature, customRooms, (isLoading) => {
+                      setLoading(isLoading)
+                      if (!isLoading) {
+                        getNewSetting()
+                        onRoomSelected({
+                          id: 'c',
+                          title: customName,
+                        })
+                      }
                     })
                   }}
                 >
@@ -117,9 +175,20 @@ const NewRoomContainer = () => {
     navigation.goBack()
   }
 
+  const onRemoveCustomRoom = (val) => {
+    let customRooms = (setting && setting['customRooms']) ? [...setting['customRooms']] : []
+    _.remove(customRooms, item => item === val);
+    updateSettingPref(cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, signature, customRooms, (isLoading) => {
+      setLoading(isLoading)
+      if (!isLoading) {
+        getNewSetting()
+      }
+    })
+  }
 
 
 
+  let customRooms = (setting && setting['customRooms']) ? setting['customRooms'] : []
   return (
     <SafeAreaView
       style={Layout.fill}>
@@ -150,13 +219,22 @@ const NewRoomContainer = () => {
             </View>
             <View style={styles.separator} />
             {
-              DATA.map(item => {
+              [...DATA, ...customRooms].map((item, idx) => {
                 return (
-                  <View key={item['id']} style={Layout.column}>
+                  <View key={idx} style={Layout.column}>
                     <TouchableOpacity
                       onPress={() => onRoomSelected(item)}
                       style={styles.item}>
                       <Text style={styles.title}>{item['title']}</Text>
+                      {
+                        item['id'] === 'c' && (
+                          <TouchableOpacity
+                            onPress={() => onRemoveCustomRoom(item)}
+                            style={{ marginRight: Responsive.width(10) }}>
+                            <MaterialCommunityIcons name='delete' size={24} color={'#B2C249'} />
+                          </TouchableOpacity>
+                        )
+                      }
                     </TouchableOpacity>
                     <View style={styles.separator} />
                   </View>
@@ -169,7 +247,7 @@ const NewRoomContainer = () => {
         </KeyboardAvoidingView>
 
       </View>
-
+      <Loader visible={loading} />
     </SafeAreaView>
   )
 }

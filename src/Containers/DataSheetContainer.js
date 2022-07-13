@@ -20,9 +20,10 @@ import { isEmpty } from 'lodash'
 import { Header, Avatar } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import Icon from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CheckBox from '@react-native-community/checkbox';
 import Pdf from "react-native-pdf";
+import Share from 'react-native-share';
 
 
 
@@ -50,6 +51,25 @@ const DataSheetContainer = () => {
             <Header
               text={data['name']}
               type={'normal'}
+              rightOption={
+                <TouchableOpacity onPress={() => {
+                  const options = {
+                    title: 'Share file',
+                    failOnCancel: false,
+                    saveToFiles: false,
+                    urls: [source?.uri],
+                  };
+                  Share.open(options)
+                    .then((res) => {
+                      console.log(res);
+                    })
+                    .catch((err) => {
+                      err && console.log(err);
+                    });
+                }}>
+                  <MaterialIcons name='ios-share' size={24} color={'#B2C249'} />
+                </TouchableOpacity>
+              }
               leftOption={
                 <TouchableOpacity
                   onPress={() => {
@@ -64,7 +84,7 @@ const DataSheetContainer = () => {
           );
         },
       })
-    }, [navigation])
+    }, [navigation, source])
   )
 
 

@@ -22,7 +22,7 @@ export default function () {
 
   const info = useSelector(state => state.auth.info || {})
 
-  const getQuotesApi = async () => {
+  const getQuotesApi = async (callback = undefined) => {
     setLoading(true)
 
     firestore()
@@ -37,6 +37,9 @@ export default function () {
         })
         setLoading(false)
         setQuoteList(tempData)
+        if(callback){
+          callback()
+        }
       })
   }
 

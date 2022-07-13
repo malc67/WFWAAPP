@@ -49,7 +49,7 @@ const AddPictureContainer = () => {
         header: () => {
           return (
             <Header
-              text={'Add Picture'}
+              text={route?.params?.title ? route?.params?.title : 'Add Picture'}
               type={'normal'}
               leftOption={
                 <TouchableOpacity

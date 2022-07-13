@@ -18,7 +18,7 @@ import { useAuth, useQuote, useTheme, useWindow } from '@/Hooks'
 import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
-import { findLast, isEmpty, isUndefined } from 'lodash'
+import _, { findLast, isEmpty, isUndefined } from 'lodash'
 import { Header, Avatar } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -628,14 +628,21 @@ const CreateQuoteContainer = () => {
   const [priceForSealing, setPriceForSealing] = useState('')
   const [priceFilmRemoval, setPriceFilmRemoval] = useState({})
 
+  const [roomSelected, setRoomSelected] = useState([])
   const [isAttachEnergySaving, setIsAttachEnergySaving] = useState(false)
 
   useEffect(() => {
     const { item, room } = route?.params
     setData(item)
     setRoom(room)
-    console.log('data->', item)
-    console.log('room->', room)
+
+    let rooms = []
+    if (room) {
+      rooms.push(room)
+    } else {
+      rooms.push(...data['rooms'])
+    }
+    setRoomSelected(rooms)
   }, [route])
 
 
@@ -682,19 +689,11 @@ const CreateQuoteContainer = () => {
 
   const getGlassArea = () => {
     let glassArea = 0
-    if (room) {
+    for (let room of roomSelected) {
       if (room['windows']) {
         room['windows'].forEach(item => {
           glassArea += item['width'] / 1000 * item['height'] / 1000 * item['quantity']
         })
-      }
-    } else {
-      for (let room of data['rooms']) {
-        if (room['windows']) {
-          room['windows'].forEach(item => {
-            glassArea += item['width'] / 1000 * item['height'] / 1000 * item['quantity']
-          })
-        }
       }
     }
     return Math.round(glassArea * 1.1 * 100) / 100
@@ -725,9 +724,9 @@ const CreateQuoteContainer = () => {
 
   const getGlassType = () => {
     let result = ''
-    if (room) {
+    for (let room of roomSelected) {
       if (room['windows']) {
-        if (room['windows'].length > 1) result += '<br/>'
+        result += '<br/>'
         room['windows'].forEach(item => {
           result += `${item['glassType']}<br/>`
         })
@@ -738,9 +737,9 @@ const CreateQuoteContainer = () => {
 
   const getFrameType = () => {
     let result = ''
-    if (room) {
+    for (let room of roomSelected) {
       if (room['windows']) {
-        if (room['windows'].length > 1) result += '<br/>'
+        result += '<br/>'
         room['windows'].forEach(item => {
           result += `${item['frameType']}<br/>`
         })
@@ -775,32 +774,51 @@ const CreateQuoteContainer = () => {
     return 0
   }
 
+  const getPowerCost = () => {
+    return (setting && setting['powerCost']) ? setting['powerCost'] : 0.27
+  }
+
   const getSaving = () => {
     let filmSelected = findLast(DATA_FILM, item => item['name'] === getTintFilm())
     let value = 0
-    if (room) {
+    for (let room of roomSelected) {
       if (room['windows']) {
         room['windows'].forEach(item => {
-          value = getConstByGlassType(filmSelected, item['glassType'])
+          value += getConstByGlassType(filmSelected, item['glassType'])
         })
       }
-    }else {
-      for (let room of data['rooms']) {
-        if (room['windows']) {
-          room['windows'].forEach(item => {
-            value += getConstByGlassType(filmSelected, item['glassType'])
-          })
-        }
-      }
     }
-    return Math.round((value * setting['powerCost']) * getGlassArea() * 100) / 100
+    return Math.round((value * getPowerCost()) * getGlassArea() * 100) / 100
   }
 
+  const getSignature = () => {
+    if (setting && setting['signature']) {
+      return setting['signature'].replace(new RegExp('\r?\n', 'g'), '<br />');
+    } else {
+      return `Window Films WA
+      77 Boulder Road 
+      MALAGA 6090`
+    }
+  }
+
+  const getCompanyLogo = () => {
+    return profile['companyLogo'] || setting['companyLogo']
+  }
+  const getRooms = () => {
+    let rooms = []
+    if (room) {
+      rooms.push(room)
+    } else {
+      rooms.push(...data['rooms'])
+    }
+    return rooms
+  }
 
   const getEmailHtml = (isQuick = false) => {
     onUpdateStatusQuote()
     if (!isQuick) {
-      return (`<div style="text-align: left;"><img src="${profile['companyLogo']}" alt="Logo" height="80"></div>
+      return (`<div style="text-align: left;"><img src="${getCompanyLogo()}" alt="Logo" height="80">
+      ${profile['member'] ? `<img src="https://www.wfaanz.org.au/wp-content/uploads/2018/11/WFAANZ-logo-e1541639610957.png" alt="Logo" height="50"></div>` : ``}</div>
       <h1>Quotation No. ${data['quote_number']}</h1>
     <h1>${moment().format('DD MMM YYYY')}</h1>
     <p><strong>Customer details: </strong>${data['customer_name']}</br>${data['site_address']}, ${data['site_state']}</p>
@@ -863,7 +881,7 @@ const CreateQuoteContainer = () => {
     <tbody>
     <tr>
     <td>Total</td>
-    <td>$${getPriceTotal(0)}</td>
+    <td>$${getPriceTotal(1)}</td>
     </tr>
     <tr>
     <td>GST</td>
@@ -879,12 +897,12 @@ const CreateQuoteContainer = () => {
     <p>Payment Types:</p>
     <p>Cheque, EFT (see bank details below)</p>
     <p>Please contact me directly should you require any additional information.</p>
-    <p style="text-align: center;">${(setting && setting['signature']) ? setting['signature'] : `Window Films WA
-    77 Boulder Road 
-    MALAGA 6090 `}</p>`
+    <p style="text-align: center;">${getSignature()}</p>`
       )
     } else {
-      return (`<h1>Quotation No. ${data['quote_number']}</h1>
+      return (`<div style="text-align: left;"><img src="${getCompanyLogo()}" alt="Logo" height="80">
+      ${profile['member'] ? `<img src="https://www.wfaanz.org.au/wp-content/uploads/2018/11/WFAANZ-logo-e1541639610957.png" alt="Logo" height="50"></div>` : ``}</div>
+      <h1>Quotation No. ${data['quote_number']}</h1>
       <h1>${moment().format('DD MMM YYYY')}</h1>
       <p><strong>Customer details:</strong>${data['customer_name']}</p>
       <p><strong>Site details:</strong>${data['site_address']}, ${data['site_state']}</p>
@@ -916,9 +934,7 @@ const CreateQuoteContainer = () => {
       <p>Payment Types:</p>
       <p>EFT (see bank details below)</p>
       <p>Please contact me directly should you require any additional information.</p>
-      <p>${(setting && setting['signature']) ? setting['signature'] : `Window Films WA
-      77 Boulder Road 
-      MALAGA 6090 `}</p>`)
+      <p>${getSignature()}</p>`)
     }
   }
 
@@ -940,6 +956,16 @@ const CreateQuoteContainer = () => {
     }, (error, event) => {
 
     });
+  }
+
+  const onAddOrRemoveRoom = (val) => {
+    let newRoomSelected = [...roomSelected]
+    if (!_.includes(roomSelected, val)) {
+      newRoomSelected.push(val);
+    } else {
+      _.remove(newRoomSelected, item => item === val);
+    }
+    setRoomSelected(newRoomSelected)
   }
 
   return (
@@ -1033,21 +1059,33 @@ const CreateQuoteContainer = () => {
 
 
             <View style={{ height: Responsive.height(20), width: '100%' }} />
-            <View style={styles.item}>
-              <Text style={styles.title}>Spare</Text>
-              <CheckBox
-                disabled={false}
-                value={false}
-                style={styles.checkBox}
-                boxType={'square'}
-                tintColor={'#B2C249'}
-                onCheckColor={'#FFFFFF'}
-                onTintColor={'#B2C249'}
-                onFillColor={'#B2C249'}
-                onValueChange={(newValue) => { }}
-              />
-              <View style={{ width: Responsive.width(15) }} />
-            </View>
+
+            {
+              getRooms().map(item => {
+                return (<>
+                  <View style={styles.item}>
+                    <Text style={styles.title}>{item['title']}</Text>
+                    <CheckBox
+                      disabled={false}
+                      value={_.includes(roomSelected, item)}
+                      style={styles.checkBox}
+                      boxType={'square'}
+                      tintColor={'#B2C249'}
+                      onCheckColor={'#FFFFFF'}
+                      onTintColor={'#B2C249'}
+                      onFillColor={'#B2C249'}
+                      onValueChange={(newValue) => onAddOrRemoveRoom(item)}
+                    />
+                    <View style={{ width: Responsive.width(15) }} />
+                  </View>
+                  <View style={styles.separator} />
+                </>
+                )
+              })
+            }
+            <View style={{ height: Responsive.height(20), width: '100%' }} />
+
+
             <TouchableOpacity
               onPress={() => { }}
               style={styles.item}>

@@ -36,35 +36,48 @@ const SettingContainer = () => {
 
   const [loading, setLoading] = useState(false)
 
-  const { profile: { settings } } = useAuth().Data
+  const { setting } = useAuth().Data
   const [, , , , updateSettingPref, getSetting] = useAuth().BussinessProfile
 
   const [cutListsTo, setCutListsTo] = useState('')
   const [bccQuotesTo, setBccQuotesTo] = useState('')
-  const [powerCost, setPowerCost] = useState(0)
+  const [powerCost, setPowerCost] = useState(0.27)
 
   const [unit, setUnit] = useState('mm')
   const [followUp, setFollowUp] = useState(true)
 
   const [signature, setSignature] = useState('')
 
-  const [companyLogo, setCompanyLogo] = useState(settings ? { uri: settings['companyLogo'] } : '');
+  const [companyLogo, setCompanyLogo] = useState('');
 
 
   useEffect(() => {
+    getNewSetting()
+  }, [route])
+
+  const getNewSetting = (callback = undefined) => {
+    setLoading(true)
     getSetting().then(data => {
-      setCutListsTo(data['cutListsTo'])
-      setBccQuotesTo(data['bccQuotesTo'])
-      setUnit(data['unit'])
-      setFollowUp(data['followUp'])
-      setPowerCost(data['powerCost'])
-      setCompanyLogo(data['companyLogo'])
-      setSignature(data['signature'])
-      dispatch(saveUpdateSettingPref({ setting: data }))
+      console.log('data', data)
+      if (data) {
+        setCutListsTo(data['cutListsTo'])
+        setBccQuotesTo(data['bccQuotesTo'])
+        setUnit(data['unit'])
+        setFollowUp(data['followUp'])
+        setPowerCost(data['powerCost'])
+        setCompanyLogo({ uri: data['companyLogo'] })
+        setSignature(data['signature'])
+        dispatch(saveUpdateSettingPref({ setting: data }))
+      }
+      setLoading(false)
+      if (callback) {
+        callback()
+      }
     }).catch(error => {
+      setLoading(false)
       console.log('error', error)
     })
-  }, [route])
+  }
 
   useFocusEffect(
     useCallback(() => {
@@ -77,8 +90,14 @@ const SettingContainer = () => {
               leftOption={
                 <TouchableOpacity
                   onPress={() => {
-                    updateSettingPref(cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, signature)
-                    navigation.goBack();
+                    let customRooms = (setting && setting['customRooms']) ? setting['customRooms'] : []
+                    updateSettingPref(cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, signature, customRooms, (isLoading) => {
+                      setLoading(isLoading)
+                      if (!isLoading) {
+                        navigation.navigate('Settings')
+                        getNewSetting()
+                      }
+                    })
                   }}
                   style={Layout.rowHCenter}>
                   <Image source={Images.ic_back} />
@@ -89,7 +108,7 @@ const SettingContainer = () => {
           );
         },
       })
-    }, [navigation, cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, signature])
+    }, [navigation, cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, signature, setting])
   )
 
 
@@ -98,8 +117,12 @@ const SettingContainer = () => {
     return signature
   }
 
-  const onUpdateNotes = (notes) => {
-    setSignature(notes)
+  const onUpdateSignature = (signature) => {
+    setSignature(signature)
+  }
+
+  const onUpdateCompanyLogo = (source) => {
+    setCompanyLogo(source)
   }
 
   return (
@@ -190,7 +213,7 @@ const SettingContainer = () => {
             </View>
             <View style={styles.separator} />
             <TouchableOpacity
-              onPress={() => {}}
+              onPress={() => navigation.navigate('AddPicture', { picture: companyLogo, from: 'Settings', title: 'Company Logo', onUpdatePicture: onUpdateCompanyLogo })}
               style={styles.item}>
               <Text style={styles.title}>Set a new company logo</Text>
               <Text style={styles.subValue}>{''}</Text>
@@ -200,7 +223,7 @@ const SettingContainer = () => {
             <View style={{ height: Responsive.height(20), width: '100%' }} />
             <Text style={styles.header}>FRANCHISE CONTACT DETAILS</Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate('Notes', { notes: signature, title: 'Signature', from: 'Settings', onUpdateNotes })}
+              onPress={() => navigation.navigate('Notes', { notes: signature, title: 'Signature', from: 'Settings', onUpdateNotes: onUpdateSignature })}
               style={[styles.item]}>
               <Text style={styles.title}>Signature</Text>
               <Text style={styles.subValue}>{getTextDisplaySignature()}</Text>

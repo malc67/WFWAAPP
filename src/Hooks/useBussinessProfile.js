@@ -122,18 +122,32 @@ export default function () {
     }
   }
 
-  const updateSettingPref = async (cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, signature) => {
-    let data = { cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, signature }
+  const updateSettingPref = async (cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, signature, customRooms = [], callback = undefined) => {
+    callback(true)
+    console.log('companyLogo', companyLogo)
+    let data = { cutListsTo, bccQuotesTo, unit, followUp, powerCost, signature, customRooms }
+    if (!isUndefined(companyLogo) && !isEmpty(companyLogo) && !isUndefined(companyLogo?.uri) && !isEmpty(companyLogo?.uri) && !checkUriFromInternet(companyLogo?.uri)) {
+      let companyLogoUri = await uploadImageToFirebase(companyLogo?.uri)
+      data = { ...data, companyLogo: companyLogoUri }
+    } else {
+      if (checkUriFromInternet(companyLogo?.uri)) {
+        data = { ...data, companyLogo: companyLogo?.uri }
+      } else {
+        data = { ...data, companyLogo: '' }
+      }
+    }
     firestore()
       .collection('Settings')
       .doc(info.uid)
       .set(data)
       .then((res) => {
-        navigation.navigate('Settings')
+        callback(false)
       }).catch((error) => {
+        callback(false)
         console.log('updateSettingPref', error)
       })
   }
+
 
   const getSetting = async () => {
     return new Promise((resolve, reject) => {

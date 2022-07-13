@@ -15,7 +15,7 @@ import { useAuth, useQuote, useRoom, useTheme } from '@/Hooks'
 import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
-import { isEmpty } from 'lodash'
+import _, { isEmpty, isUndefined } from 'lodash'
 import { Header, Avatar, Loader } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -23,7 +23,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import email from 'react-native-email'
 import Mailer from 'react-native-mail';
 import moment from 'moment'
-
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
 
 
 
@@ -92,7 +92,6 @@ const QuoteDetailContainer = () => {
   useEffect(() => {
     const { item } = route?.params
     setData(item)
-    console.log('XXX->', item)
     getRoomsApi(item['id'], true)
   }, [route])
 
@@ -212,9 +211,9 @@ const QuoteDetailContainer = () => {
                   <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${room['title']}</td>
                   <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['tintFilm']}</td>
                   <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['quantity']}</td>
-                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['width']} (mm)</td>
-                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['height']} (mm)</td>
-                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${area} (m²)</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['width']}</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['height']}</td>
+                  <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${area}</td>
                   <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['frameType']}</td>
                   <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['glassType']}</td>
                   <td style="border: 1px solid #6d6d6d;border-collapse: collapse;padding: 0.5em;">${window['includeCorking']}</td>
@@ -287,12 +286,86 @@ const QuoteDetailContainer = () => {
           <p><strong>Total corking:</strong> <span>${getTotalFilmRemoval()}m²</span></p>`
   }
 
+  const getInfoLabel = (window) => {
+    let roomName = ''
+    let tintFilm = ''
+    let position = ''
+    let wh = ''
+    if (window && !isUndefined(window['tintFilm']) && !isEmpty(window['tintFilm'])) {
+      tintFilm = window['tintFilm']
+    } else {
+      if (window && window['room']) {
+        tintFilm = window['room']['tint_film']
+      }
+    }
+    if (window && window['room']) {
+      roomName = window['room']['title']
+      let index = _.findIndex(window['room']['windows'], item => item['id'] === window['id'])
+      position = `${index + 1} of ${window['room']['window_count']}`
+    }
+    if (window) {
+      wh = `${window['width']} x ${window['height']} x ${window['quantity']}`
+    }
+    return `${roomName}</br>${tintFilm}</br>${position}</br>${wh}</br></br>`
+  }
 
-  const handleEmail = () => {
+  const getPrintedFilmLabels = () => {
+    let result = ''
+    if (rooms) {
+      let windows = []
+      for (let room of rooms) {
+        if (room['windows']) {
+          room['windows'].forEach(item => {
+            windows.push({ ...item, room })
+          })
+        }
+      }
+      for (let i = 0; i < windows.length; i++) {
+        if (i % 3 == 0) {
+          console.log('i', i)
+          let item1 = windows[i]
+          let item2 = windows[i + 1]
+          let item3 = windows[i + 2]
+          result += `
+            <tr style="border-collapse: collapse;">
+                <td style="text-align: center;border-collapse: collapse;padding: 0.5em;">${getInfoLabel(item1)}</td>
+                <td style="text-align: center;border-collapse: collapse;padding: 0.5em;">${getInfoLabel(item2)}</td>
+                <td style="text-align: center;border-collapse: collapse;padding: 0.5em;">${getInfoLabel(item3)}</td>
+            </tr>`
+            
+        }
+      }
+    }
+    return result
+  }
+
+  const createPrintedFilmLabels = async () => {
+    let options = {
+      html: `<table style="width: 100%;border-collapse: collapse;">
+              <tr style="border-collapse: collapse;">
+                  <th style="width: 33%;border-collapse: collapse;"></th>
+                  <th style="width: 33%;border-collapse: collapse;"></th>
+                  <th style="width: 33%;border-collapse: collapse;"></th>
+              </tr>
+              ${getPrintedFilmLabels()}
+            </table>`,
+      fileName: 'PrintedFilmLabels',
+      directory: 'Documents',
+    };
+
+    let file = await RNHTMLtoPDF.convert(options)
+    console.log(file.filePath);
+    return file.filePath
+  }
+
+  const handleEmail = async () => {
     const to = [(setting && setting['cutListsTo']) ? setting['cutListsTo'] : data['contact_email']]
     const cc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : 'malc@windowfilmswa.com.au']
     const bcc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : 'malc@windowfilmswa.com.au']
-    const subject = `Window Film WA Quote ${data['quote_number']}`
+    const subject = `Cutting List for ${data['job_name']}  (${data['quote_number']})`
+
+    let path = await createPrintedFilmLabels()
+    console.log('path', path);
     Mailer.mail({
       subject: subject,
       recipients: to,
@@ -301,7 +374,11 @@ const QuoteDetailContainer = () => {
       body: getHtmlCutList(),
       customChooserTitle: 'Send Mail',
       isHTML: true,
-      attachments: []
+      attachments: [{
+        path: path,
+        type: 'pdf',
+        name: `${data['job_name']} Cut list Printed Film Labels`,
+      }]
     }, (error, event) => {
 
     });

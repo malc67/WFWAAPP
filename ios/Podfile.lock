@@ -1024,6 +1024,8 @@ PODS:
     - React-Core
   - react-native-geocoder (1.0.0-alpha.7):
     - React
+  - react-native-html-to-pdf (0.12.0):
+    - React-Core
   - react-native-image-picker (4.8.4):
     - React-Core
   - react-native-mail (6.1.1):
@@ -1160,6 +1162,8 @@ PODS:
   - RNScreens (3.13.1):
     - React-Core
     - React-RCTImage
+  - RNShare (7.6.4):
+    - React-Core
   - RNVectorIcons (9.1.0):
     - React-Core
   - Yoga (1.14.0)
@@ -1214,6 +1218,7 @@ DEPENDENCIES:
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
   - react-native-flipper (from `../node_modules/react-native-flipper`)
   - "react-native-geocoder (from `../node_modules/@timwangdev/react-native-geocoder`)"
+  - react-native-html-to-pdf (from `../node_modules/react-native-html-to-pdf`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-mail (from `../node_modules/react-native-mail`)
   - react-native-maps (from `../node_modules/react-native-maps`)
@@ -1243,6 +1248,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNShare (from `../node_modules/react-native-share`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -1324,6 +1330,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-flipper"
   react-native-geocoder:
     :path: "../node_modules/@timwangdev/react-native-geocoder"
+  react-native-html-to-pdf:
+    :path: "../node_modules/react-native-html-to-pdf"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-mail:
@@ -1382,6 +1390,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNShare:
+    :path: "../node_modules/react-native-share"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   Yoga:
@@ -1440,6 +1450,7 @@ SPEC CHECKSUMS:
   react-native-blob-util: 2d49d135d6fe1410c019fb5bff241dac7f12d73d
   react-native-flipper: df8e2a7e5dcc857033d925ad8c7e8c52760b8e06
   react-native-geocoder: 225895386f04bf37515eaa09c419dea9b923f40b
+  react-native-html-to-pdf: 4c5c6e26819fe202971061594058877aa9b25265
   react-native-image-picker: cffb727cf2f59bd5c0408e30b3dbe0b935f88835
   react-native-mail: 8fdcd3aef007c33a6877a18eb4cf7447a1d4ce4a
   react-native-maps: 8b8bfada2c86205a7f5a07dd1f92f29b33ea83aa
@@ -1469,6 +1480,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 61628a2c859172551aa2100d3e73d1e57878392f
   RNReanimated: 46cdb89ca59ab7181334f4ed05a70e82ddb36751
   RNScreens: 40a2cb40a02a609938137a1e0acfbf8fc9eebf19
+  RNShare: 4406f61af043027b695c3a0b8f39e2c2bdacde12
   RNVectorIcons: 7923e585eaeb139b9f4531d25a125a1500162a0b
   Yoga: d6b6a80659aa3e91aaba01d0012e7edcbedcbecd
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
