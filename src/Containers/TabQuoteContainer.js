@@ -6,7 +6,8 @@ import {
   View,
   Text,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  SectionList
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -31,6 +32,12 @@ const TabQuoteContainer = () => {
 
   const [quotesListDisplay, setQuotesListDisplay] = useState(quotesList)
 
+  const [quotesListUnsent, setQuotesListUnsent] = useState([])
+  const [quotesListSent, setQuotesListSent] = useState([])
+  const [quotesListAccepted, setQuotesListAccepted] = useState([])
+  const [quotesListRejected, setQuotesListRejected] = useState([])
+
+
   const [statusTab, setStatusTab] = useState(undefined)
 
   useFocusEffect(
@@ -54,6 +61,13 @@ const TabQuoteContainer = () => {
   }, [quotesList])
 
   useEffect(() => {
+    setQuotesListUnsent(statusTab ? [] : filter(quotesListDisplay, item => item['status'] === undefined || item['status'] === false))
+    setQuotesListSent(filter(quotesListDisplay, item => item['status'] === true && item['confirm'] === undefined))
+    setQuotesListAccepted(filter(quotesListDisplay, item => item['status'] === true && item['confirm'] === 'accepted'))
+    setQuotesListRejected(filter(quotesListDisplay, item => item['status'] === true && item['confirm'] === 'rejected'))
+  }, [quotesListDisplay])
+
+  useEffect(() => {
     getQuotesApi()
     onFilterStatus(undefined)
   }, [])
@@ -70,7 +84,7 @@ const TabQuoteContainer = () => {
     }
     if (status === true) {
       setStatusTab(true)
-      setQuotesListDisplay(filter(quotesList, item => item['status'] === true))
+      setQuotesListDisplay(filter(quotesList, item => item['status'] === true && item['confirm'] === undefined))
       return
     }
     if (status === false) {
@@ -80,6 +94,14 @@ const TabQuoteContainer = () => {
     }
   }
 
+
+  const HeaderItem = ({ title, data }) => {
+    if (data && data.length > 0) {
+      return (<Text style={styles.header}>{title}</Text>)
+    } else {
+      return null
+    }
+  }
 
   const Item = ({ item }) => (
     <TouchableOpacity
@@ -100,6 +122,7 @@ const TabQuoteContainer = () => {
   );
 
 
+
   return (
     <SafeAreaView
       style={Layout.fill}>
@@ -109,11 +132,31 @@ const TabQuoteContainer = () => {
         if (index === 2) onFilterStatus(true)
       }} />
 
-      <FlatList
+      <SectionList
+        sections={[
+          {
+            title: 'Unsent Quote',
+            data: quotesListUnsent
+          },
+          {
+            title: 'Sent Quote',
+            data: quotesListSent
+          },
+          {
+            title: 'Accepted Quote',
+            data: quotesListAccepted
+          },
+          {
+            title: 'Rejected Quote',
+            data: quotesListRejected
+          },
+        ]}
         contentContainerStyle={{ flexGrow: 1 }}
         data={quotesListDisplay}
         keyExtractor={(item, index) => item + index}
         renderItem={({ item }) => <Item item={item} />}
+        renderSectionHeader={({ section: { title, data } }) => <HeaderItem title={title} data={data} />}
+        stickySectionHeadersEnabled={false}
         ListHeaderComponent={() => <View style={styles.separator} />}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListFooterComponent={() => <View style={{ height: Responsive.height(85), width: '100%' }} />}
@@ -157,6 +200,15 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: Responsive.height(20)
+  },
+  header: {
+    fontSize: 14,
+    fontFamily: 'NewJune',
+    textTransform: 'uppercase',
+    color: '#A7B0B5',
+    paddingHorizontal: Responsive.width(20),
+    paddingTop: Responsive.width(15),
+    paddingBottom: Responsive.height(10)
   },
   title: {
     flex: 1,

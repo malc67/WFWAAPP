@@ -19,7 +19,9 @@ import {
   AddPictureContainer,
   DataSheetContainer,
   NotesContainer,
-  SettingContainer
+  SettingContainer,
+  DiscountContainer,
+  ExtraCostContainer
 } from '@/Containers'
 import { useTheme } from '@/Hooks'
 import MainNavigator from './Main'
@@ -128,6 +130,18 @@ const ApplicationNavigator = () => {
           <Stack.Screen
             name="SettingsPref"
             component={SettingContainer}
+            options={{
+              headerShown: true
+            }} />
+          <Stack.Screen
+            name="Discount"
+            component={DiscountContainer}
+            options={{
+              headerShown: true
+            }} />
+          <Stack.Screen
+            name="ExtraCost"
+            component={ExtraCostContainer}
             options={{
               headerShown: true
             }} />

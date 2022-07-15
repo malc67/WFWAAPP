@@ -627,6 +627,8 @@ const CreateQuoteContainer = () => {
   const [price, setPrice] = useState('')
   const [priceForSealing, setPriceForSealing] = useState('')
   const [priceFilmRemoval, setPriceFilmRemoval] = useState({})
+  const [discount, setDiscount] = useState({ type: 'Amount', value: 0 })
+  const [extraCosts, setExtraCosts] = useState([])
 
   const [roomSelected, setRoomSelected] = useState([])
   const [isAttachEnergySaving, setIsAttachEnergySaving] = useState(false)
@@ -681,10 +683,29 @@ const CreateQuoteContainer = () => {
     setPriceFilmRemoval(data)
   }
 
+  const onUpdateDiscount = (data) => {
+    console.log('DISCOUNT', data)
+    setDiscount(data)
+  }
+
+  const onUpdateExtraCost = (data) => {
+    console.log('EXtraCost', data)
+    setExtraCosts(data)
+  }
+
   const onUpdateStatusQuote = () => {
     updateQuote(data['id'], { status: true })
     setData({ ...data, status: true })
     route?.params?.onUpdateListQuote()
+  }
+
+  const getDiscountDisplay = () => {
+    if (discount && discount['type'] === 'Amount') {
+      return `$${discount['value']}`
+    }
+    if (discount && discount['type'] === 'Percent') {
+      return `${discount['value']}%`
+    }
   }
 
   const getGlassArea = () => {
@@ -708,9 +729,32 @@ const CreateQuoteContainer = () => {
     }
   }
 
+  const getTotalExtra = () => {
+    let totalExtra = 0
+    if (!_.isEmpty(extraCosts)) {
+      extraCosts.forEach(item => {
+        if (item['value']) {
+          totalExtra += Number(item['value'])
+        }
+      })
+    }
+    return totalExtra
+  }
+
 
   const getPriceTotal = (percent = 1) => {
     let priceFilm = getGlassArea() * price + getPriceFilmRemoval() + Number(priceForSealing)
+
+    if (discount && discount['type'] === 'Amount') {
+      priceFilm = priceFilm - discount['value']
+    }
+    if (discount && discount['type'] === 'Percent') {
+      priceFilm = priceFilm - ((priceFilm * discount['value']) / 100)
+    }
+
+    if (!_.isEmpty(extraCosts)) {
+      priceFilm += getTotalExtra()
+    }
 
     return Math.round(priceFilm * percent * 100) / 100
   }
@@ -1096,18 +1140,18 @@ const CreateQuoteContainer = () => {
 
 
             <TouchableOpacity
-              onPress={() => { }}
+              onPress={() => navigation.navigate('Discount', { item: discount, onUpdateDiscount })}
               style={styles.item}>
               <Text style={styles.title}>Discount</Text>
-              <Text style={[styles.subValue, { paddingHorizontal: Responsive.height(10) }]}>$0.00</Text>
+              <Text style={[styles.subValue, { paddingHorizontal: Responsive.height(10) }]}>{getDiscountDisplay()}</Text>
               <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
             </TouchableOpacity>
             <View style={styles.separator} />
             <TouchableOpacity
-              onPress={() => { }}
+              onPress={() => navigation.navigate('ExtraCost', { item: extraCosts, onUpdateExtraCost })}
               style={styles.item}>
               <Text style={styles.title}>Extra Costs</Text>
-              <Text style={[styles.subValue, { paddingHorizontal: Responsive.height(10) }]}>$0.00</Text>
+              <Text style={[styles.subValue, { paddingHorizontal: Responsive.height(10) }]}>${getTotalExtra()}</Text>
               <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
             </TouchableOpacity>
 
@@ -1187,8 +1231,15 @@ const styles = StyleSheet.create({
     color: '#B2C249'
   },
   checkBox: {
-    height: Responsive.height(20),
-    width: Responsive.height(20)
+    ...Platform.select({
+      ios: {
+        height: Responsive.height(20),
+        width: Responsive.height(20)
+      },
+      android: {
+
+      }
+    })
   },
   item: {
     backgroundColor: "#ffffff",

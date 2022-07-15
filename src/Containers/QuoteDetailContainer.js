@@ -137,6 +137,12 @@ const QuoteDetailContainer = () => {
     getRoomsApi(data['id'], true)
   }
 
+  const onUpdateConfirm = (confirm) => {
+    updateQuote(data['id'], { confirm })
+    setData({ ...data, confirm })
+    route?.params?.onUpdateListQuote()
+  }
+
 
   const getTextDisplayNotes = () => {
     if (data['notes'] && data['notes'].length > 15) return `${data['notes'].substring(0, 15)}...`
@@ -294,61 +300,75 @@ const QuoteDetailContainer = () => {
     if (window && !isUndefined(window['tintFilm']) && !isEmpty(window['tintFilm'])) {
       tintFilm = window['tintFilm']
     } else {
-      if (window && window['room']) {
+      if (window && window['room'] && !isUndefined(window['room']['tint_film']) && !isEmpty(window['room']['tint_film'])) {
         tintFilm = window['room']['tint_film']
+      } else {
+        if (window && window['quote'] && !isUndefined(window['quote']['tint_film']) && !isEmpty(window['quote']['tint_film'])) {
+          tintFilm = window['quote']['tint_film']
+        }
       }
     }
     if (window && window['room']) {
       roomName = window['room']['title']
-      let index = _.findIndex(window['room']['windows'], item => item['id'] === window['id'])
-      position = `${index + 1} of ${window['room']['window_count']}`
+      position = window['position']
     }
     if (window) {
-      wh = `${window['width']} x ${window['height']} x ${window['quantity']}`
+      wh = `${window['width']} x ${window['height']}`
     }
-    return `${roomName}</br>${tintFilm}</br>${position}</br>${wh}</br></br>`
+    return `</br>${roomName}</br>${tintFilm}</br>${position}</br>${wh}</br>`
   }
 
   const getPrintedFilmLabels = () => {
-    let result = ''
+    let result = `<table style="width: 100%;border-collapse: collapse;">
+                  <tr style="border-collapse: collapse;">
+                      <th style="width: 33%;border-collapse: collapse;"></th>
+                      <th style="width: 33%;border-collapse: collapse;"></th>
+                      <th style="width: 33%;border-collapse: collapse;"></th>
+                  </tr>`
     if (rooms) {
       let windows = []
+      let printedFilmLabels = []
       for (let room of rooms) {
         if (room['windows']) {
           room['windows'].forEach(item => {
             windows.push({ ...item, room })
+            for (let i = 0; i < item['quantity']; i++) {
+              printedFilmLabels.push({ ...item, room, quote: data, position: `${i + 1} of ${item['quantity']}` })
+            }
           })
         }
       }
-      for (let i = 0; i < windows.length; i++) {
+      for (let i = 0; i < printedFilmLabels.length; i++) {
         if (i % 3 == 0) {
-          console.log('i', i)
-          let item1 = windows[i]
-          let item2 = windows[i + 1]
-          let item3 = windows[i + 2]
+          let item1 = printedFilmLabels[i]
+          let item2 = printedFilmLabels[i + 1]
+          let item3 = printedFilmLabels[i + 2]
           result += `
             <tr style="border-collapse: collapse;">
                 <td style="text-align: center;border-collapse: collapse;padding: 0.5em;">${getInfoLabel(item1)}</td>
                 <td style="text-align: center;border-collapse: collapse;padding: 0.5em;">${getInfoLabel(item2)}</td>
                 <td style="text-align: center;border-collapse: collapse;padding: 0.5em;">${getInfoLabel(item3)}</td>
             </tr>`
-            
+        }
+        if (i != 0 && i % 20 == 0) {
+          result += `</table>`
+          result += `<p style="page-break-before: always;" align=center></p>`
+          result += `<table style="width: 100%;border-collapse: collapse;">
+                <tr style="border-collapse: collapse;">
+                    <th style="width: 33%;border-collapse: collapse;"></th>
+                    <th style="width: 33%;border-collapse: collapse;"></th>
+                    <th style="width: 33%;border-collapse: collapse;"></th>
+                </tr>`
         }
       }
     }
+    result += `</table>`
     return result
   }
 
   const createPrintedFilmLabels = async () => {
     let options = {
-      html: `<table style="width: 100%;border-collapse: collapse;">
-              <tr style="border-collapse: collapse;">
-                  <th style="width: 33%;border-collapse: collapse;"></th>
-                  <th style="width: 33%;border-collapse: collapse;"></th>
-                  <th style="width: 33%;border-collapse: collapse;"></th>
-              </tr>
-              ${getPrintedFilmLabels()}
-            </table>`,
+      html: `${getPrintedFilmLabels()}`,
       fileName: 'PrintedFilmLabels',
       directory: 'Documents',
     };
@@ -392,6 +412,28 @@ const QuoteDetailContainer = () => {
         <ScrollView
           style={Layout.fill}
           contentContainerStyle={{ flexGrow: 1 }}>
+
+          {
+            (data['status'] === true && data['confirm'] === undefined) ? (
+              <View style={[Layout.rowHCenter, styles.actionTop]}>
+                <TouchableOpacity
+                  onPress={() => {
+                    onUpdateConfirm('accepted')
+                  }}
+                  style={[Layout.fill, Layout.center, styles.buttonSend]}>
+                  <Text style={[styles.textButton, { color: '#434A4F', fontSize: Responsive.font(14) }]}>Quote Accepted</Text>
+                </TouchableOpacity>
+                <View style={{ width: Responsive.width(20) }} />
+                <TouchableOpacity
+                  onPress={() => {
+                    onUpdateConfirm('rejected')
+                  }}
+                  style={[Layout.fill, Layout.center, styles.buttonSend]}>
+                  <Text style={[styles.textButton, { color: '#434A4F', fontSize: Responsive.font(14) }]}>Quote Rejected</Text>
+                </TouchableOpacity>
+              </View>
+            ) : null
+          }
 
           <View style={{ height: Responsive.height(20), width: '100%' }} />
 
@@ -546,6 +588,11 @@ const styles = StyleSheet.create({
     width: Responsive.height(22),
     height: Responsive.height(22),
     tintColor: '#B2C249'
+  },
+  actionTop: {
+    paddingHorizontal: Responsive.width(20),
+    paddingBottom: Responsive.height(10),
+    marginTop: Responsive.height(20)
   },
   actionWrapper: {
     paddingHorizontal: Responsive.width(20),
