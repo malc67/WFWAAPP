@@ -24,6 +24,7 @@ import email from 'react-native-email'
 import Mailer from 'react-native-mail';
 import moment from 'moment'
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import SheetMenu from 'react-native-sheetmenu'
 
 
 
@@ -36,7 +37,7 @@ const QuoteDetailContainer = () => {
 
   const { profile, setting } = useAuth().Data
 
-  const [loadingQuote, , , , , updateQuote, deleteQuote] = useQuote()
+  const [loadingQuote, , , , , updateQuote, deleteQuote, duplicationQuote] = useQuote()
 
   const [loadingRoom, errors, rooms, getRoomsApi, createRoom, ,] = useRoom()
 
@@ -345,12 +346,12 @@ const QuoteDetailContainer = () => {
           let item3 = printedFilmLabels[i + 2]
           result += `
             <tr style="border-collapse: collapse;">
-                <td style="text-align: center;border-collapse: collapse;padding: 0.5em;">${getInfoLabel(item1)}</td>
-                <td style="text-align: center;border-collapse: collapse;padding: 0.5em;">${getInfoLabel(item2)}</td>
-                <td style="text-align: center;border-collapse: collapse;padding: 0.5em;">${getInfoLabel(item3)}</td>
+                <td style="text-align: center;border-collapse: collapse;padding: 0.5em;font-size: 13px">${getInfoLabel(item1)}</td>
+                <td style="text-align: center;border-collapse: collapse;padding: 0.5em;font-size: 13px">${getInfoLabel(item2)}</td>
+                <td style="text-align: center;border-collapse: collapse;padding: 0.5em;font-size: 13px">${getInfoLabel(item3)}</td>
             </tr>`
         }
-        if (i != 0 && i % 20 == 0) {
+        if (i != 0 && i % 26 == 0) {
           result += `</table>`
           result += `<p style="page-break-before: always;" align=center></p>`
           result += `<table style="width: 100%;border-collapse: collapse;">
@@ -402,6 +403,25 @@ const QuoteDetailContainer = () => {
     }, (error, event) => {
 
     });
+  }
+
+  const onOptionDuplicationJob = () => {
+    SheetMenu.show({
+      actions: [{
+        title: "Duplication Job",
+        onPress: () => {
+          duplicationQuote(data['id'], () => {
+            route?.params?.onUpdateListQuote()
+          })
+        },
+      },
+      {
+        title: "Cancel",
+        style: 'cancel',
+        onPress: () => {
+        },
+      }]
+    })
   }
 
 
@@ -493,7 +513,7 @@ const QuoteDetailContainer = () => {
 
           <View style={{ height: Responsive.height(20), width: '100%' }} />
           <TouchableOpacity
-            onPress={() => { }}
+            onPress={onOptionDuplicationJob}
             style={styles.item}>
             <Text style={styles.title}>Duplication Job</Text>
             <Image style={styles.imgArrow} source={Images.ic_arrow_right} />

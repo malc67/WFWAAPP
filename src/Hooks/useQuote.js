@@ -10,6 +10,7 @@ import { navigateAndSimpleReset } from "@/Navigators/utils";
 import { useDispatch, useSelector } from 'react-redux'
 import { updateInfo, clearAuth } from '@/Store/Auth'
 import geocoder from "@timwangdev/react-native-geocoder";
+import moment from "moment";
 
 export default function () {
 
@@ -37,7 +38,7 @@ export default function () {
         })
         setLoading(false)
         setQuoteList(tempData)
-        if(callback){
+        if (callback) {
           callback()
         }
       })
@@ -150,6 +151,9 @@ export default function () {
         .update(data)
         .then(async () => {
           setLoading(false)
+          if (callback) {
+            callback()
+          }
         }).catch((error) => {
           setLoading(false)
           if (callback) {
@@ -164,6 +168,9 @@ export default function () {
         .update(data)
         .then(async () => {
           setLoading(false)
+          if (callback) {
+            callback()
+          }
         }).catch((error) => {
           setLoading(false)
           if (callback) {
@@ -188,12 +195,33 @@ export default function () {
         }
       }).catch((error) => {
         setLoading(false)
-        console.log('updateQuote', error)
+        console.log('deleteQuote', error)
       })
+  }
+
+  const duplicationQuote = async (quoteId, callback = undefined) => {
+    setLoading(true)
+    const quote = await firestore().collection('create_quote').doc(quoteId).get()
+
+    const quoteDuplicate = await firestore().collection('create_quote').add({ ...quote.data(), status: false, create_date: moment().valueOf() })
+
+    const rooms = await firestore().collection('create_quote').doc(quoteId).collection('rooms').get()
+    rooms.forEach(async (room) => {
+      const roomDuplicate = await firestore().collection('create_quote').doc(quoteDuplicate.id).collection('rooms').add(room.data())
+
+      const windows = await firestore().collection('create_quote').doc(quoteId).collection('rooms').doc(room.id).collection('windows').get()
+      windows.forEach(async (window) => {
+        await firestore().collection('create_quote').doc(quoteDuplicate.id).collection('rooms').doc(roomDuplicate.id).collection('windows').add(window.data())
+      })
+    })
+    if (callback) {
+      callback()
+    }
+    setLoading(false)
   }
 
 
 
 
-  return [loading, errors, quotesList, getQuotesApi, createQuote, updateQuote, deleteQuote]
+  return [loading, errors, quotesList, getQuotesApi, createQuote, updateQuote, deleteQuote, duplicationQuote]
 }

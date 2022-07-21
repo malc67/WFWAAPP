@@ -118,6 +118,12 @@ const AddPictureContainer = () => {
         onPress: () => {
           imagePicker()
         },
+      },
+      {
+        title: "Cancel",
+        style: 'cancel',
+        onPress: () => {
+        },
       }]
     })
   }
