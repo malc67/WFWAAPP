@@ -871,7 +871,7 @@ const CreateQuoteContainer = () => {
     <p>I have great pleasure in submitting the following quotation and have attached the following documents:</p>
     <ul>
     <li>Quotation ${data['quote_number']} (contained within this document)</li>
-    ${getTintFilm() && `<li>${getTintFilm()} Internal Window Film Brochure</li>`}
+    ${getTintFilm() ? `<li>${getTintFilm()} Internal Window Film Brochure</li>` : ''}
     <li>Sample copy of the Manufacturer&rsquo;s Warranty Form (attached to original email)</li>
     </ul>
     <p>Scope of Works:</p>
@@ -885,8 +885,7 @@ const CreateQuoteContainer = () => {
     <p>Glass Type: ${getGlassType()}</p>
     <p>Frame Type: ${getFrameType()}</p>
     <p><strong>Film-to-Glass Application (Recommendation):</strong></p>
-    ${getTintFilm() && `<p>${getTintFilm()} Internal Window Film is recommended by the manufacturer</p>`
-        }
+    ${getTintFilm() ? `<p>${getTintFilm()} Internal Window Film is recommended by the manufacturer</p>` : ''}
     <p><strong>About SolarZone Internal Window Films:</strong></p>
     <ul>
     <li>Deliver high levels of protection from solar heat, cut energy costs by reducing the need for air-conditioning, boosting energy efficiency</li>
@@ -910,7 +909,7 @@ const CreateQuoteContainer = () => {
      ` : ``
         }
     <p><strong>Warranty Period &amp; Registration:</strong></p>
-    <p>${getTintFilm() && `${getTintFilm()}`} Internal Window Film carries a Lifetime Warranty for Residential applications and 12 Years Warranty for Commercial applications. The warranty period on the External Window film applications varies depending on the film used and other site variables. Please refer to the sample copy of the manufacturer&rsquo;s warranty form attached to confirm the warranty period relevant to this particular application.</p>
+    <p>${getTintFilm() ? `${getTintFilm()}` : ''} Internal Window Film carries a Lifetime Warranty for Residential applications and 12 Years Warranty for Commercial applications. The warranty period on the External Window film applications varies depending on the film used and other site variables. Please refer to the sample copy of the manufacturer&rsquo;s warranty form attached to confirm the warranty period relevant to this particular application.</p>
     <p>The original warranty document will be sent to you after installation for this types of glazing.</p>
     <p><strong>Apples for Apples Policy:</strong></p>
     <p>Window Films WA pride ourselves on giving best value pricing for quality products but if you receive a cheaper quote from our competitors we will do our very best to match it. Competitor&rsquo;s quotes must be in writing and comparable to our quoted product and service.</p>
@@ -921,22 +920,29 @@ const CreateQuoteContainer = () => {
         }
     <p><em>Please note that this is only a guide and more accurate figures can be obtained by employing an energy auditor.</em></p>
     <div>
-    <table>
-    <tbody>
-    <tr>
-    <td>Total</td>
-    <td>$${getPriceTotal(1)}</td>
-    </tr>
-    <tr>
-    <td>GST</td>
-    <td>$${getPriceTotal(0.1)}</td>
-    </tr>
-    <tr>
-    <td>Total (including GST)</td>
-    <td>$${getPriceTotal(1.1)}</td>
-    </tr>
-    </tbody>
-    </table>
+    ${
+      Platform.OS === 'ios' ? `
+      <table>
+      <tbody>
+      <tr>
+      <td>Total</td>
+      <td>$${getPriceTotal(1)}</td>
+      </tr>
+      <tr>
+      <td>GST</td>
+      <td>$${getPriceTotal(0.1)}</td>
+      </tr>
+      <tr>
+      <td>Total (including GST)</td>
+      <td>$${getPriceTotal(1.1)}</td>
+      </tr>
+      </tbody>
+      </table>` : `
+      <p>Total: $${getPriceTotal(1)}</p>
+      <p>GST: $${getPriceTotal(0.1)}</p>
+      <p>Total (including GST): $${getPriceTotal(1.1)}</p>
+      `
+    }
     </div>
     <p>Payment Types:</p>
     <p>Cheque, EFT (see bank details below)</p>
@@ -954,26 +960,33 @@ const CreateQuoteContainer = () => {
       <p>I have great pleasure in submitting the following quotation and have attached the following documents:</p>
       <ul>
       <li>Quotation ${data['quote_number']} (contained within this document)</li>
-      <li>${getTintFilm() && `${getTintFilm()}`} Internal Window Film Brochure</li>
+      <li>${getTintFilm() ? `${getTintFilm()}` : ''} Internal Window Film Brochure</li>
       <li>Sample copy of the Manufacturer&rsquo;s Warranty Form (attached to original email)</li>
       </ul>
       <div>
-      <table>
-      <tbody>
-      <tr>
-      <td>Total</td>
-      <td>$${getPriceTotal(1)}</td>
-      </tr>
-      <tr>
-      <td>GST</td>
-      <td>$${getPriceTotal(0.1)}</td>
-      </tr>
-      <tr>
-      <td>Total (including GST)</td>
-      <td>$${getPriceTotal(1.1)}</td>
-      </tr>
-      </tbody>
-      </table>
+      ${
+        Platform.OS === 'ios' ? `
+        <table>
+        <tbody>
+        <tr>
+        <td>Total</td>
+        <td>$${getPriceTotal(1)}</td>
+        </tr>
+        <tr>
+        <td>GST</td>
+        <td>$${getPriceTotal(0.1)}</td>
+        </tr>
+        <tr>
+        <td>Total (including GST)</td>
+        <td>$${getPriceTotal(1.1)}</td>
+        </tr>
+        </tbody>
+        </table>` : `
+        <p>Total: $${getPriceTotal(1)}</p>
+        <p>GST: $${getPriceTotal(0.1)}</p>
+        <p>Total (including GST): $${getPriceTotal(1.1)}</p>
+        `
+      }
       </div>
       <p>Payment Types:</p>
       <p>EFT (see bank details below)</p>

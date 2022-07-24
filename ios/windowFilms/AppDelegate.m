@@ -49,6 +49,7 @@ static void InitializeFlipper(UIApplication *application) {
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   [FIRApp configure];
+  NSLog(@"Available fonts: %@", [UIFont familyNames]);
   return YES;
 }
 

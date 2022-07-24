@@ -8,6 +8,7 @@ import {
   Image,
   Alert,
   TouchableOpacity,
+  Platform,
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -25,6 +26,7 @@ import Mailer from 'react-native-mail';
 import moment from 'moment'
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import SheetMenu from 'react-native-sheetmenu'
+import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 
 
 
@@ -237,60 +239,60 @@ const QuoteDetailContainer = () => {
 
 
   const getHtmlCutList = () => {
-    return `<table>
-              <tr>
-                  <td><strong>Job</strong></td>
-                  <td><span style="padding-left:4em">${data['job_name']}</span></td>
-              </tr>
-              <tr>
-                  <td><strong>Quote</strong></td>
-                  <td><span style="padding-left:4em">${data['quote_number']}</span></td>
-              </tr>
-              <tr>
-                  <td><strong>Client</strong></td>
-                  <td><span style="padding-left:4em">${data['customer_name']}</span></td>
-              </tr>
-              <tr>
-                  <td><strong>Address</strong></td>
-                  <td><span style="padding-left:4em">${data['site_address']}, ${data['site_state']}</span></td>
-              </tr>
-              <tr>
-                  <td><strong>Billing Address</strong></td>
-                  <td><span style="padding-left:4em">${data['billing_address']}, ${data['billing_state']}</span></td>
-              </tr>
-          </table>
-          <br/>
-          <p><strong>Rooms</strong></p>
-          <table style="border: 1px solid #6d6d6d;border-collapse: collapse;">
-              <tr style="border: 1px solid #6d6d6d;border-collapse: collapse;">
-                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Room</th>
-                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Area (m²)</th>
-                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Notes</th>
-              </tr>
-              ${getAreaRoom()}
-          </table>
+    return `<table style="width:100%!important">
+            <tr>
+                <td><strong>Job</strong></td>
+                <td><span style="padding-left:4em">${data['job_name']}</span></td>
+            </tr>
+            <tr>
+                <td><strong>Quote</strong></td>
+                <td><span style="padding-left:4em">${data['quote_number']}</span></td>
+            </tr>
+            <tr>
+                <td><strong>Client</strong></td>
+                <td><span style="padding-left:4em">${data['customer_name']}</span></td>
+            </tr>
+            <tr>
+                <td><strong>Address</strong></td>
+                <td><span style="padding-left:4em">${data['site_address']}, ${data['site_state']}</span></td>
+            </tr>
+            <tr>
+                <td><strong>Billing Address</strong></td>
+                <td><span style="padding-left:4em">${data['billing_address']}, ${data['billing_state']}</span></td>
+            </tr>
+        </table>
+        <br/>
+        <p><strong>Rooms</strong></p>
+        <table style="border: 1px solid #6d6d6d;border-collapse: collapse;">
+            <tr style="border: 1px solid #6d6d6d;border-collapse: collapse;">
+                <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Room</th>
+                <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Area (m²)</th>
+                <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Notes</th>
+            </tr>
+            ${getAreaRoom()}
+        </table>
 
-          <p><strong>Windows</strong></p>
-          <table style="border: 1px solid #6d6d6d;border-collapse: collapse;">
-              <tr style="border: 1px solid #6d6d6d;border-collapse: collapse;">
-                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;"></th>
-                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Room</th>
-                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Film</th>
-                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Qty</th>
-                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">W (mm)</th>
-                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">H (mm)</th>
-                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Area (m²)</th>
-                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Frame</th>
-                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Glass</th>
-                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Corking</th>
-                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Removal</th>
-                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Ladder</th>
-                  <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Notes</th>
-              </tr>
-              ${getWindowRoom()}
-          </table>
-          <p><strong>Total area:</strong> <span>${getTotalArea()}m²</span></p>
-          <p><strong>Total corking:</strong> <span>${getTotalFilmRemoval()}m²</span></p>`
+        <p><strong>Windows</strong></p>
+        <table style="border: 1px solid #6d6d6d;border-collapse: collapse;">
+            <tr style="border: 1px solid #6d6d6d;border-collapse: collapse;">
+                <th style="border: 1px solid #6d6d6d;border-collapse: collapse;"></th>
+                <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Room</th>
+                <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Film</th>
+                <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Qty</th>
+                <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">W (mm)</th>
+                <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">H (mm)</th>
+                <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Area (m²)</th>
+                <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Frame</th>
+                <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Glass</th>
+                <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Corking</th>
+                <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Removal</th>
+                <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Ladder</th>
+                <th style="border: 1px solid #6d6d6d;border-collapse: collapse;">Notes</th>
+            </tr>
+            ${getWindowRoom()}
+        </table>
+        <p><strong>Total area:</strong> <span>${getTotalArea()}m²</span></p>
+        <p><strong>Total corking:</strong> <span>${getTotalFilmRemoval()}m²</span></p>`
   }
 
   const getInfoLabel = (window) => {
@@ -316,16 +318,23 @@ const QuoteDetailContainer = () => {
     if (window) {
       wh = `${window['width']} x ${window['height']}`
     }
-    return `</br>${roomName}</br>${tintFilm}</br>${position}</br>${wh}</br>`
+    return Platform.OS === 'ios' ? `</br>${roomName}</br>${tintFilm}</br>${position}</br>${wh}</br>` : `${roomName}</br>${tintFilm}</br>${position}</br>${wh}</br></br>`
   }
 
   const getPrintedFilmLabels = () => {
-    let result = `<table style="width: 100%;border-collapse: collapse;">
+    let result = `<style type="text/css">
+      @font-face {
+        font-family: 'New June';
+        src: ${Platform.OS === 'ios' ? `url('NewJune-Medium.otf')` : `url('file:///android_asset/fonts/NewJune-Medium.otf')`}  format('truetype')
+    }
+    </style>
+    <table style="width: 100%;border-collapse: collapse;">
                   <tr style="border-collapse: collapse;">
                       <th style="width: 33%;border-collapse: collapse;"></th>
                       <th style="width: 33%;border-collapse: collapse;"></th>
                       <th style="width: 33%;border-collapse: collapse;"></th>
                   </tr>`
+    let styleText = Platform.OS === 'ios' ? "font-family:'New June';text-align: center;border-collapse: collapse;padding: 0.5em;font-size: 14px" : "font-family:'New June';text-align: center;border-collapse: collapse;padding: 0.5em;font-size: 15.6px"
     if (rooms) {
       let windows = []
       let printedFilmLabels = []
@@ -346,9 +355,9 @@ const QuoteDetailContainer = () => {
           let item3 = printedFilmLabels[i + 2]
           result += `
             <tr style="border-collapse: collapse;">
-                <td style="text-align: center;border-collapse: collapse;padding: 0.5em;font-size: 13px">${getInfoLabel(item1)}</td>
-                <td style="text-align: center;border-collapse: collapse;padding: 0.5em;font-size: 13px">${getInfoLabel(item2)}</td>
-                <td style="text-align: center;border-collapse: collapse;padding: 0.5em;font-size: 13px">${getInfoLabel(item3)}</td>
+                <td style="${styleText}" >${getInfoLabel(item1)}</td>
+                <td style="${styleText}" >${getInfoLabel(item2)}</td>
+                <td style="${styleText}" >${getInfoLabel(item3)}</td>
             </tr>`
         }
         if (i != 0 && i % 26 == 0) {
@@ -370,8 +379,12 @@ const QuoteDetailContainer = () => {
   const createPrintedFilmLabels = async () => {
     let options = {
       html: `${getPrintedFilmLabels()}`,
-      fileName: 'PrintedFilmLabels',
+      fileName: `${data['job_name']} Cut list Printed Film Labels`,
       directory: 'Documents',
+      fonts: [resolveAssetSource(require('../../fonts/NewJune-Regular.otf')).uri],
+      paddingLeft: 20,
+      paddingRight: 20,
+      bgColor: '#ffffff'
     };
 
     let file = await RNHTMLtoPDF.convert(options)

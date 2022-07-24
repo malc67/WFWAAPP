@@ -21,7 +21,9 @@ import {
   NotesContainer,
   SettingContainer,
   DiscountContainer,
-  ExtraCostContainer
+  ExtraCostContainer,
+  HelpContainer,
+  ForgetPWContainer
 } from '@/Containers'
 import { useTheme } from '@/Hooks'
 import MainNavigator from './Main'
@@ -42,6 +44,9 @@ const ApplicationNavigator = () => {
           <Stack.Screen name="Startup" component={StartupContainer} />
           <Stack.Screen name="Login" component={LoginContainer} />
           <Stack.Screen name="SignUp" component={SignUpContainer} />
+          <Stack.Screen name="ForgetPW" component={ForgetPWContainer} options={{
+            headerShown: true
+          }} />
           <Stack.Screen
             name="BussinessProfile"
             component={BussinessProfileContainer}
@@ -142,6 +147,12 @@ const ApplicationNavigator = () => {
           <Stack.Screen
             name="ExtraCost"
             component={ExtraCostContainer}
+            options={{
+              headerShown: true
+            }} />
+          <Stack.Screen
+            name="Help"
+            component={HelpContainer}
             options={{
               headerShown: true
             }} />

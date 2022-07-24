@@ -17,6 +17,7 @@
 		6BF8C3242E784751BBD99833 /* Ubuntu-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1AB8E088665A47658B6A06D0 /* Ubuntu-Medium.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		833F2006FE004CFBA319C9F2 /* libPods-windowFilms.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CE8F60935CC7F1EA8FB7E0E /* libPods-windowFilms.a */; };
+		8B661D9185D94DA1997637B3 /* NewJune-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA13242667354926BEF74BBE /* NewJune-Medium.otf */; };
 		912DCE4387C7435881C58B4A /* NewJune-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = AC94ABAC64F04E1691492534 /* NewJune-Bold.otf */; };
 		9B5B00C55A164AD681F8B9DC /* Ubuntu-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2DDB2052F8B144DF8F4B4ADA /* Ubuntu-Bold.ttf */; };
 		B4129D4DDDF64461B8D8290A /* Ubuntu-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10AA370575C146EE99B1D2ED /* Ubuntu-MediumItalic.ttf */; };
@@ -80,6 +81,7 @@
 		AC94ABAC64F04E1691492534 /* NewJune-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "NewJune-Bold.otf"; path = "../fonts/NewJune-Bold.otf"; sourceTree = "<group>"; };
 		B5CBF059BC034CAA8CF1CEC8 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		B97715114CFA456193748264 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
+		CA13242667354926BEF74BBE /* NewJune-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "NewJune-Medium.otf"; path = "../fonts/NewJune-Medium.otf"; sourceTree = "<group>"; };
 		D1E3B17E187B4E86B23E3646 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		D3A1CE40550748B0A85E88BB /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		D84CE489B22647958F7C6D66 /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
@@ -184,6 +186,7 @@
 				642F5A732238414BAF78FD2C /* New June Regular.otf */,
 				AC94ABAC64F04E1691492534 /* NewJune-Bold.otf */,
 				1D54E9A8ECC441B1B2005E3A /* NewJune-Regular.otf */,
+				CA13242667354926BEF74BBE /* NewJune-Medium.otf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -340,6 +343,7 @@
 				D2B8D00E928A4BDE9D3270E3 /* Ubuntu-Regular.ttf in Resources */,
 				912DCE4387C7435881C58B4A /* NewJune-Bold.otf in Resources */,
 				6953341DDFF445D7A2A19CB0 /* NewJune-Regular.otf in Resources */,
+				8B661D9185D94DA1997637B3 /* NewJune-Medium.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,7 +362,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		05F85629541516737FF642BC /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -665,7 +669,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = windowFilms/windowFilms.entitlements;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 17;
 				DEVELOPMENT_TEAM = C74474Q88T;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = windowFilms/Info.plist;
@@ -692,7 +696,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = windowFilms/windowFilms.entitlements;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 17;
 				DEVELOPMENT_TEAM = C74474Q88T;
 				INFOPLIST_FILE = windowFilms/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;

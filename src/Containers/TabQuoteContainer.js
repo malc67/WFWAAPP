@@ -16,7 +16,7 @@ import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { isEmpty, filter } from 'lodash'
-import { Header, Loader, TabBarQuote } from '@/Components'
+import { Header, Loader, SearchBar, TabBarQuote } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import moment from 'moment'
 
@@ -36,6 +36,11 @@ const TabQuoteContainer = () => {
   const [quotesListSent, setQuotesListSent] = useState([])
   const [quotesListAccepted, setQuotesListAccepted] = useState([])
   const [quotesListRejected, setQuotesListRejected] = useState([])
+  
+  const [quotesListUnsentSearch, setQuotesListUnsentSearch] = useState([])
+  const [quotesListSentSearch, setQuotesListSentSearch] = useState([])
+  const [quotesListAcceptedSearch, setQuotesListAcceptedSearch] = useState([])
+  const [quotesListRejectedSearch, setQuotesListRejectedSearch] = useState([])
 
 
   const [statusTab, setStatusTab] = useState(undefined)
@@ -66,6 +71,23 @@ const TabQuoteContainer = () => {
     setQuotesListAccepted(filter(quotesListDisplay, item => item['status'] === true && item['confirm'] === 'accepted'))
     setQuotesListRejected(filter(quotesListDisplay, item => item['status'] === true && item['confirm'] === 'rejected'))
   }, [quotesListDisplay])
+
+  useEffect(() => {
+    setQuotesListUnsentSearch(quotesListUnsent)
+  }, [quotesListUnsent])
+
+  useEffect(() => {
+    setQuotesListSentSearch(quotesListSent)
+  }, [quotesListSent])
+
+  useEffect(() => {
+    setQuotesListAcceptedSearch(quotesListAccepted)
+  }, [quotesListAccepted])
+
+  useEffect(() => {
+    setQuotesListRejectedSearch(quotesListRejected)
+  }, [quotesListRejected])
+
 
   useEffect(() => {
     getQuotesApi()
@@ -121,6 +143,20 @@ const TabQuoteContainer = () => {
     </TouchableOpacity>
   );
 
+  const onSearch = (keyword) => {
+    if (isEmpty(keyword)) {
+      setQuotesListUnsentSearch(quotesListUnsent)
+      setQuotesListSentSearch(quotesListSent)
+      setQuotesListAcceptedSearch(quotesListAccepted)
+      setQuotesListRejectedSearch(quotesListRejected)
+    } else {
+      setQuotesListUnsentSearch(filter(quotesListUnsent, item => item['customer_name'].includes(keyword) || item['site_address'].includes(keyword) || item['job_name'].includes(keyword)))
+      setQuotesListSentSearch(filter(quotesListSent, item => item['customer_name'].includes(keyword) || item['site_address'].includes(keyword) || item['job_name'].includes(keyword)))
+      setQuotesListAcceptedSearch(filter(quotesListAccepted, item => item['customer_name'].includes(keyword) || item['site_address'].includes(keyword) || item['job_name'].includes(keyword)))
+      setQuotesListRejectedSearch(filter(quotesListRejected, item => item['customer_name'].includes(keyword) || item['site_address'].includes(keyword) || item['job_name'].includes(keyword)))
+    }
+  }
+
 
 
   return (
@@ -131,24 +167,25 @@ const TabQuoteContainer = () => {
         if (index === 1) onFilterStatus(false)
         if (index === 2) onFilterStatus(true)
       }} />
-
+      <View style={{ height: Responsive.height(5), backgroundColor: '#ffffff' }} />
+      <SearchBar textLabel='Search Quotes' onSearch={onSearch} />
       <SectionList
         sections={[
           {
             title: 'Unsent Quote',
-            data: quotesListUnsent
+            data: quotesListUnsentSearch
           },
           {
             title: 'Sent Quote',
-            data: quotesListSent
+            data: quotesListSentSearch
           },
           {
             title: 'Accepted Quote',
-            data: quotesListAccepted
+            data: quotesListAcceptedSearch
           },
           {
             title: 'Rejected Quote',
-            data: quotesListRejected
+            data: quotesListRejectedSearch
           },
         ]}
         contentContainerStyle={{ flexGrow: 1 }}

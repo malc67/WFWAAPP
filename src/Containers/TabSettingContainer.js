@@ -88,7 +88,9 @@ const TabSettingContainer = () => {
           <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
         </TouchableOpacity>
         <View style={styles.separator} />
-        <TouchableOpacity style={styles.item}>
+        <TouchableOpacity
+        onPress={() => navigation.navigate('Help')}
+         style={styles.item}>
           <Text style={styles.itemTitle}>Help</Text>
           <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
         </TouchableOpacity>
