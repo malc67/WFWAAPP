@@ -436,11 +436,12 @@ const QuoteDetailContainer = () => {
         name: `${data['job_name']} Cut list Printed Film Labels`,
       }]
     } else {
-      body = `Dear ${data['customer_name']}\n\n
-I have great pleasure in submitting the following quotation and have attached the following documents:\n
-Quotation ${data['quote_number']}\n
-Sample of the Manufacturers warranty Document\n
-Specified film performance data sheet\n\n
+      body = `Hello\n
+The attachment to this email is a cutting list\n
+Job: ${data['job_name']}\n
+Quote: ${data['quote_number']}\n
+Address: ${data['site_address']}, ${data['site_state']}\n
+Dispatch/Collection Date: ${moment().format('DD MMM YYYY')}\n\n
 Please contact us directly if you  have any issues downloading these attachments or require any further information\n
 ${getSignature()}
       `
