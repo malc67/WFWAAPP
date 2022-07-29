@@ -152,6 +152,16 @@ const QuoteDetailContainer = () => {
     return data['notes']
   }
 
+  const getSignature = () => {
+    if (setting && setting['signature']) {
+      return setting['signature'].replace(new RegExp('\r?\n', 'g'), '\n');
+    } else {
+      return `Window Films WA\n
+      77 Boulder Road\n
+      MALAGA 6090`
+    }
+  }
+
   const getTotalArea = () => {
     let result = 0
     if (rooms) {
@@ -242,23 +252,23 @@ const QuoteDetailContainer = () => {
     return `<table style="width:100%!important">
             <tr>
                 <td><strong>Job</strong></td>
-                <td><span style="padding-left:4em">${data['job_name']}</span></td>
+                <td><span style="padding-left:2em">${data['job_name']}</span></td>
             </tr>
             <tr>
                 <td><strong>Quote</strong></td>
-                <td><span style="padding-left:4em">${data['quote_number']}</span></td>
+                <td><span style="padding-left:2em">${data['quote_number']}</span></td>
             </tr>
             <tr>
                 <td><strong>Client</strong></td>
-                <td><span style="padding-left:4em">${data['customer_name']}</span></td>
+                <td><span style="padding-left:2em">${data['customer_name']}</span></td>
             </tr>
             <tr>
                 <td><strong>Address</strong></td>
-                <td><span style="padding-left:4em">${data['site_address']}, ${data['site_state']}</span></td>
+                <td><span style="padding-left:2em">${data['site_address']}, ${data['site_state']}</span></td>
             </tr>
             <tr>
-                <td><strong>Billing Address</strong></td>
-                <td><span style="padding-left:4em">${data['billing_address']}, ${data['billing_state']}</span></td>
+                <td><strong>Dispatch/Collection Date</strong></td>
+                <td><span style="padding-left:2em">${moment().format('DD MMM YYYY')}</span></td>
             </tr>
         </table>
         <br/>
@@ -392,6 +402,22 @@ const QuoteDetailContainer = () => {
     return file.filePath
   }
 
+  const createPdfCutListAndroid = async () => {
+    let options = {
+      html: `${getHtmlCutList()}`,
+      fileName: `Cutting List for ${data['job_name']}  (${data['quote_number']})`,
+      directory: 'Documents',
+      fonts: [resolveAssetSource(require('../../fonts/NewJune-Regular.otf')).uri],
+      paddingLeft: 20,
+      paddingRight: 20,
+      bgColor: '#ffffff'
+    };
+
+    let file = await RNHTMLtoPDF.convert(options)
+    console.log(file.filePath);
+    return file.filePath
+  }
+
   const handleEmail = async () => {
     const to = [(setting && setting['cutListsTo']) ? setting['cutListsTo'] : data['contact_email']]
     const cc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : 'malc@windowfilmswa.com.au']
@@ -399,20 +425,46 @@ const QuoteDetailContainer = () => {
     const subject = `Cutting List for ${data['job_name']}  (${data['quote_number']})`
 
     let path = await createPrintedFilmLabels()
-    console.log('path', path);
+
+    let body = ''
+    let attachments = []
+    if (Platform.OS === 'ios') {
+      body = getHtmlCutList()
+      attachments = [{
+        path: path,
+        type: 'pdf',
+        name: `${data['job_name']} Cut list Printed Film Labels`,
+      }]
+    } else {
+      body = `Dear ${data['customer_name']}\n\n
+I have great pleasure in submitting the following quotation and have attached the following documents:\n
+Quotation ${data['quote_number']}\n
+Sample of the Manufacturers warranty Document\n
+Specified film performance data sheet\n\n
+Please contact us directly if you  have any issues downloading these attachments or require any further information\n
+${getSignature()}
+      `
+      let pathCutList = await createPdfCutListAndroid()
+      attachments = [{
+        path: pathCutList,
+        type: 'pdf',
+        name: `${data['job_name']} CutList`,
+      },{
+        path: path,
+        type: 'pdf',
+        name: `${data['job_name']} Cut list Printed Film Labels`,
+      }]
+    }
+
     Mailer.mail({
       subject: subject,
       recipients: to,
       ccRecipients: cc,
       bccRecipients: bcc,
-      body: getHtmlCutList(),
+      body: body,
       customChooserTitle: 'Send Mail',
-      isHTML: true,
-      attachments: [{
-        path: path,
-        type: 'pdf',
-        name: `${data['job_name']} Cut list Printed Film Labels`,
-      }]
+      isHTML: Platform.OS === 'ios',
+      attachments: attachments
     }, (error, event) => {
 
     });

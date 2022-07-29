@@ -27,6 +27,8 @@ import CheckBox from '@react-native-community/checkbox';
 import email from 'react-native-email'
 import Mailer from 'react-native-mail';
 import moment from 'moment'
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 
 
 
@@ -837,7 +839,7 @@ const CreateQuoteContainer = () => {
 
   const getSignature = () => {
     if (setting && setting['signature']) {
-      return setting['signature'].replace(new RegExp('\r?\n', 'g'), '<br />');
+      return setting['signature'].replace(new RegExp('\r?\n', 'g'), '\n<br />');
     } else {
       return `Window Films WA
       77 Boulder Road 
@@ -920,8 +922,7 @@ const CreateQuoteContainer = () => {
         }
     <p><em>Please note that this is only a guide and more accurate figures can be obtained by employing an energy auditor.</em></p>
     <div>
-    ${
-      Platform.OS === 'ios' ? `
+    ${Platform.OS === 'ios' ? `
       <table>
       <tbody>
       <tr>
@@ -942,7 +943,7 @@ const CreateQuoteContainer = () => {
       <p>GST: $${getPriceTotal(0.1)}</p>
       <p>Total (including GST): $${getPriceTotal(1.1)}</p>
       `
-    }
+        }
     </div>
     <p>Payment Types:</p>
     <p>Cheque, EFT (see bank details below)</p>
@@ -964,8 +965,7 @@ const CreateQuoteContainer = () => {
       <li>Sample copy of the Manufacturer&rsquo;s Warranty Form (attached to original email)</li>
       </ul>
       <div>
-      ${
-        Platform.OS === 'ios' ? `
+      ${Platform.OS === 'ios' ? `
         <table>
         <tbody>
         <tr>
@@ -986,7 +986,7 @@ const CreateQuoteContainer = () => {
         <p>GST: $${getPriceTotal(0.1)}</p>
         <p>Total (including GST): $${getPriceTotal(1.1)}</p>
         `
-      }
+        }
       </div>
       <p>Payment Types:</p>
       <p>EFT (see bank details below)</p>
@@ -996,20 +996,57 @@ const CreateQuoteContainer = () => {
   }
 
 
-  const handleEmail = (isQuick = false) => {
+  const createPdfEmailAndroid = async (isQuick = false) => {
+    let options = {
+      html: `${getEmailHtml(isQuick)}`,
+      fileName: `Window Film WA Quote ${data['quote_number']}`,
+      directory: 'Documents',
+      fonts: [resolveAssetSource(require('../../fonts/NewJune-Regular.otf')).uri],
+      paddingLeft: 20,
+      paddingRight: 20,
+      bgColor: '#ffffff'
+    };
+
+    let file = await RNHTMLtoPDF.convert(options)
+    return file.filePath
+  }
+
+
+  const handleEmail = async (isQuick = false) => {
     const to = [(setting && setting['cutListsTo']) ? setting['cutListsTo'] : data['contact_email']]
     const cc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : 'malc@windowfilmswa.com.au']
     const bcc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : 'malc@windowfilmswa.com.au']
     const subject = `Window Film WA Quote ${data['quote_number']}`
+    let body = ''
+    let attachments = []
+    if (Platform.OS === 'ios') {
+      body = getEmailHtml(isQuick)
+    } else {
+      body = `Dear ${data['customer_name']}\n\n
+I have great pleasure in submitting the following quotation and have attached the following documents:\n
+Quotation ${data['quote_number']}\n
+Sample of the Manufacturers warranty Document\n
+Specified film performance data sheet\n\n
+Please contact us directly if you  have any issues downloading these attachments or require any further information\n
+${getSignature()}
+      `
+      let pathPdfEmailAndroid = await createPdfEmailAndroid(isQuick)
+      attachments = [{
+        path: pathPdfEmailAndroid,
+        type: 'pdf',
+        name: `Window Film WA Quote ${data['quote_number']}`,
+      }]
+    }
+
     Mailer.mail({
       subject: subject,
       recipients: to,
       ccRecipients: cc,
       bccRecipients: bcc,
-      body: getEmailHtml(isQuick),
+      body: body,
       customChooserTitle: 'Send Mail',
-      isHTML: true,
-      attachments: []
+      isHTML: Platform.OS === 'ios',
+      attachments: attachments
     }, (error, event) => {
 
     });
