@@ -85,9 +85,25 @@ const LoginContainer = () => {
             </TouchableOpacity>
 
           </View>
+          <View style={styles.policyContainer}>
+            <TouchableOpacity disabled>
+              <Text style={styles.textPolicy}>By signing in, you agree to our{'\n'}
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Help', { from: 'Login', item: 'terms_and_conditions' })}
+                >
+                  <Text style={[styles.textPolicy, styles.textUnderline]}>Terms</Text>
+                </TouchableOpacity>
+                <TouchableOpacity><Text style={[styles.textPolicy]}> & </Text></TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Help', { from: 'Login', item: 'privacy_policy' })}
+                >
+                  <Text style={[styles.textPolicy, styles.textUnderline]}>Privacy Policy.</Text>
+                </TouchableOpacity></Text>
+            </TouchableOpacity>
+          </View>
 
           <View style={Layout.fill} />
-          <TouchableOpacity style={styles.dontHaveAccountContainer}>
+          <TouchableOpacity disabled style={styles.dontHaveAccountContainer}>
             <Text style={styles.textdontHaveAccount}>Don't have an Account</Text>
           </TouchableOpacity>
           <View style={[Layout.rowHCenter, styles.actionWrapper]}>
@@ -212,4 +228,17 @@ const styles = StyleSheet.create({
     fontFamily: 'NewJune',
     fontSize: Responsive.font(15),
   },
+  policyContainer: {
+    alignSelf: 'center',
+    marginTop: Responsive.height(10)
+  },
+  textPolicy: {
+    color: '#485973',
+    fontFamily: 'NewJune',
+    fontSize: Responsive.font(12),
+    textAlign: 'center'
+  },
+  textUnderline: {
+    textDecorationLine: 'underline'
+  }
 });

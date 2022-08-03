@@ -19,7 +19,7 @@ import { useLazyFetchOneQuery } from '@/Services/modules/users'
 import { changeTheme } from '@/Store/Theme'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
 import _, { findLast, isEmpty, isUndefined } from 'lodash'
-import { Header, Avatar } from '@/Components'
+import { Header, Avatar, Loader } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -29,7 +29,7 @@ import Mailer from 'react-native-mail';
 import moment from 'moment'
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
-
+import ReactNativeBlobUtil from 'react-native-blob-util'
 
 
 const DATA_FILM = [
@@ -635,6 +635,8 @@ const CreateQuoteContainer = () => {
   const [roomSelected, setRoomSelected] = useState([])
   const [isAttachEnergySaving, setIsAttachEnergySaving] = useState(false)
 
+  const [isLoadingGenerate, setIsLoadingGenerate] = useState(false)
+
   useEffect(() => {
     const { item, room } = route?.params
     setData(item)
@@ -768,6 +770,8 @@ const CreateQuoteContainer = () => {
     return data['tint_film']
   }
 
+
+
   const getGlassType = () => {
     let result = ''
     for (let room of roomSelected) {
@@ -837,9 +841,9 @@ const CreateQuoteContainer = () => {
     return Math.round((value * getPowerCost()) * getGlassArea() * 100) / 100
   }
 
-  const getSignature = () => {
+  const getSignature = (chars = '<br />') => {
     if (setting && setting['signature']) {
-      return setting['signature'].replace(new RegExp('\r?\n', 'g'), '\n<br />');
+      return setting['signature'].replace(new RegExp('\r?\n', 'g'), chars);
     } else {
       return `Window Films WA
       77 Boulder Road 
@@ -860,7 +864,7 @@ const CreateQuoteContainer = () => {
     return rooms
   }
 
-  const getEmailHtml = (isQuick = false) => {
+  const getEmailHtml = (isQuick = false, isPdf = false, dataSheet = '') => {
     onUpdateStatusQuote()
     if (!isQuick) {
       return (`<div style="text-align: left;"><img src="${getCompanyLogo()}" alt="Logo" height="80">
@@ -872,9 +876,9 @@ const CreateQuoteContainer = () => {
     <p>Dear ${data['customer_name']},</p>
     <p>I have great pleasure in submitting the following quotation and have attached the following documents:</p>
     <ul>
-    <li>Quotation ${data['quote_number']} (contained within this document)</li>
-    ${getTintFilm() ? `<li>${getTintFilm()} Internal Window Film Brochure</li>` : ''}
-    <li>Sample copy of the Manufacturer&rsquo;s Warranty Form (attached to original email)</li>
+    <li>Quotation ${data['quote_number']} ${(Platform.OS === 'android' && isPdf) ? '' : '(contained within this document)'}</li>
+    ${getTintFilm() ? `<li>${getTintFilm()} Internal Window Film Brochure ${(Platform.OS === 'android' && dataSheet) ? `(<a href="${dataSheet}">Here</a>)` : ''}</li>` : ''}
+    <li>Sample copy of the Manufacturer&rsquo;s Warranty Form ${Platform.OS === 'android' ? `(<a href="https://graphicsap.averydennison.com/content/dam/averydennison/graphics/ap/en/warranty/windowfilm/Architectural%20Window%20Film%20-%20Warranty%20Bulletin%201.0_SAPSSA_Rev_0.pdf">Here</a>)` : ''}</li>
     </ul>
     <p>Scope of Works:</p>
     <p><strong>Provide quotation to supply and install ${getTintFilm() && `${getTintFilm()}`} as described</strong></p>
@@ -960,9 +964,9 @@ const CreateQuoteContainer = () => {
       <p>Dear ${data['customer_name']},</p>
       <p>I have great pleasure in submitting the following quotation and have attached the following documents:</p>
       <ul>
-      <li>Quotation ${data['quote_number']} (contained within this document)</li>
-      <li>${getTintFilm() ? `${getTintFilm()}` : ''} Internal Window Film Brochure</li>
-      <li>Sample copy of the Manufacturer&rsquo;s Warranty Form (attached to original email)</li>
+      <li>Quotation ${data['quote_number']} ${(Platform.OS === 'android' && isPdf) ? '' : '(contained within this document)'}</li>
+      ${getTintFilm() ? `<li>${getTintFilm()} Internal Window Film Brochure ${(Platform.OS === 'android' && dataSheet) ? `(<a href="${dataSheet}">Here</a>)` : ''}</li>` : ''}
+      <li>Sample copy of the Manufacturer&rsquo;s Warranty Form ${Platform.OS === 'android' ? `(<a href="https://graphicsap.averydennison.com/content/dam/averydennison/graphics/ap/en/warranty/windowfilm/Architectural%20Window%20Film%20-%20Warranty%20Bulletin%201.0_SAPSSA_Rev_0.pdf">Here</a>)` : ''}</li>
       </ul>
       <div>
       ${Platform.OS === 'ios' ? `
@@ -995,10 +999,37 @@ const CreateQuoteContainer = () => {
     }
   }
 
+  const downloadDataSheet = async (data) => {
+    const { config, fs } = ReactNativeBlobUtil
+    const { CacheDir } = fs.dirs;
+    if (data) {
+      const options = {
+        fileCache: true,
+        path: CacheDir + '/' + `${data['name']}.pdf`
+      };
+      let dataSheet = config(options).fetch('GET', data['dataSheet'])
+      const warrantyOptions = {
+        fileCache: true,
+        path: CacheDir + '/' + `Architectural Window Film - Warranty Bulletin SAPSSA.pdf`
+      };
+      let warranty = config(warrantyOptions).fetch('GET', `https://graphicsap.averydennison.com/content/dam/averydennison/graphics/ap/en/warranty/windowfilm/Architectural%20Window%20Film%20-%20Warranty%20Bulletin%201.0_SAPSSA_Rev_0.pdf`)
 
-  const createPdfEmailAndroid = async (isQuick = false) => {
+      let responses = await Promise.all([dataSheet, warranty]);
+      return [responses[0].path(), responses[1].path()]
+    } else {
+      const warrantyOptions = {
+        fileCache: true,
+        path: CacheDir + '/' + `Architectural Window Film - Warranty Bulletin SAPSSA.pdf`
+      };
+      let warranty = await config(warrantyOptions).fetch('GET', `https://graphicsap.averydennison.com/content/dam/averydennison/graphics/ap/en/warranty/windowfilm/Architectural%20Window%20Film%20-%20Warranty%20Bulletin%201.0_SAPSSA_Rev_0.pdf`)
+      return [warranty.path()]
+    }
+  }
+
+
+  const createPdfEmailAndroid = async (isQuick = false, dataSheet = '') => {
     let options = {
-      html: `${getEmailHtml(isQuick)}`,
+      html: `${getEmailHtml(isQuick, true, dataSheet)}`,
       fileName: `Window Film WA Quote ${data['quote_number']}`,
       directory: 'Documents',
       fonts: [resolveAssetSource(require('../../fonts/NewJune-Regular.otf')).uri],
@@ -1013,13 +1044,37 @@ const CreateQuoteContainer = () => {
 
 
   const handleEmail = async (isQuick = false) => {
+    setIsLoadingGenerate(true)
     const to = [(setting && setting['cutListsTo']) ? setting['cutListsTo'] : data['contact_email']]
     const cc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : 'malc@windowfilmswa.com.au']
     const bcc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : 'malc@windowfilmswa.com.au']
     const subject = `Window Film WA Quote ${data['quote_number']}`
     let body = ''
     let attachments = []
+    let filmSelected = findLast(DATA_FILM, item => item['name'] === getTintFilm())
+    let files = await downloadDataSheet(filmSelected)
     if (Platform.OS === 'ios') {
+      if (files && files.length >= 2) {
+        attachments = [{
+          path: files[0],
+          type: 'pdf',
+          name: filmSelected['name']
+        },
+        {
+          path: files[1],
+          type: 'pdf',
+          name: `Architectural Window Film - Warranty Bulletin SAPSSA`
+        }]
+      } else {
+        if (files) {
+          attachments = [
+            {
+              path: files[0],
+              type: 'pdf',
+              name: `Architectural Window Film - Warranty Bulletin SAPSSA`
+            }]
+        }
+      }
       body = getEmailHtml(isQuick)
     } else {
       body = `Dear ${data['customer_name']}\n\n
@@ -1028,16 +1083,36 @@ Quotation ${data['quote_number']}\n
 Sample of the Manufacturers warranty Document\n
 Specified film performance data sheet\n\n
 Please contact us directly if you  have any issues downloading these attachments or require any further information\n
-${getSignature()}
+${getSignature('\n')}
       `
-      let pathPdfEmailAndroid = await createPdfEmailAndroid(isQuick)
+      let pathPdfEmailAndroid = await createPdfEmailAndroid(isQuick, filmSelected ? filmSelected['dataSheet'] : '')
       attachments = [{
         path: pathPdfEmailAndroid,
         type: 'pdf',
         name: `Window Film WA Quote ${data['quote_number']}`,
       }]
+      if (files && files.length >= 2) {
+        attachments.push({
+          path: files[0],
+          type: 'pdf',
+          name: filmSelected['name']
+        })
+        attachments.push({
+          path: files[1],
+          type: 'pdf',
+          name: `Architectural Window Film - Warranty Bulletin SAPSSA`
+        })
+      } else {
+        if (files) {
+          attachments.push({
+            path: files[0],
+            type: 'pdf',
+            name: `Architectural Window Film - Warranty Bulletin SAPSSA`
+          })
+        }
+      }
     }
-
+    setIsLoadingGenerate(false)
     Mailer.mail({
       subject: subject,
       recipients: to,
@@ -1263,7 +1338,7 @@ ${getSignature()}
         </View>
 
       </View>
-
+      <Loader visible={isLoadingGenerate} />
     </SafeAreaView>
   )
 }

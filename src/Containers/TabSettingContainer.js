@@ -51,7 +51,7 @@ const TabSettingContainer = () => {
       <ScrollView
         style={Layout.fill}
         contentContainerStyle={[
-          Layout.fill,
+          { flexGrow: 1 }
         ]}>
 
         <View style={styles.infoWrapper}>
@@ -103,7 +103,7 @@ const TabSettingContainer = () => {
         </TouchableOpacity>
 
         <Text style={styles.textVersion}>Version-1.02 - 2022</Text>
-
+        <View style={{ height: Responsive.height(10) }} />
 
       </ScrollView>
       <Loader visible={loading} />
