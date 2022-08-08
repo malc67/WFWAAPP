@@ -97,7 +97,7 @@ const RoomDetailContainer = () => {
           );
         },
       })
-    }, [navigation, route])
+    }, [navigation, route, data])
   )
 
   useEffect(() => {
@@ -151,6 +151,14 @@ const RoomDetailContainer = () => {
     route?.params?.onUpdateRooms()
   }
 
+  const onUpdateRoom = (item) => {
+    updateRoom(quote['id'], data['id'], {
+      ...item
+    })
+    setData({ ...data, title: item['title'] })
+    route?.params?.onUpdateRooms()
+  }
+
   return (
     <SafeAreaView
       style={Layout.fill}>
@@ -162,7 +170,7 @@ const RoomDetailContainer = () => {
           <View style={{ height: Responsive.height(20), width: '100%' }} />
 
           <TouchableOpacity
-            onPress={() => { }}
+            onPress={() => navigation.navigate('NewRoom', { from: 'Room', onUpdateRoom })}
             style={styles.item}>
             <Text style={styles.title}>Name</Text>
             <Text style={styles.subValue}>{data['title']}</Text>

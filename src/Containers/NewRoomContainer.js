@@ -27,7 +27,7 @@ import { updateSettingPref as saveUpdateSettingPref } from '@/Store/Auth'
 const DATA = [
   {
     id: '1',
-    title: 'Bathrom',
+    title: 'Bathroom',
   },
   {
     id: '2',
@@ -47,7 +47,7 @@ const DATA = [
   },
   {
     id: '6',
-    title: 'control Tower',
+    title: 'Control Tower',
   },
   {
     id: '7',
@@ -127,7 +127,7 @@ const NewRoomContainer = () => {
         header: () => {
           return (
             <Header
-              text={'New Room'}
+              text={route?.params?.from ? 'Update Room' : 'New Room'}
               type={'normal'}
               rightOption={
                 <TouchableOpacity
@@ -159,7 +159,7 @@ const NewRoomContainer = () => {
                   }}
                   style={Layout.rowHCenter}>
                   <Image source={Images.ic_back} />
-                  <Text style={styles.textBack}>Map</Text>
+                  <Text style={styles.textBack}>{route?.params?.from ? route?.params?.from : 'Map'}</Text>
                 </TouchableOpacity>
               }
             />
@@ -171,7 +171,12 @@ const NewRoomContainer = () => {
 
 
   const onRoomSelected = (room) => {
-    route?.params?.onAddNewRoom(room)
+    if (route?.params?.onAddNewRoom) {
+      route?.params?.onAddNewRoom(room)
+    }
+    if (route?.params.onUpdateRoom) {
+      route?.params.onUpdateRoom(room)
+    }
     navigation.goBack()
   }
 

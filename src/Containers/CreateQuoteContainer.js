@@ -854,6 +854,11 @@ const CreateQuoteContainer = () => {
   const getCompanyLogo = () => {
     return profile['companyLogo'] || setting['companyLogo']
   }
+
+  const getBussinessName = () => {
+    return profile['bussiness'] || 'Window films WA'
+  }
+
   const getRooms = () => {
     let rooms = []
     if (room) {
@@ -906,19 +911,19 @@ const CreateQuoteContainer = () => {
     <p>Manufacturer&rsquo;s Note: This data is a guide enabling an estimate only of fade reduction, as there are many variables that cause fading, it would be impossible to give an exact figure, therefore, does not constitute a warranty.</p>
     <p><strong>Installation of your Window Film:</strong></p>
     <p>Will be supplied and installed in accordance with manufacturer&rsquo;s installation instructions.</p>
-    <p>Window Films WA employees are licenced and approved window film applicators.</p>
+    <p>${getBussinessName()} employees are licenced and approved window film applicators.</p>
     <p>We are currently booking ahead for between 7 - 10 working days (if you require immediate installation, please contact me directly and I will endeavour to accommodate your requirements).</p>
     <p>Please let me know directly when you are ready to proceed and I will schedule ASAP.</p>
     ${profile['installer'] ? `
       <p><strong>Window Energy Rating System&nbsp;</strong><img src="https://awa.associationonline.com.au/sitebuilder/wershome/knowledge/asset/small/17/werslogo1.png" alt="Logo" height="30"></p>
-      <p>Window films WA is an accredited WERS installer. Upon completion you will issued a certification of the WERS rating appropriate to the film being installed on your current&nbsp; Glazing specifications. Based on the ${getTintFilm() && `${getTintFilm()}`}&nbsp; you will achieve a WERS rating <span style="color: #ff0000;">★</span><span style="color: #ff0000;">15 %&nbsp; </span>heating <span style="color: #8eaadb;">★★★</span><span style="color: #8eaadb;">32%&nbsp; </span>Cooling<span style="color: #8eaadb;">&nbsp; Rating</span><span style="color: #8eaadb;">.&nbsp;</span></p>
+      <p>${getBussinessName()} is an accredited WERS installer. Upon completion you will issued a certification of the WERS rating appropriate to the film being installed on your current&nbsp; Glazing specifications. Based on the ${getTintFilm() && `${getTintFilm()}`}&nbsp; you will achieve a WERS rating <span style="color: #ff0000;">★</span><span style="color: #ff0000;">15 %&nbsp; </span>heating <span style="color: #8eaadb;">★★★</span><span style="color: #8eaadb;">32%&nbsp; </span>Cooling<span style="color: #8eaadb;">&nbsp; Rating</span><span style="color: #8eaadb;">.&nbsp;</span></p>
      ` : ``
         }
     <p><strong>Warranty Period &amp; Registration:</strong></p>
     <p>${getTintFilm() ? `${getTintFilm()}` : ''} Internal Window Film carries a Lifetime Warranty for Residential applications and 12 Years Warranty for Commercial applications. The warranty period on the External Window film applications varies depending on the film used and other site variables. Please refer to the sample copy of the manufacturer&rsquo;s warranty form attached to confirm the warranty period relevant to this particular application.</p>
     <p>The original warranty document will be sent to you after installation for this types of glazing.</p>
     <p><strong>Apples for Apples Policy:</strong></p>
-    <p>Window Films WA pride ourselves on giving best value pricing for quality products but if you receive a cheaper quote from our competitors we will do our very best to match it. Competitor&rsquo;s quotes must be in writing and comparable to our quoted product and service.</p>
+    <p>${getBussinessName()} pride ourselves on giving best value pricing for quality products but if you receive a cheaper quote from our competitors we will do our very best to match it. Competitor&rsquo;s quotes must be in writing and comparable to our quoted product and service.</p>
    ${isAttachEnergySaving ? `
     <p><strong>Energy savings and Payback period</strong></p>
     <p>The film manufacturers have calculated the energy savings (kwh/sqm2) based on applying film to the different glass types of commercial buildings that require air-conditioning. While we haven&rsquo;t energy modelled your particular building yet, if we apply the same reduction in Solar Energy Gain achieved by applying this film and multiply that by the amount you actually pay to run your air-conditioning we can get this estimate of the savings in your power costs.</p>
