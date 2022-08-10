@@ -82,18 +82,20 @@ const SignUpContainer = () => {
           </View>
           <View style={styles.policyContainer}>
             <TouchableOpacity disabled>
-              <Text style={styles.textPolicy}>By signing up, you agree to our{'\n'}
+              <Text style={styles.textPolicy}>By signing in, you agree to our</Text>
+              <View style={[Layout.row, { alignSelf: 'center' }]}>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('Help', { from: 'Sign Up', item: 'terms_and_conditions' })}
+                  onPress={() => navigation.navigate('Help', { from: 'Login', item: 'terms_and_conditions' })}
                 >
                   <Text style={[styles.textPolicy, styles.textUnderline]}>Terms</Text>
                 </TouchableOpacity>
                 <TouchableOpacity><Text style={[styles.textPolicy]}> & </Text></TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('Help', { from: 'Sign Up', item: 'privacy_policy' })}
+                  onPress={() => navigation.navigate('Help', { from: 'Login', item: 'privacy_policy' })}
                 >
                   <Text style={[styles.textPolicy, styles.textUnderline]}>Privacy Policy.</Text>
-                </TouchableOpacity></Text>
+                </TouchableOpacity>
+              </View>
             </TouchableOpacity>
           </View>
           <View style={Layout.fill} />

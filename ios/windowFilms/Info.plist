@@ -49,6 +49,8 @@
 	<string>WindowFilms needs permission to save images to photo library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>WindowFilms needs permission to use photo library.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>WindowFilms needs permission to track in order to show your location on the map</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Ubuntu-Bold.ttf</string>
@@ -90,8 +92,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>

@@ -87,7 +87,8 @@ const LoginContainer = () => {
           </View>
           <View style={styles.policyContainer}>
             <TouchableOpacity disabled>
-              <Text style={styles.textPolicy}>By signing in, you agree to our{'\n'}
+              <Text style={styles.textPolicy}>By signing in, you agree to our</Text>
+              <View style={[Layout.row, { alignSelf: 'center' }]}>
                 <TouchableOpacity
                   onPress={() => navigation.navigate('Help', { from: 'Login', item: 'terms_and_conditions' })}
                 >
@@ -98,7 +99,8 @@ const LoginContainer = () => {
                   onPress={() => navigation.navigate('Help', { from: 'Login', item: 'privacy_policy' })}
                 >
                   <Text style={[styles.textPolicy, styles.textUnderline]}>Privacy Policy.</Text>
-                </TouchableOpacity></Text>
+                </TouchableOpacity>
+              </View>
             </TouchableOpacity>
           </View>
 
@@ -230,6 +232,7 @@ const styles = StyleSheet.create({
   },
   policyContainer: {
     alignSelf: 'center',
+    alignItems: 'center',
     marginTop: Responsive.height(10)
   },
   textPolicy: {

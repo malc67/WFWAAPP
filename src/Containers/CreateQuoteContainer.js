@@ -633,6 +633,7 @@ const CreateQuoteContainer = () => {
   const [extraCosts, setExtraCosts] = useState([])
 
   const [roomSelected, setRoomSelected] = useState([])
+  const [roomCostBreakdown, setRoomCostBreakdown] = useState(true)
   const [isAttachEnergySaving, setIsAttachEnergySaving] = useState(false)
 
   const [isLoadingGenerate, setIsLoadingGenerate] = useState(false)
@@ -721,7 +722,9 @@ const CreateQuoteContainer = () => {
         })
       }
     }
-    return Math.round(glassArea * 1.1 * 100) / 100
+    let includeWastage = (setting['includeWastage'] === undefined || setting['includeWastage']) ? 1.1 : 1.0
+
+    return Math.round(glassArea * includeWastage * 100) / 100
   }
 
   const getPriceFilmRemoval = () => {
@@ -761,6 +764,21 @@ const CreateQuoteContainer = () => {
     }
 
     return Math.round(priceFilm * percent * 100) / 100
+  }
+
+  const getPriceByRoom = (room) => {
+    let glassArea = 0
+    if (room) {
+      room['windows'].forEach(item => {
+        glassArea += item['width'] / 1000 * item['height'] / 1000 * item['quantity']
+      })
+      let includeWastage = (setting['includeWastage'] === undefined || setting['includeWastage']) ? 1.1 : 1.0
+
+      glassArea = Math.round(glassArea * includeWastage * 100) / 100
+
+      return Math.round(glassArea * price * 100) / 100
+    }
+    return 0
   }
 
   const getTintFilm = () => {
@@ -869,6 +887,19 @@ const CreateQuoteContainer = () => {
     return rooms
   }
 
+  const getCostBreakdown = () => {
+    let result = '<table><tbody>'
+
+    getRooms().forEach(item => {
+      result = result + `<tr>
+      <td>${item['title']}&nbsp;&nbsp;</td>
+      <td>$${getPriceByRoom(item)}</td>
+      </tr>`
+    })
+    result = result + '</tbody></table>'
+    return result
+  }
+
   const getEmailHtml = (isQuick = false, isPdf = false, dataSheet = '') => {
     onUpdateStatusQuote()
     if (!isQuick) {
@@ -931,28 +962,31 @@ const CreateQuoteContainer = () => {
         }
     <p><em>Please note that this is only a guide and more accurate figures can be obtained by employing an energy auditor.</em></p>
     <div>
-    ${Platform.OS === 'ios' ? `
+    
+    ${roomCostBreakdown ? `
+      <p style="text-decoration: underline;">Cost Breakdown</p>
+      ${getCostBreakdown()}
+    ` : ``}
+    
+
+    </br>
+
       <table>
       <tbody>
       <tr>
-      <td>Total</td>
-      <td>$${getPriceTotal(1)}</td>
+      <td><strong>Total</strong></td>
+      <td><strong>$${getPriceTotal(1)}</strong></td>
       </tr>
       <tr>
-      <td>GST</td>
-      <td>$${getPriceTotal(0.1)}</td>
+      <td><strong>GST</strong></td>
+      <td><strong>$${getPriceTotal(0.1)}</strong></td>
       </tr>
       <tr>
-      <td>Total (including GST)</td>
-      <td>$${getPriceTotal(1.1)}</td>
+      <td><strong>Total (including GST)</strong></td>
+      <td><strong>$${getPriceTotal(1.1)}</strong></td>
       </tr>
       </tbody>
-      </table>` : `
-      <p>Total: $${getPriceTotal(1)}</p>
-      <p>GST: $${getPriceTotal(0.1)}</p>
-      <p>Total (including GST): $${getPriceTotal(1.1)}</p>
-      `
-        }
+      </table>
     </div>
     <p>Payment Types:</p>
     <p>Cheque, EFT (see bank details below)</p>
@@ -974,28 +1008,22 @@ const CreateQuoteContainer = () => {
       <li>Sample copy of the Manufacturer&rsquo;s Warranty Form ${Platform.OS === 'android' ? `(<a href="https://graphicsap.averydennison.com/content/dam/averydennison/graphics/ap/en/warranty/windowfilm/Architectural%20Window%20Film%20-%20Warranty%20Bulletin%201.0_SAPSSA_Rev_0.pdf">Here</a>)` : ''}</li>
       </ul>
       <div>
-      ${Platform.OS === 'ios' ? `
-        <table>
-        <tbody>
-        <tr>
-        <td>Total</td>
-        <td>$${getPriceTotal(1)}</td>
-        </tr>
-        <tr>
-        <td>GST</td>
-        <td>$${getPriceTotal(0.1)}</td>
-        </tr>
-        <tr>
-        <td>Total (including GST)</td>
-        <td>$${getPriceTotal(1.1)}</td>
-        </tr>
-        </tbody>
-        </table>` : `
-        <p>Total: $${getPriceTotal(1)}</p>
-        <p>GST: $${getPriceTotal(0.1)}</p>
-        <p>Total (including GST): $${getPriceTotal(1.1)}</p>
-        `
-        }
+      <table>
+      <tbody>
+      <tr>
+      <td>Total</td>
+      <td>$${getPriceTotal(1)}</td>
+      </tr>
+      <tr>
+      <td>GST</td>
+      <td>$${getPriceTotal(0.1)}</td>
+      </tr>
+      <tr>
+      <td>Total (including GST)</td>
+      <td>$${getPriceTotal(1.1)}</td>
+      </tr>
+      </tbody>
+      </table>
       </div>
       <p>Payment Types:</p>
       <p>EFT (see bank details below)</p>
@@ -1156,21 +1184,6 @@ ${getSignature('\n')}
             contentContainerStyle={{ flexGrow: 1 }}>
 
             <View style={{ height: Responsive.height(20), width: '100%' }} />
-            <View style={styles.item}>
-              <Text style={styles.title}>Office</Text>
-              <CheckBox
-                disabled={false}
-                value={false}
-                style={styles.checkBox}
-                boxType={'square'}
-                tintColor={'#B2C249'}
-                onCheckColor={'#FFFFFF'}
-                onTintColor={'#B2C249'}
-                onFillColor={'#B2C249'}
-                onValueChange={(newValue) => { }}
-              />
-              <View style={{ width: Responsive.width(15) }} />
-            </View>
             <View style={styles.separator} />
             <View style={styles.item}>
               <Text style={styles.title}>Glass Area</Text>
@@ -1238,7 +1251,7 @@ ${getSignature('\n')}
               getRooms().map(item => {
                 return (<>
                   <View style={styles.item}>
-                    <Text style={styles.title}>{item['title']}</Text>
+                    <Text style={styles.title}>{`${item['title']} ($${getPriceByRoom(item)})`}</Text>
                     <CheckBox
                       disabled={false}
                       value={_.includes(roomSelected, item)}
@@ -1257,7 +1270,25 @@ ${getSignature('\n')}
                 )
               })
             }
+
             <View style={{ height: Responsive.height(20), width: '100%' }} />
+            <View style={styles.item}>
+              <Text style={styles.title}>Room Cost Breakdown</Text>
+              <CheckBox
+                disabled={false}
+                value={roomCostBreakdown}
+                style={styles.checkBox}
+                boxType={'square'}
+                tintColor={'#B2C249'}
+                onCheckColor={'#FFFFFF'}
+                onTintColor={'#B2C249'}
+                onFillColor={'#B2C249'}
+                onValueChange={(newValue) => setRoomCostBreakdown(newValue)}
+              />
+              <View style={{ width: Responsive.width(15) }} />
+            </View>
+
+            <View style={styles.separator} />
 
 
             <TouchableOpacity

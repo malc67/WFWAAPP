@@ -8,6 +8,7 @@ import Responsive from 'react-native-lightweight-responsive'
 import { isUndefined, isEmpty } from 'lodash'
 import { useNavigation } from '@react-navigation/native'
 
+
 Responsive.setOptions({ width: 390, height: 844, enableOnlySmallSize: true });
 const StartupContainer = () => {
   const { Layout, Images, Gutters, Fonts } = useTheme()

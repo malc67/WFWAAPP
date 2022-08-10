@@ -122,10 +122,10 @@ export default function () {
     }
   }
 
-  const updateSettingPref = async (cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, signature, customRooms = [], callback = undefined) => {
+  const updateSettingPref = async (cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, includeWastage, signature, customRooms = [], callback = undefined) => {
     callback(true)
     console.log('companyLogo', companyLogo)
-    let data = { cutListsTo, bccQuotesTo, unit, followUp, powerCost, signature, customRooms }
+    let data = { cutListsTo, bccQuotesTo, unit, followUp, powerCost, signature, customRooms, includeWastage }
     if (!isUndefined(companyLogo) && !isEmpty(companyLogo) && !isUndefined(companyLogo?.uri) && !isEmpty(companyLogo?.uri) && !checkUriFromInternet(companyLogo?.uri)) {
       let companyLogoUri = await uploadImageToFirebase(companyLogo?.uri)
       data = { ...data, companyLogo: companyLogoUri }

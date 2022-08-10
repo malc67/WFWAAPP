@@ -102,7 +102,6 @@ const ExtraCostContainer = () => {
                 style={styles.input}
                 placeholder={'Description'}
                 value={data1['description']}
-                keyboardType={'decimal-pad'}
                 onChangeText={text => setData1({ ...data1, description: text })}
                 placeholderTextColor={'#606A70'} />
             </View>
@@ -131,7 +130,6 @@ const ExtraCostContainer = () => {
                 style={styles.input}
                 placeholder={'Description'}
                 value={data2['description']}
-                keyboardType={'decimal-pad'}
                 onChangeText={text => setData2({ ...data2, description: text })}
                 placeholderTextColor={'#606A70'} />
             </View>
@@ -160,7 +158,6 @@ const ExtraCostContainer = () => {
                 style={styles.input}
                 placeholder={'Description'}
                 value={data3['description']}
-                keyboardType={'decimal-pad'}
                 onChangeText={text => setData3({ ...data3, description: text })}
                 placeholderTextColor={'#606A70'} />
             </View>
@@ -189,7 +186,6 @@ const ExtraCostContainer = () => {
                 style={styles.input}
                 placeholder={'Description'}
                 value={data4['description']}
-                keyboardType={'decimal-pad'}
                 onChangeText={text => setData4({ ...data4, description: text })}
                 placeholderTextColor={'#606A70'} />
             </View>

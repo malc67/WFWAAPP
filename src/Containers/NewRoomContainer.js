@@ -91,6 +91,7 @@ const NewRoomContainer = () => {
   const [signature, setSignature] = useState('')
 
   const [companyLogo, setCompanyLogo] = useState('');
+  const [isIncludeWastage, setIsIncludeWastage] = useState(true)
 
   useEffect(() => {
     getNewSetting()
@@ -108,6 +109,7 @@ const NewRoomContainer = () => {
         setPowerCost(data['powerCost'])
         setCompanyLogo({ uri: data['companyLogo'] })
         setSignature(data['signature'])
+        setIsIncludeWastage((data['includeWastage'] === undefined || data['includeWastage']) ? true : false)
         dispatch(saveUpdateSettingPref({ setting: data }))
       }
       setLoading(false)
@@ -137,7 +139,7 @@ const NewRoomContainer = () => {
                       id: 'c',
                       title: customName,
                     }]
-                    updateSettingPref(cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, signature, customRooms, (isLoading) => {
+                    updateSettingPref(cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, isIncludeWastage, signature, customRooms, (isLoading) => {
                       setLoading(isLoading)
                       if (!isLoading) {
                         getNewSetting()
@@ -183,7 +185,7 @@ const NewRoomContainer = () => {
   const onRemoveCustomRoom = (val) => {
     let customRooms = (setting && setting['customRooms']) ? [...setting['customRooms']] : []
     _.remove(customRooms, item => item === val);
-    updateSettingPref(cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, signature, customRooms, (isLoading) => {
+    updateSettingPref(cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, isIncludeWastage, signature, customRooms, (isLoading) => {
       setLoading(isLoading)
       if (!isLoading) {
         getNewSetting()

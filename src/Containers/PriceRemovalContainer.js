@@ -88,6 +88,7 @@ const PriceRemovalContainer = () => {
                 style={styles.input}
                 placeholder={'Required'}
                 value={data['width']}
+                keyboardType={'number-pad'}
                 onChangeText={text => setData({ ...data, width: text })}
                 placeholderTextColor={'#606A70'} />
             </View>
@@ -101,6 +102,7 @@ const PriceRemovalContainer = () => {
                 style={styles.input}
                 placeholder={'Required'}
                 value={data['drop']}
+                keyboardType={'number-pad'}
                 onChangeText={text => setData({ ...data, drop: text })}
                 placeholderTextColor={'#606A70'} />
             </View>
@@ -114,6 +116,7 @@ const PriceRemovalContainer = () => {
                 style={styles.input}
                 placeholder={'Required'}
                 value={data['quantity']}
+                keyboardType={'number-pad'}
                 onChangeText={text => setData({ ...data, quantity: text })}
                 placeholderTextColor={'#606A70'} />
             </View>
@@ -127,6 +130,7 @@ const PriceRemovalContainer = () => {
                 style={styles.input}
                 placeholder={'$ per m²'}
                 value={data['price']}
+                keyboardType={'decimal-pad'}
                 onChangeText={text => setData({ ...data, price: text })}
                 placeholderTextColor={'#606A70'} />
             </View>

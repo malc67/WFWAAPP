@@ -50,6 +50,8 @@ const SettingContainer = () => {
 
   const [companyLogo, setCompanyLogo] = useState('');
 
+  const [isIncludeWastage, setIsIncludeWastage] = useState(true)
+
 
   useEffect(() => {
     getNewSetting()
@@ -67,6 +69,7 @@ const SettingContainer = () => {
         setPowerCost(data['powerCost'])
         setCompanyLogo({ uri: data['companyLogo'] })
         setSignature(data['signature'])
+        setIsIncludeWastage((data['includeWastage'] === undefined || data['includeWastage']) ? true : false)
         dispatch(saveUpdateSettingPref({ setting: data }))
       }
       setLoading(false)
@@ -91,7 +94,7 @@ const SettingContainer = () => {
                 <TouchableOpacity
                   onPress={() => {
                     let customRooms = (setting && setting['customRooms']) ? setting['customRooms'] : []
-                    updateSettingPref(cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, signature, customRooms, (isLoading) => {
+                    updateSettingPref(cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, isIncludeWastage, signature, customRooms, (isLoading) => {
                       setLoading(isLoading)
                       if (!isLoading) {
                         navigation.navigate('Settings')
@@ -108,7 +111,7 @@ const SettingContainer = () => {
           );
         },
       })
-    }, [navigation, cutListsTo, bccQuotesTo, unit, followUp, powerCost, companyLogo, signature, setting])
+    }, [navigation, cutListsTo, bccQuotesTo, unit, followUp, powerCost, isIncludeWastage, companyLogo, signature, setting])
   )
 
 
@@ -219,6 +222,21 @@ const SettingContainer = () => {
               <Text style={styles.subValue}>{''}</Text>
               <Image style={styles.imgPreview} source={companyLogo} resizeMode={'contain'} />
               <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
+            </TouchableOpacity>
+            <View style={styles.separator} />
+            <TouchableOpacity
+              onPress={() => { }}
+              style={styles.item}>
+              <Text style={styles.title}>Incorderate 10% wastage into total price</Text>
+              <Switch
+                ios_backgroundColor={"#E0E0E0"}
+                thumbColor={'#FFFFFF'}
+                trackColor={{ true: '#B2C249', false: '#E0E0E0' }}
+                onValueChange={(value) => {
+                  setIsIncludeWastage(value)
+                }}
+                value={isIncludeWastage} />
+              <View style={{ width: Responsive.width(15) }} />
             </TouchableOpacity>
             <View style={{ height: Responsive.height(20), width: '100%' }} />
             <Text style={styles.header}>FRANCHISE CONTACT DETAILS</Text>

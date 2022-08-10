@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { View, StatusBar } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { NavigationContainer } from '@react-navigation/native'
@@ -28,6 +28,7 @@ import {
 import { useTheme } from '@/Hooks'
 import MainNavigator from './Main'
 import { navigationRef } from './utils'
+import { requestTrackingPermission } from 'react-native-tracking-transparency';
 
 const Stack = createStackNavigator()
 
@@ -35,6 +36,17 @@ const Stack = createStackNavigator()
 const ApplicationNavigator = () => {
   const { Layout, darkMode, NavigationTheme } = useTheme()
   const { colors } = NavigationTheme
+
+  useEffect(() => {
+    requestPermission()
+  }, [])
+
+  const requestPermission = async () => {
+    const trackingStatus = await requestTrackingPermission();
+    if (trackingStatus === 'authorized' || trackingStatus === 'unavailable') {
+      // enable tracking features
+    }
+  }
 
   return (
     <View style={Layout.fill}>
