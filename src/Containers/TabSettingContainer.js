@@ -6,7 +6,8 @@ import {
   View,
   Text,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -17,6 +18,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { isEmpty } from 'lodash'
 import { Header, Avatar, Loader } from '@/Components'
 import Responsive from 'react-native-lightweight-responsive'
+import auth from '@react-native-firebase/auth';
 
 
 Responsive.setOptions({ width: 390, height: 844, enableOnlySmallSize: true });
@@ -26,7 +28,7 @@ const TabSettingContainer = () => {
   const { info, profile } = useAuth().Data
   const [loading, signOut] = useAuth().SignOut
   const { Common, Fonts, Gutters, Layout, Images } = useTheme()
-
+  const [isLoading, setIsLoading] = useState(false)
 
 
   useFocusEffect(
@@ -40,6 +42,34 @@ const TabSettingContainer = () => {
       })
     }, [navigation])
   )
+
+
+  const deleteAccount = () => {
+    Alert.alert(
+      'Delete Account',
+      'Are you sure you want to Delete Account?\nAll data and information will be deleted. That can\'t be undone',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed')
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            setIsLoading(true)
+            auth().currentUser.delete()
+              .then(() => {
+                signOut()
+                setIsLoading(false)
+              }).catch(error => {
+                setIsLoading(false)
+              })
+          }
+        },
+      ],
+      { cancelable: false },
+    );
+  }
 
 
   var fullName = profile ? profile['contactPerson']?.split(' ') : []
@@ -99,6 +129,13 @@ const TabSettingContainer = () => {
           onPress={() => signOut()}
           style={styles.item}>
           <Text style={styles.itemTitle}>Sign Out</Text>
+          <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
+        </TouchableOpacity>
+        <View style={styles.separator} />
+        <TouchableOpacity
+          onPress={() => deleteAccount()}
+          style={styles.item}>
+          <Text style={styles.itemTitle}>Delete Account</Text>
           <Image style={styles.imgArrow} source={Images.ic_arrow_right} />
         </TouchableOpacity>
 
