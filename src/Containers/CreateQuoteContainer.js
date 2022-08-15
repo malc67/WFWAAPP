@@ -1079,8 +1079,8 @@ const CreateQuoteContainer = () => {
   const handleEmail = async (isQuick = false) => {
     setIsLoadingGenerate(true)
     const to = [(setting && setting['cutListsTo']) ? setting['cutListsTo'] : data['contact_email']]
-    const cc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : 'malc@windowfilmswa.com.au']
-    const bcc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : 'malc@windowfilmswa.com.au']
+    const cc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : '']
+    const bcc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : '']
     const subject = `Window Film WA Quote ${data['quote_number']}`
     let body = ''
     let attachments = []

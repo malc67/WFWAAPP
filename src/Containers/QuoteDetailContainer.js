@@ -420,8 +420,8 @@ const QuoteDetailContainer = () => {
 
   const handleEmail = async () => {
     const to = [(setting && setting['cutListsTo']) ? setting['cutListsTo'] : data['contact_email']]
-    const cc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : 'malc@windowfilmswa.com.au']
-    const bcc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : 'malc@windowfilmswa.com.au']
+    const cc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : '']
+    const bcc = [(setting && setting['bccQuotesTo']) ? setting['bccQuotesTo'] : '']
     const subject = `Cutting List for ${data['job_name']}  (${data['quote_number']})`
 
     let path = await createPrintedFilmLabels()
