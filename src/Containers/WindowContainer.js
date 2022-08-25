@@ -99,7 +99,7 @@ const WindowContainer = () => {
   const [frameColour, setFrameColour] = useState('Light')
   const [glassType, setGlassType] = useState('')
   const [glassThickness, setGlassThickness] = useState('')
-  const [includeCorking, setIncludeCorking] = useState(false)
+  const [includeCorking, setIncludeCorking] = useState(true)
   const [filmRemovalRequired, setFilmRemovalRequired] = useState(true)
   const [ladderType, setLadderType] = useState('')
 

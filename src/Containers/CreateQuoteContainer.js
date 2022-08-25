@@ -628,7 +628,8 @@ const CreateQuoteContainer = () => {
 
   const [price, setPrice] = useState('')
   const [priceForSealing, setPriceForSealing] = useState('')
-  const [priceFilmRemoval, setPriceFilmRemoval] = useState({})
+  const [priceFilmRemovalExtra, setPriceFilmRemovalExtra] = useState({})
+  const [priceFilmRemoval, setPriceFilmRemoval] = useState('')
   const [discount, setDiscount] = useState({ type: 'Amount', value: 0 })
   const [extraCosts, setExtraCosts] = useState([])
 
@@ -685,7 +686,7 @@ const CreateQuoteContainer = () => {
   )
 
   const onUpdatePriceRemoval = (data) => {
-    setPriceFilmRemoval(data)
+    setPriceFilmRemovalExtra(data)
   }
 
   const onUpdateDiscount = (data) => {
@@ -722,18 +723,59 @@ const CreateQuoteContainer = () => {
         })
       }
     }
-    let includeWastage = (setting['includeWastage'] === undefined || setting['includeWastage']) ? 1.1 : 1.0
+    let includeWastage = (setting && (setting['includeWastage'] === undefined || setting['includeWastage'])) ? 1.1 : 1.0
 
     return Math.round(glassArea * includeWastage * 100) / 100
   }
 
   const getPriceFilmRemoval = () => {
+    let costPriceFilmRemoval = 0
     if (isUndefined(priceFilmRemoval) || isEmpty(priceFilmRemoval)) {
-      return 0
+      costPriceFilmRemoval = 0
     } else {
-      let area = priceFilmRemoval['width'] / 1000 * priceFilmRemoval['drop'] / 1000 * priceFilmRemoval['quantity']
-      return Math.round(area * priceFilmRemoval['price'] * 100) / 100
+
+      let area = 0
+      for (let room of roomSelected) {
+        if (room['windows']) {
+          room['windows'].forEach(item => {
+            if (item['filmRemovalRequired']) {
+              area += item['width'] / 1000 * item['height'] / 1000 * item['quantity']
+            }
+          })
+        }
+      }
+      costPriceFilmRemoval = area * priceFilmRemoval
     }
+
+    let extraCost = 0
+    if (isUndefined(priceFilmRemovalExtra) || isEmpty(priceFilmRemovalExtra) ||
+      isUndefined(priceFilmRemovalExtra['width']) || isEmpty(priceFilmRemovalExtra['width']) ||
+      isUndefined(priceFilmRemovalExtra['drop']) || isEmpty(priceFilmRemovalExtra['drop']) ||
+      isUndefined(priceFilmRemovalExtra['quantity']) || isEmpty(priceFilmRemovalExtra['quantity']) ||
+      isUndefined(priceFilmRemovalExtra['price']) || isEmpty(priceFilmRemovalExtra['price'])) {
+      extraCost = 0
+    } else {
+      extraCost = priceFilmRemovalExtra['width'] / 1000 * priceFilmRemovalExtra['drop'] / 1000 * priceFilmRemovalExtra['quantity'] * priceFilmRemovalExtra['price']
+    }
+
+    return Math.round((costPriceFilmRemoval + extraCost) * 100) / 100
+  }
+
+  const getPriceForSealing = () => {
+
+    if (isUndefined(priceForSealing) || isEmpty(priceForSealing)) return 0
+
+    let totalCircumference = 0
+    for (let room of roomSelected) {
+      if (room['windows']) {
+        room['windows'].forEach(item => {
+          if (item['includeCorking']) {
+            totalCircumference += (item['width'] / 1000 + item['height'] / 1000) * 2 * item['quantity']
+          }
+        })
+      }
+    }
+    return Math.round(priceForSealing * totalCircumference * 100) / 100
   }
 
   const getTotalExtra = () => {
@@ -748,9 +790,13 @@ const CreateQuoteContainer = () => {
     return totalExtra
   }
 
+  const getPriceFilmAndLabourTotal = () => {
+    return getGlassArea() * price
+  }
+
 
   const getPriceTotal = (percent = 1) => {
-    let priceFilm = getGlassArea() * price + getPriceFilmRemoval() + Number(priceForSealing)
+    let priceFilm = getPriceFilmAndLabourTotal() + getPriceFilmRemoval() + getPriceForSealing()
 
     if (discount && discount['type'] === 'Amount') {
       priceFilm = priceFilm - discount['value']
@@ -772,7 +818,7 @@ const CreateQuoteContainer = () => {
       room['windows'].forEach(item => {
         glassArea += item['width'] / 1000 * item['height'] / 1000 * item['quantity']
       })
-      let includeWastage = (setting['includeWastage'] === undefined || setting['includeWastage']) ? 1.1 : 1.0
+      let includeWastage = (setting && (setting['includeWastage'] === undefined || setting['includeWastage'])) ? 1.1 : 1.0
 
       glassArea = Math.round(glassArea * includeWastage * 100) / 100
 
@@ -1211,7 +1257,8 @@ ${getSignature('\n')}
                   style={styles.input}
                   placeholder={'$ per m²'}
                   keyboardType={'numeric'}
-                  value={priceFilmRemoval['price']}
+                  value={priceFilmRemoval}
+                  onChangeText={text => setPriceFilmRemoval(text)}
                   placeholderTextColor={'#606A70'} />
               </View>
               <View style={{ width: Responsive.width(15) }} />
@@ -1222,7 +1269,7 @@ ${getSignature('\n')}
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
-                  placeholder={'$ per m²'}
+                  placeholder={'$ per lm²'}
                   value={priceForSealing}
                   keyboardType={'numeric'}
                   onChangeText={text => setPriceForSealing(text)}
@@ -1233,11 +1280,11 @@ ${getSignature('\n')}
             <View style={styles.separator} />
             <View style={styles.item}>
               <Text style={styles.title}>Film and labour total</Text>
-              <Text style={styles.subValue}>$0.00</Text>
+              <Text style={styles.subValue}>${getPriceFilmAndLabourTotal()}</Text>
             </View>
             <View style={styles.separator} />
             <TouchableOpacity
-              onPress={() => navigation.navigate('PriceRemoval', { item: priceFilmRemoval, onUpdatePriceRemoval })}
+              onPress={() => navigation.navigate('PriceRemoval', { item: priceFilmRemovalExtra, onUpdatePriceRemoval })}
               style={styles.item}>
               <Text style={styles.title}>Film Removal</Text>
               <Text style={[styles.subValue, { paddingHorizontal: Responsive.height(10) }]}>${getPriceFilmRemoval()}</Text>
