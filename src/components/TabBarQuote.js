@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { SafeAreaView, ViewPropTypes, Text, View, StyleSheet, TouchableOpacity } from 'react-native'
+import { SafeAreaView, Text, View, StyleSheet, TouchableOpacity } from 'react-native'
 import { useTheme } from '@/Hooks'
 import Responsive from 'react-native-lightweight-responsive'
 
@@ -20,7 +20,7 @@ const TabBarQuote = ({ height, containStyle, textStyle, onChangeTab, initSelecte
   }
 
   const getStyleBackground = (position) => {
-    return (position === (idxSelected | initSelected)) ? [styles.tabStyleSelected, { backgroundColor: colorHeightline, shadowColor:colorHeightline }] : styles.tabStyle
+    return (position === (idxSelected | initSelected)) ? [styles.tabStyleSelected, { backgroundColor: colorHeightline, shadowColor: colorHeightline }] : styles.tabStyle
   }
 
   return (
@@ -51,9 +51,9 @@ const TabBarQuote = ({ height, containStyle, textStyle, onChangeTab, initSelecte
 TabBarQuote.propTypes = {
   colorHeightline: PropTypes.string,
   height: PropTypes.number,
-  containStyle: ViewPropTypes.style,
-  tabStyle: ViewPropTypes.style,
-  textStyle: ViewPropTypes.style,
+  containStyle: PropTypes.object,
+  tabStyle: PropTypes.object,
+  textStyle: PropTypes.object,
   initSelected: PropTypes.number,
   onChangeTab: PropTypes.func
 }
@@ -64,7 +64,7 @@ TabBarQuote.defaultProps = {
   tabStyle: {},
   textStyle: {},
   initSelected: 0,
-  onChangeTab: (index) => {},
+  onChangeTab: (index) => { },
   colorHeightline: '#ffffff'
 }
 

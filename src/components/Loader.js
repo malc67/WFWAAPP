@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from 'prop-types'
-import { View, ActivityIndicator, Text, StyleSheet, ViewPropTypes } from "react-native";
+import { View, ActivityIndicator, Text, StyleSheet } from "react-native";
 import { colors } from "../themes/colors";
 import Responsive from "react-native-lightweight-responsive";
 
@@ -28,7 +28,7 @@ const Loader = ({ visible, containerStyle, text }) => {
 
 Loader.propTypes = {
     visible: PropTypes.bool,
-    containerStyle: ViewPropTypes.style,
+    containerStyle: PropTypes.object,
     text: PropTypes.string,
 }
 

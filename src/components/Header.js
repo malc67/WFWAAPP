@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { SafeAreaView, ViewPropTypes, Text, View, StyleSheet } from 'react-native'
+import { SafeAreaView, Text, View, StyleSheet } from 'react-native'
 import { useTheme } from '@/Hooks'
 import Responsive from 'react-native-lightweight-responsive'
 
@@ -49,8 +49,8 @@ Header.propTypes = {
   height: PropTypes.number,
   text: PropTypes.string,
   type: PropTypes.oneOf(['large', 'normal']),
-  containStyle: ViewPropTypes.style,
-  textStyle: ViewPropTypes.style,
+  containStyle: PropTypes.object,
+  textStyle: PropTypes.object,
   leftOption: PropTypes.element,
   rightOption: PropTypes.element,
   isShowLine: PropTypes.bool

@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { SafeAreaView, ViewPropTypes, TextInput, View, Image, StyleSheet } from 'react-native'
+import { SafeAreaView , TextInput, View, Image, StyleSheet } from 'react-native'
 import { useTheme } from '@/Hooks'
 import Responsive from 'react-native-lightweight-responsive'
 
@@ -21,8 +21,8 @@ const SearchBar = ({ height, textLabel, containStyle, textSearchStyle, onSearch 
 SearchBar.propTypes = {
   height: PropTypes.number,
   textLabel: PropTypes.string,
-  containStyle: ViewPropTypes.style,
-  textSearchStyle: ViewPropTypes.style,
+  containStyle: PropTypes.object,
+  textSearchStyle: PropTypes.object,
   onSearch: PropTypes.func
 }
 
